@@ -1,0 +1,13 @@
+#06.01.2017
+#HTACCESS GLOBAL SCOPE
+Options All -Indexes
+
+#Cache Images & CSS Files one Month
+<filesMatch ".(css|jpg|jpeg|png|gif)$">
+Header set Cache-Control "max-age=2628000, public"
+</filesMatch>
+
+#Disallow Caching of PHP, JSON & JS Files
+<filesMatch ".(php|json|js)$">
+Header set Cache-Control "max-age=0, no-store"
+</filesMatch>
