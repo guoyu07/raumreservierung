@@ -12,8 +12,8 @@
     $sess->initialize();
 
     if(isset($_POST['name']) && isset($_POST['pw'])){
-        $name = htmlentities($_POST['name'], ENT_QUOTES);
-        $pw = htmlentities($_POST['pw'], ENT_QUOTES);
+        $name = $_POST['name'];
+        $pw = $_POST['pw'];
 
         require_once('sessionsystem.class.php');
         $session = new SessionSystem($name, $pw, $pdo);

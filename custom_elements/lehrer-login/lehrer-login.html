@@ -34,7 +34,7 @@
             <h1 class="center">Log-in f&uuml;r Lehrer</h1>
             <br>
             <paper-input label="Benutzername" type="text"
-                         id="nameInput" pattern="[A-Za-z0-9]*" required maxlength="24"
+                         id="nameInput" allowed-pattern="[A-Za-z0-9-_ÄäÖöÜüß]" required maxlength="24"
                          error-message="Bitte &uuml;berpr&uuml;fen Sie Ihre Eingaben!"
                          auto-validate></paper-input>
             <paper-input label="Passwort" type="password" id="pwInput"
@@ -93,6 +93,7 @@
                         errorBox.innerHTML = "";
 
                         if(this.responseText){
+                            console.log(this.responseText);
                             var r = JSON.parse(this.responseText);
                             if(r.success !== true){
                                 errorBox.innerHTML = r.message;

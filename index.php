@@ -1,3 +1,10 @@
+<?php
+    require_once ('backend/accountsystem/sessioncontroller.class.php');
+    require_once ('backend/db/conf/dbconf.php');
+    $sess = new SessionController($pdo);
+    $sess->initialize();
+?>
+
 <!DOCTYPE html>
 <html lang="de">
 

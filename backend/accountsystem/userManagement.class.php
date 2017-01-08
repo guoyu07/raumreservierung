@@ -32,8 +32,6 @@
 
             if($this->pdo){
 
-                $name = htmlentities($name, ENT_QUOTES);
-
                 $iterations = 1024*24;
                 $hash = $this->hash_password($password, $iterations);
                 $pw = $hash['password'];
