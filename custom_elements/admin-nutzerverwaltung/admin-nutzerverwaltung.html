@@ -30,7 +30,7 @@
                 <paper-icon-button title="Tabelle neu laden" icon="autorenew" id="reloadButton" style="float: right;background-color: #607D8B;color:white; border-radius: 100px;"></paper-icon-button>
                 <paper-fab id="delfab" mini icon="delete" style="background-color: #8BC34A; display:none; position: relative; margin-top: -40px; margin-right: 20px; float: right;"></paper-fab>
 
-                <paper-input id="nameSearchInput" on-input="applyFilter" maxlength="32" label="Nach Namen suchen" style="width: 310px; margin-top: -40px; padding: 10px; background-color: white;">
+                <paper-input id="nameSearchInput" on-input="applyFilter" maxlength="32" label="Nach Namen suchen" style="width: 250px; margin-top: -40px; padding: 10px; background-color: white;">
                     <div prefix><iron-icon icon="account-box" style="margin-right: 10px;"></iron-icon></div>
                 </paper-input>
 
@@ -84,7 +84,9 @@
 
             <paper-dialog id="cd" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
                 <h2>&Auml;nderungen best&auml;tigen</h2>
-                <div id="cdc"></div>
+                <paper-dialog-scrollable>
+                    <div id="cdc"></div>
+                </paper-dialog-scrollable>
                 <div class="buttons">
                     <paper-button dialog-dismiss>Abbrechen</paper-button>
                     <paper-button dialog-confirm id="deletionConfirmation">Best&auml;tigen</paper-button>
@@ -95,7 +97,7 @@
                 <h2>Neuen Nutzer hinzuf&uuml;gen</h2>
                 <paper-dialog-scrollable id="audc">
 
-                    <paper-input label="Nutzername" id="addUserAccountName" maxlength="32" minlength="4" auto-validate required char-counter allowed-pattern="[A-Za-z0-9-_]"></paper-input>
+                    <paper-input label="Nutzername" id="addUserAccountName" maxlength="32" minlength="4" auto-validate required char-counter allowed-pattern="[A-Za-z0-9-_ÄäÖöÜüß]"></paper-input>
                     <paper-dropdown-menu label="Account-Typ" id="addUserAccountType" required>
                         <paper-listbox class="dropdown-content" selected="2">
                             <paper-item>Administrator</paper-item>

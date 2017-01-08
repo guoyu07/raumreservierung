@@ -48,7 +48,7 @@
                                 header('Location: /raumreservierung/project/main/notconfirmed');
                             }
                         } else {
-                            //Deactivation routing
+                            //Deactivation routine
                             require_once('userManagement.class.php');
                             $um = new userManagement($this->pdo);
                             if($um !== false) {
@@ -95,7 +95,7 @@
                             break;
                     }
                 }
-            } elseif($_SESSION['loggedin'] !== true && $_SERVER['SCRIPT_NAME'] != "/raumreservierung/project/index.html") {
+            } elseif($_SESSION['loggedin'] !== true && $_SERVER['SCRIPT_NAME'] != "/raumreservierung/project/index.php") {
                 header('Location: /raumreservierung/project/');
             }
 
