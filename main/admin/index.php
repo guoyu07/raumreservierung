@@ -37,6 +37,7 @@
 
     <!-- Polymer Imports -->
     <link rel="import" href="../../additional/imports.html">
+    
     <link rel="import" href="../../custom_elements/admin-nutzerverwaltung/admin-nutzerverwaltung.html">
     <link rel="import" href="../../custom_elements/admin-raumverwaltung/admin-raumverwaltung.html">
 
@@ -89,12 +90,12 @@
         <paper-toolbar id="header" class="medium-tall">
             <a href="https://www.gymnasium-klotzsche.de" target="_self"><img src="../../img/gykl-logo.gif" width="80px" alt="Gymnasium Klotzsche" title="Gymnasium Klotzsche"></a>
             <div class="title">$name &commat; Administration</div>
-            <paper-icon-button icon="more-vert" class="bottom" title="Men&uuml; &ouml;ffnen" paper-drawer-toggle style="position: absolute; right: 12px;"></paper-icon-button>
+            <paper-icon-button icon="more-vert" class="bottom" style="position: absolute;right: 16px;" title="Men&uuml; &ouml;ffnen" paper-drawer-toggle></paper-icon-button>
 
             <paper-tabs class="bottom" style="width: calc(100% - 45px);" fit-container scrollable selected="0" autoselect>
 
-                <paper-tab>Raumverwaltung</paper-tab>
                 <paper-tab>Nutzerverwaltung</paper-tab>
+                <paper-tab>Raumverwaltung</paper-tab>
 
             </paper-tabs>
 
@@ -102,8 +103,8 @@
 
         <iron-pages selected="0">
 
-            <admin-raumverwaltung></admin-raumverwaltung>
             <admin-nutzerverwaltung></admin-nutzerverwaltung>
+            <admin-raumverwaltung></admin-raumverwaltung>
 
         </iron-pages>
 
@@ -131,10 +132,10 @@
     function changeUrl(selected, routing) {
         switch(selected) {
             case 0:
-                routing.hash = "raumverwaltung";
+                routing.hash = "nutzerverwaltung";
                 break;
             case 1:
-                routing.hash = "nutzerverwaltung";
+                routing.hash = "raumverwaltung";
                 break;
             default:
                 routing.hash = "";
@@ -144,11 +145,11 @@
 
     function selectByHash(routing, pages, tabs) {
         switch(routing.hash) {
-            case "raumverwaltung":
+            case "nutzerverwaltung":
                 pages.selected = 0;
                 tabs.selected = 0;
                 break;
-            case "nutzerverwaltung":
+            case "raumverwaltung":
                 pages.selected = 1;
                 tabs.selected = 1;
                 break;

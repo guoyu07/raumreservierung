@@ -22,12 +22,22 @@
 		<!-- Polymer Imports -->
         <link rel="import" href="additional/imports.html">
 
+        <link rel="import" href="custom_elements/lehrer-login/lehrer-login.html">
+
         <!-- meta configuration -->
         <meta charset="UTF-8">
         <meta name="authors" content="Moritz Menzel, Maximilian Seiler, Benjamin Kirchhoff">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     </head>
     <body>
+
+    <platinum-sw-register skip-waiting
+                          clients-claim
+                          auto-register
+                          reload-on-install>
+        <platinum-sw-cache default-cache-strategy="fastest"></platinum-sw-cache>
+    </platinum-sw-register>
+
 
         <style is="custom-style">
             paper-button {
