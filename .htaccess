@@ -8,7 +8,7 @@ Header set Cache-Control "max-age=2628000, public"
 </filesMatch>
 
 #Disallow Caching of PHP, JSON & JS Files
-<filesMatch ".(php|json|js)$">
+<filesMatch ".(php|json|js|html)$">
 Header set Cache-Control "max-age=0, no-store"
 </filesMatch>
 
