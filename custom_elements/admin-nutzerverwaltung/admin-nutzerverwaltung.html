@@ -212,6 +212,7 @@
                             var newstatus = this.users.data[key].status;
 
                             ajax.body = "request=update&oldname=" + name + "&newname=" + newname + "&newtype=" + newtype + "&newstatus=" + newstatus;
+                            console.log(ajax.body);
                             ajax.generateRequest();
                             this.$.usertable.deselectAll();
 

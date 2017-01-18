@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/paper-input/paper-textarea.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
 <dom-module id="reporting-form">
 
@@ -44,11 +45,13 @@
 
         <iron-ajax id="sendReport"
                    url="/raumreservierung/project/backend/toolbox/sendError.php"
-                   method="POST"
+                   method="post"
                    content-type="application/x-www-form-urlencoded"
                    handle-as="json"
                    debounce-duration="300"
-                   timeout="5000"></iron-ajax>
+                   timeout="5000"
+                   last-response="{{response}}"
+                   on-response="_onResponse"></iron-ajax>
 
         <paper-card heading="Kontaktformular" style="padding-bottom: 8px;">
 
@@ -56,7 +59,7 @@
 
                 <paper-input id="dynamicInput" label="" allowed-pattern="[A-Za-z0-1.-_ÖöÄäÜüß@~:;,]" auto-validate required></paper-input>
                 <paper-input id="linkInput" label="Seite des Fehlers" maxlength="42" error-message="Bitte Eingaben &uuml;berpr&uuml;fen!" allowed-pattern="[A-Za-z0-9_\-#/?=]"><div prefix>.../raumreservierung/project/</div></paper-input>
-                <paper-textarea id="descInput" label="Erkl&auml;rung des Fehlers" prevent-invalid-input required auto-validate error-message="Bitte &uuml;berpr&uuml;fen Sie Ihre Eingaben!" rows="2" max-rows="6" type="text" char-counter maxlength="4096"></paper-textarea>
+                <paper-textarea id="descInput" type="text" label="Erkl&auml;rung des Fehlers" required auto-validate error-message="Bitte &uuml;berpr&uuml;fen Sie Ihre Eingaben!" rows="2" max-rows="6" type="text" char-counter maxlength="4096"></paper-textarea>
 
                 <div id="errorBox" style="margin-top: 26px; text-align: center; color: red;"></div>
 
@@ -85,7 +88,6 @@
                 listeners: {
                     'sendButton.tap': 'sendErrorReport',
                     'sendReport.request': '_onRequest',
-                    'sendReport.response': '_onResponse',
                     'sendReport.timeout': '_onTimeout'
                 },
 
@@ -93,8 +95,10 @@
                     this.updateInput();
                 },
                 updateInput: function(){
+
+                    var i = this.$.dynamicInput;
+
                     if(this.loggedin == true) {
-                        var i = this.$.dynamicInput;
                         i.value = this.name;
                         i.label = "Benutzername";
                         i.errorMessage = "Bitte Namen überprüfen!";
@@ -104,7 +108,6 @@
                         i.charCounter = true;
                         i.disabled = true;
                     } else {
-                        var i = this.$.dynamicInput;
                         i.value = "";
                         i.label = "E-Mail - Adresse";
                         i.errorMessage = "Bitte E-Mail überprüfen!";
@@ -121,20 +124,28 @@
                     var desc = this.$.descInput;
 
                     if(dyn.validate() && page.validate() && desc.validate()) {
-                        if(this.loggedin) {
-                            var body = "request=sendError&name="+dyn.value+"&msg="+desc.value+"&page="+page;
-                        } else {
-                            if(this.checked == true) {
-                                var body = "request=sendError&name="+dyn.value+"&msg="+desc.value+"&page="+page;
+
+                            var dynval = this.htmlentities(dyn.value);
+                            var pval = this.htmlentities(page.value);
+                            var dval = this.htmlentities(desc.value);
+
+                            if(this.loggedin) {
+                                this.$.sendReport.body = "request=error&name="+dynval+"&msg="+dval+"&page="+pval;
+                                this.$.sendReport.generateRequest();
                             } else {
-                                var body = "request=sendError&email="+dyn.value+"&msg="+desc.value+"&page="+page;
+                                this.$.sendReport.body = "request=error&email="+dynval+"&msg="+dval+"&page="+pval;
+                                this.$.sendReport.generateRequest();
                             }
-                        }
+
+                    } else {
+                        this.$.errorBox.innerHTML = "Bitte &uuml;berpr&uuml;fen Sie Ihre Eingaben!<br>";
                     }
 
-                    this.$.sendReport.body = body;
-                    this.$.sendReport.generateRequest();
+                },
 
+                htmlentities: function(str) {
+                    // HTMLEntities doesnt exist in JS, but is needed for x-www-form-urlencoded POST - Requests
+                    return String(str).replace(/&/g, '::AMP::').replace(/</g, '::LT::').replace(/>/g, '::GT::').replace(/"/g, '::QUOT::');
                 },
 
                 _onRequest: function(){
@@ -143,9 +154,27 @@
                     this.$.errorBox.innerHTML = '';
                 },
                 _onResponse: function(){
+
                     this.$.sendButton.disabled = false;
                     this.$.spinner.style.display = "none";
-                    //TODO: Handle Response JSON
+
+                    var response = this.$.sendReport.lastResponse;
+
+                    if(response.success == false){
+                        this.$.errorBox.style.color = "red";
+                        this.$.errorBox.innerHTML = "Bei der Abfrage ist ein Fehler aufgetreten:<br>"+response.message;
+                    } else if(response.success == true) {
+                        this.$.errorBox.style.color = "#689F38";
+                        this.$.errorBox.innerHTML = response.message;
+                        this.$.dynamicInput.value = "";
+                        this.$.dynamicInput.disabled = true;
+                        this.$.linkInput.value = "";
+                        this.$.linkInput.disabled = true;
+                        this.$.descInput.value = "";
+                        this.$.descInput.disabled = true;
+                        this.$.sendButton.disabled = true;
+                    }
+
                 },
                 _onTimeout: function(){
                     this._onResponse();

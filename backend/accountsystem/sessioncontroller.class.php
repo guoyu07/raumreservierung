@@ -16,6 +16,10 @@
             session_start();
             session_regenerate_id(true);
             $this->pdo = $pdo;
+            if(empty($_SESSION['loggedin']) || !isset($_SESSION['loggedin'])){
+                session_unset();
+                $_SESSION['loggedin'] = false;
+            }
         }
 
         public function initialize()
@@ -106,6 +110,10 @@
         {
             unset($_SESSION['loggedin']);
             session_destroy();
+        }
+
+        public function getAccType(){
+            return $_SESSION['acctype'];
         }
 
     }

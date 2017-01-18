@@ -83,7 +83,7 @@
                 <paper-material elevation="2">
                     <paper-toolbar id="header">
                         <a href="https://www.gymnasium-klotzsche.de" target="_self"><img src="img/gykl-logo.gif" width="80px" alt="Gymnasium Klotzsche" title="Gymnasium Klotzsche"></a>
-                        <a href="index.html" id="bclink"><div class="title shrink" id="breadcrumb">Raumreservierung</div></a><h3 style="font-weight: normal;" id="bcaddition"></h3>
+                        <a href="" id="bclink"><div class="title shrink" id="breadcrumb">Raumreservierung</div></a><h3 style="font-weight: normal;" id="bcaddition"></h3>
                         <paper-icon-button icon="more-vert" title="Men&uuml; &ouml;ffnen" paper-drawer-toggle style="position: absolute; right: 12px;"></paper-icon-button>
                     </paper-toolbar>
                 </paper-material>

@@ -259,7 +259,7 @@ HTML;
 
         public function updateUserData($oldname, $name, $type, $status){
 
-            $sql = "UPDATE accounts SET name=:newname, type=:type, status=:status
+            $sql = "UPDATE type=:type, status=:status
                     WHERE accounts.name = :oldname";
             $sql2 = "UPDATE accounts_users SET name=:newname WHERE accounts_users.name = :oldname";
             $r = $this->pdo->prepare($sql);
@@ -267,7 +267,7 @@ HTML;
 
             try {
                 $this->pdo->beginTransaction();
-                $r->execute(array(":newname" => $name, ":type" => $type, ":status" => $status, ":oldname" => $oldname));
+                $r->execute(array(":type" => $type, ":status" => $status, ":oldname" => $oldname));
                 $r2->execute(array(":newname" => $name, ":oldname" => $oldname));
                 $this->pdo->commit();
 
