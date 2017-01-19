@@ -290,7 +290,7 @@ HTML;
             $sql2 = "DELETE FROM accounts WHERE name=:username";
 
             $r1 = $this->pdo->prepare($sql1);
-            $r2 = $this->pdo->prepare($sql1);
+            $r2 = $this->pdo->prepare($sql2);
 
             try {
                 $this->pdo->beginTransaction();
@@ -320,6 +320,37 @@ HTML;
                 return array("error" => true, "message" => "Fehler bei der Datenbank-Abfrage: ".$e->getMessage());
             }
 
+        }
+
+        public function getErrors(){
+
+            // The LIMIT = 128 is purely case-sensitive, there should never be that much error - reports...
+            // and if someone thinks he has to spam, we have to manually clean the table
+            $sql = "SELECT errorID, name, email, coalesce(page, '-') as page, text, created FROM errorreport ORDER BY created DESC LIMIT 128";
+            $res = $this->pdo->query($sql)->fetchAll();
+
+            for($i=0;$i < count($res);$i++){
+                $res[$i]['text'] = nl2br(preg_replace("/::NEWLINE::/", ' --- ', $res[$i]['text']));
+                $res[$i]['created'] = date("d.m.Y - H:i", strtotime($res[$i]['created']));
+            }
+
+            return array("error" => false, "data" => $res);
+        }
+
+        public function deleteError($id) {
+            $sql = "DELETE FROM errorreport WHERE errorID=:errorid";
+            $r = $this->pdo->prepare($sql);
+
+            try {
+                $this->pdo->beginTransaction();
+                $r->execute(array(":errorid" => $id));
+                $this->pdo->commit();
+
+                return $this->getErrors();
+            } catch (PDOException $e) {
+                $this->pdo->rollBack();
+                return array("error" => true, "message" => "Es ist ein Fehler beim Löschen aufgetreten:<br>".$e->getMessage());
+            }
         }
 
     }

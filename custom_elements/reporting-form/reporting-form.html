@@ -63,7 +63,7 @@
 
                 <paper-input id="dynamicInput" label="" allowed-pattern="[A-Za-z0-1.-_ÖöÄäÜüß@~:;,]" auto-validate required></paper-input>
                 <paper-input id="linkInput" label="Seite des Fehlers" maxlength="42" error-message="Bitte Eingaben &uuml;berpr&uuml;fen!" allowed-pattern="[A-Za-z0-9_\-#/?.=]"><div prefix>.../raumreservierung/project/</div></paper-input>
-                <paper-textarea id="descInput" type="text" label="Erkl&auml;rung des Fehlers" required auto-validate error-message="Bitte &uuml;berpr&uuml;fen Sie Ihre Eingaben!" rows="2" max-rows="6" type="text" char-counter maxlength="4096"></paper-textarea>
+                <paper-textarea id="descInput" type="text" label="Erkl&auml;rung des Fehlers" required auto-validate error-message="Bitte &uuml;berpr&uuml;fen Sie Ihre Eingaben!" rows="2" max-rows="6" type="text" char-counter maxlength="2048"></paper-textarea>
 
                 <div id="errorBox" style="margin-top: 26px; text-align: center; color: red;"></div>
 
@@ -129,9 +129,9 @@
 
                     if(dyn.validate() && page.validate() && desc.validate()) {
 
-                            var dynval = this.htmlentities(dyn.value);
-                            var pval = this.htmlentities(page.value);
-                            var dval = this.htmlentities(desc.value);
+                            var dynval = dyn.value;
+                            var pval = page.value;
+                            var dval = String(desc.value).replace(/(?:\r\n|\r|\n)/g, '::NEWLINE::');
 
                             if(this.loggedin) {
                                 this.$.sendReport.body = "request=error&name="+dynval+"&msg="+dval+"&page="+pval;
@@ -145,11 +145,6 @@
                         this.$.errorBox.innerHTML = "Bitte &uuml;berpr&uuml;fen Sie Ihre Eingaben!<br>";
                     }
 
-                },
-
-                htmlentities: function(str) {
-                    // HTMLEntities doesnt exist in JS, but is needed for x-www-form-urlencoded POST - Requests
-                    return String(str).replace(/&/g, '::AMP::').replace(/</g, '::LT::').replace(/>/g, '::GT::').replace(/"/g, '::QUOT::');
                 },
 
                 _onRequest: function(){

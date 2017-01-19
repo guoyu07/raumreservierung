@@ -30,7 +30,7 @@
                     if(isset($_POST['oldname']) && isset($_POST['newname']) && isset($_POST['newtype']) && isset($_POST['newstatus'])){
 
                         if($_SESSION['name'] == $_POST['oldname']){
-                            echo json_encode(array("success" => false, "message" => "Sie k&ouml;nnen sich nicht selbst bearbeiten!"));
+                            echo json_encode(array("success" => false, "message" => "Sie können sich nicht selbst bearbeiten!"));
                         } else {
                             require_once('../accountsystem/userManagement.class.php');
                             require_once('../db/conf/dbconf.php');
@@ -44,12 +44,12 @@
                                     echo json_encode(array("success" => false, "message" => $res['message']));
                                 }
                             } else {
-                                echo json_encode(array("success" => false, "message" => "FATAL ERROR: Es wurde kein Ergebnis zur&uuml;ckgegeben! Bitte kontaktieren Sie umgehend einen Administrator!"));
+                                echo json_encode(array("success" => false, "message" => "FATAL ERROR: Es wurde kein Ergebnis zurückgegeben! Bitte kontaktieren Sie umgehend einen Administrator!"));
                             }
                         }
 
                     } else {
-                        echo json_encode(array("success" => false, "message" => "Es wurden nicht genug Daten &uuml;bermittelt!"));
+                        echo json_encode(array("success" => false, "message" => "Es wurden nicht genug Daten übermittelt!"));
                     }
                     break;
                 case "delete":
@@ -61,7 +61,7 @@
                         if(!empty($names)) {
 						
 							if(in_array($_SESSION['name'], $names)){
-								echo json_encode(array("success" => false, "message" => "Sie k&ouml;nnen sich nicht selber l&ouml;schen!"));
+								echo json_encode(array("success" => false, "message" => "Sie können sich nicht selber löschen!"));
 							} else {
 
 								require_once('../accountsystem/userManagement.class.php');
@@ -92,10 +92,10 @@
 							}	
 
                         } else {
-							echo json_encode(array("success" => false, "message" => "Sie k&ouml;nnen sich nicht selber l&ouml;schen!"));
+							echo json_encode(array("success" => false, "message" => "Sie können sich nicht selber löschen!"));
 						}
                     } else {
-                        echo json_encode(array("success" => false, "message" => "Es wurden keine zu l&ouml;schenden Namen angegeben!"));
+                        echo json_encode(array("success" => false, "message" => "Es wurden keine zu löschenden Namen angegeben!"));
                     }
                     break;
                 case "add":
@@ -117,13 +117,13 @@
                             $erg = $um->addUser($name, $password, $type, $status);
 
                             if($erg['error']){
-                                echo json_encode(array("success" => false, "message" => "Der Nutzer konnte nicht erstellt werden: ".$erg['message']));
+                                echo json_encode(array("success" => false, "message" => "Der Nutzer konnte nicht erstellt werden: <br>".$erg['message']));
                             } else {
 
                                 $data = $um->getAllUsers();
 
                                 if($data['error']){
-                                    echo json_encode(array("success" => false, "message" => "Es ist ein Fehler bei der Datenbankabfrage aufgetreten: ".$data['message']));
+                                    echo json_encode(array("success" => false, "message" => "Es ist ein Fehler bei der Datenbankabfrage aufgetreten: <br>".$data['message']));
                                 }
                                 else {
                                     echo json_encode(array("success" => true, "data" => $data['response']));
@@ -133,17 +133,62 @@
 
                         }
                     } else {
-                        echo json_encode(array("success" => false, "message" => "Fehler: Es wurden nicht gen&uuml;gend Daten &uuml;bermittelt!"));
+                        echo json_encode(array("success" => false, "message" => "Fehler: Es wurden nicht genügend Daten übermittelt!"));
                     }
 
                     break;
+                case "getErrors":
+
+                    require_once ('../accountsystem/userManagement.class.php');
+                    require_once ('../db/conf/dbconf.php');
+                    $um = new userManagement($pdo);
+
+                    $errorList = $um->getErrors();
+
+                    $errors = !empty($errorList['data']);
+
+                    if($errorList['error'] === false) {
+                        echo json_encode(array("success" => true, "submissions" => $errorList['data'], "errors" => $errors));
+                    } else {
+                        echo json_encode(array("success" => false, "message" => $errorList['message']));
+                    }
+
+                    break;
+                case "deleteError":
+
+                    if(isset($_POST['id'])) {
+                        if(is_numeric($_POST['id']) && is_int(intval($_POST['id']))) {
+
+                            require_once ('../accountsystem/userManagement.class.php');
+                            require_once ('../db/conf/dbconf.php');
+                            $um = new userManagement($pdo);
+
+                            $id = intval($_POST['id']);
+
+                            $res = $um->deleteError($id);
+
+                            $errors = !empty($res['data']);
+
+                            if($res['error'] === false) {
+                                echo json_encode(array("success" => true, "submissions" => $res['data'], "errors" => $errors));
+                            } else {
+                                echo json_encode(array("success" => false, "message" => $res['message']));
+                            }
+
+                        } else {
+                            echo json_encode(array("success" => false, "message" => "Die Error-ID muss numerisch sein!"));
+                        }
+                    } else {
+                        echo json_encode(array("success" => false, "message" => "Es wurden nicht alle benötigten Daten angegeben!"));
+                    }
+                    break;
                 default:
-                    echo json_encode(array("success" => false, "message" => "Die Anfrage konnte nicht gefunden werden [default]!"));
+                    echo json_encode(array("success" => false, "message" => "Die Anfrage konnte nicht gefunden werden!"));
             }
         } else {
-            echo json_encode(array("success" => false, "message" => "Es sind zu wenig Daten angegeben worden!".htmlentities(print_r($_POST), ENT_QUOTES)));
+            echo json_encode(array("success" => false, "message" => "Es sind zu wenig Daten angegeben worden!"));
         }
     } else {
         $sess->logout();
-        echo json_encode(array("success" => false, "message" => "Ihre Accountdaten sind ung&uuml;ltig. Bitte loggen Sie sich aus und wieder ein!"));
+        echo json_encode(array("success" => false, "message" => "Ihre Accountdaten sind ungültig. Bitte loggen Sie sich aus und wieder ein!"));
     }

@@ -161,8 +161,7 @@
                 ready: function () {
 
                     this.fire('pageLoaded');
-
-                    console.log('[admin-nutzerverwaltung] element loaded');
+                    console.log('[admin-nutzerverwaltung] element loaded and ready');
 
                     var ajax = this.$.dataRequest;
                     ajax.timeout = 5000;
@@ -181,6 +180,7 @@
                         this.userAmount = this.users.data.length;
                         this.$.errorbox.innerHTML = "";
                         this.$.usertable.style.display = "block";
+                        this.$.addUserButton.style.display = "block";
 
                         for (var i = 0; i < this.users.data.length; i++) {
                             origUsers[i] = this.users.data[i].name;
@@ -189,6 +189,7 @@
                     } else {
                         this.$.errorbox.innerHTML = "Es ist ein Fehler beim Abrufen der Daten aufgetreten:<br>"+this.users.message;
                         this.$.usertable.style.display = "none";
+                        this.$.addUserButton.style.display = "none";
                     }
 
                 },

@@ -15,8 +15,8 @@
 
                 if(isset($_POST['name'])){
 
-                    $name = decodeText($_POST['name']);
-                    $msg = decodeText(htmlentities($_POST['msg'], ENT_QUOTES));
+                    $name = $_POST['name'];
+                    $msg = substr($_POST['msg'], 0, 2048);
                     $page = (isset($_POST['page']) && $_POST['page'] != "") ? $_POST['page'] : null;
 
                     if($name != "" && $msg != "") {
@@ -39,8 +39,8 @@
 
                 } elseif (isset($_POST['email'])) {
 
-                    $email = decodeText($_POST['email']);
-                    $msg = decodeText(htmlentities($_POST['msg'], ENT_QUOTES));
+                    $email = $_POST['email'];
+                    $msg = substr($_POST['msg'], 0, 2048);
                     $page = (isset($_POST['page']) && $_POST['page'] != "") ? $_POST['page'] : null;
 
                     if($email != "" && $msg != "") {
@@ -70,13 +70,3 @@
         } else {
             echo json_encode(array("success" => false, "message" => "Bitte geben Sie die ben&ouml;tigten Daten f&uuml;r diese Abfrage an!"));
         }
-
-    function decodeText($str) {
-        // Dirty but functionally... This honestly makes myself wanting to kill myself ._.
-        $str = preg_replace("/::AMP::/", "&amp;", $str);
-        $str = preg_replace("/::LT::/", "&lt;", $str);
-        $str = preg_replace("/::GT::/", "&gt;", $str);
-        $str = preg_replace("/::QUOT::/", "&quot;", $str);
-
-        return $str;
-    }

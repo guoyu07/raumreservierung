@@ -30,13 +30,29 @@
         --paper-card: {
           @apply(--layout-vertical);
           @apply(--layout-center-center);
-          width: 80%;
+          width: 85%;
           margin-top: 20px;
-          padding-top: 20px;
+          padding: 20px 10px;
         };
       }
       paper-tabs {
         --paper-tabs-selection-bar-color: #FFFFFF;
+      }
+      #page4 {
+        @apply(--layout-vertical);
+        @apply(--layout-fit);
+        background-color: var(--google-grey-300);
+        margin: 0 auto;
+      }
+      #page4 h1{
+        color: var(--paper-grey-800);
+      }
+      #page4 p{
+        color: var(--paper-grey-700);
+        padding: 0 10%;
+      }
+      #page4 h1, #page4 p{
+        text-align: center;
       }
     </style>
 
@@ -66,7 +82,7 @@
               <div class="right"><img src="/raumreservierung/project/img/gykl-logo.gif" width="78px"></div>
             </a>
             <div class="bottom fit">
-              <paper-tabs fit-container no-slide selected="{{selectedTab}}" scrollable>
+              <paper-tabs fit-container no-slide selected="{{selectedTab}}" scrollable id="tabs">
                 <paper-tab>Nutzerverwaltung</paper-tab>
                 <paper-tab>Raumverwaltung</paper-tab>
                 <paper-tab>Fehlermeldungen</paper-tab>
@@ -95,6 +111,16 @@
                 <paper-spinner active></paper-spinner>
                 <p style="color: #757575;">Loading Error-Messages...<br></p>
               </paper-card>
+              <admin-error-reports></admin-error-reports>
+            </div>
+
+            <!-- Welcome Page -->
+            <div id="page4">
+              <h1>Willkommen!</h1>
+              <p>
+                Um Gebrauch von den Administratorwerkzeugen zu machen, klicken Sie einfach auf den Namen des Tools, das
+                Sie verwenden wollen (Nutzerverwaltung, Raumverwaltung oder Fehlermeldungen)
+              </p>
             </div>
 
           </iron-pages>
@@ -123,31 +149,33 @@
           },
           selectedTab: {
               type: Number,
-              value: 0,
+              value: 3,
               observer: '_onTabChanged'
           },
           selectedPage: {
               type: Number,
-              value: 0,
+              value: 3,
               observer: '_onPageChanged'
           }
       },
 
       listeners: {
-          'push':'pushConsoleLog',
           'drawerPanel.iron-select':'_onPanelSelect',
-          'pageLoaded':'_onPageLoad'
+          'pageLoaded':'_onPageLoad' // Custom event fired by Elements when ready :)
       },
 
         ready: function() {
-          this.fire('push', 'element loaded');
+          console.log('[admin-app] element loaded and ready');
           this.hash = this.$.locator.hash;
-          // Initial Trigger for predefined selected
-          this._onPageChanged();
-        },
 
-        pushConsoleLog: function(e) {
-          console.log("[admin-app] "+e.detail);
+          if(this.selectedTab != this.selectedPage) {
+              this.selectedTab = this.selectedPage;
+          } else {
+              // Initial Trigger for predefined selected
+              this._onTabChanged();
+              this._onPageChanged();
+
+          }
         },
 
         _onHashChange: function(){
@@ -172,20 +200,33 @@
             this.selectedPage = this.selectedTab;
         },
         _onPageChanged: function(){
+            for(var i=0; i < this.$.tabs.items.length; i++) {
+                this.$.tabs.items[i].disabled = true;
+            }
             this.selectedTab = this.selectedPage;
             switch (this.selectedTab) {
                 case 0:
-                    this.importHref('src/admin-nutzerverwaltung/admin-nutzerverwaltung.html', null, this._onPageLoadError, true);
+                    this.importHref('src/admin-nutzerverwaltung/admin-nutzerverwaltung.html', this._onLoadStart, this._onPageLoadError, true);
                     break;
                 case 1:
-
+                    this.importHref('URL/TO/PAGE', this._onLoadStart, this._onPageLoadError, true);
                     break;
                 case 2:
-
+                    this.importHref('src/admin-error-reports/admin-error-reports.html', this._onLoadStart, this._onPageLoadError, true);
                     break;
             }
         },
+        _onLoadStart: function() {
+            for(var i=0; i < this.$.tabs.items.length; i++) {
+                this.$.tabs.items[i].disabled = false;
+            }
+        },
         _onPageLoad: function() {
+
+            for(var i=0; i < this.$.tabs.items.length; i++) {
+                this.$.tabs.items[i].disabled = false;
+            }
+
             switch (this.selectedPage) {
                 case 0:
                     this.$.page1.querySelector('paper-card').style.display = "none";
@@ -196,6 +237,38 @@
                 case 2:
                     this.$.page3.querySelector('paper-card').style.display = "none";
             }
+        },
+        _onPageLoadError: function(){
+
+            for(var i=0; i < this.$.tabs.items.length; i++) {
+                this.$.tabs.items[i].disabled = false;
+            }
+
+            var errorObj = Object();
+            errorObj.selectedPage = this.selectedPage;
+            errorObj.selectedTab = this.selectedTab;
+
+            this.fire('push', ['error loading page '+errorObj.pageName, JSON.stringify(errorObj)]);
+
+            var errorPlain = JSON.stringify(errorObj);
+
+            var errorText = '<p style="color: red;">Das angeforderte Element konnte nicht geladen werden oder wurde nicht gefunden.<br>Bitte &uuml;berpr&uuml;fen Sie den Pfad zu Seite '+(this.selectedPage+1)+'</b>!</p>';
+            errorText += '<p style="word-break: break-all;">'+errorPlain+'</p>';
+
+            switch (errorObj.selectedPage) {
+                case 0:
+                    this.$.page1.querySelector('paper-card').heading = "Fehler beim Laden der Seite!";
+                    this.$.page1.querySelector('paper-card').innerHTML = errorText;
+                    break;
+                case 1:
+                    this.$.page2.querySelector('paper-card').heading = "Fehler beim Laden der Seite!";
+                    this.$.page2.querySelector('paper-card').innerHTML = errorText;
+                    break;
+                case 2:
+                    this.$.page3.querySelector('paper-card').heading = "Fehler beim Laden der Seite!";
+                    this.$.page3.querySelector('paper-card').innerHTML = errorText;
+            }
+
         }
 
     });
