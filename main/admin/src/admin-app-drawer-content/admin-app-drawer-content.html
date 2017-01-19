@@ -1,0 +1,67 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
+
+<dom-module id="admin-app-drawer-content">
+  <template>
+    <style>
+      :host {
+        display: block;
+        --primary-color: #3F51B5;
+        --accent-color: #FF4081;
+      }
+      .paper-item-link {
+        color: inherit;
+        text-decoration: none;
+      }
+    </style>
+
+    <h2 style="color: darkblue; font-size: 22px; text-align: center; text-decoration: underline;">Navigation</h2>
+
+    <paper-menu>
+
+      <a href="/raumreservierung/project/main/logout" class="paper-item-link">
+        <paper-icon-item>
+          <iron-icon icon="power-settings-new" item-icon></iron-icon>
+          <paper-item-body two-line>
+            <div>Ausloggen</div>
+            <div secondary>Abmelden und zur Startseite</div>
+          </paper-item-body>
+        </paper-icon-item>
+      </a>
+      <a href="https://www.gymnasium-klotzsche.de/cont/cms/front_content.php?idcat=121" class="paper-item-link">
+        <paper-icon-item>
+          <iron-icon icon="gavel" item-icon></iron-icon>
+          <paper-item-body two-line>
+            <div>Impressum</div>
+            <div secondary>Impressum des Gymnasium Dresden-Klotzsche</div>
+          </paper-item-body>
+        </paper-icon-item>
+      </a>
+
+    </paper-menu>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'admin-app-drawer-content',
+
+      properties: {
+
+      },
+
+      listeners: {
+
+      },
+
+      ready: function() {
+          console.log('[admin-app-drawer-content] element loaded');
+      }
+
+    });
+  </script>
+</dom-module>

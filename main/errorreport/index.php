@@ -39,8 +39,18 @@ HTML;
     <link rel="import" href="../../style/main-polymer.css.html">
 
     <!-- Polymer Imports -->
-    <link rel="import" href="../../additional/imports.html">
     <link rel="import" href="../../custom_elements/reporting-form/reporting-form.html">
+    <link rel="import" href="../../bower_components/platinum-https-redirect/platinum-https-redirect.html">
+    <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+    <link rel="import" href="../../bower_components/paper-card/paper-card.html">
+    <link rel="import" href="../../bower_components/paper-drawer-panel/paper-drawer-panel.html">
+    <link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+    <link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+    <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+    <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+    <link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+    <link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+    <link rel="import" href="../../bower_components/paper-material/paper-material.html">
 
     <!-- meta configuration -->
     <meta charset="UTF-8">
@@ -68,8 +78,6 @@ HTML;
 </style>
 
 <platinum-https-redirect></platinum-https-redirect>
-
-<iron-location dwell-time="-1" id="locator" url-space-regex="^/project/"></iron-location>
 
 <paper-drawer-panel force-narrow right-drawer id="sidebar">
     <paper-header-panel drawer>

@@ -244,7 +244,7 @@ HTML;
         }
 
         public function getAllUsers() {
-            $sql = "SELECT accounts.A_ID, accounts.name, accounts.type, accounts.status, accounts.last_login, accounts.email_confirmed, accounts_users.email
+            $sql = "SELECT accounts.A_ID, accounts.name, accounts.type, accounts.status, coalesce(accounts.last_login, '-') as last_login, accounts.email_confirmed, coalesce(accounts_users.email,'-') as email
                     FROM accounts, accounts_users
                     WHERE accounts.name = accounts_users.name
                     ORDER BY A_ID";
@@ -259,7 +259,7 @@ HTML;
 
         public function updateUserData($oldname, $name, $type, $status){
 
-            $sql = "UPDATE type=:type, status=:status
+            $sql = "UPDATE accounts SET type=:type, status=:status
                     WHERE accounts.name = :oldname";
             $sql2 = "UPDATE accounts_users SET name=:newname WHERE accounts_users.name = :oldname";
             $r = $this->pdo->prepare($sql);
