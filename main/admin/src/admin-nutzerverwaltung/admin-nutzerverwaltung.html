@@ -200,7 +200,7 @@
 
                     var inp = e.path[0];
 
-                    if(inp.nodeName = "INPUT" && e.target.id == "nutzerverwaltung-origin" && inp.className.includes("tableInput")){
+                    if(inp.nodeName = "INPUT" && ((e.target.id == "nutzerverwaltung-origin" && inp.className.includes("tableInput")) || (e.target.id == "input" && e.target.className.includes("paper-input")))){
                         if (inp.validate() === true) {
 
                             //Update Routine
@@ -220,6 +220,8 @@
                         } else {
                             this.$.errorbox.innerHTML = "Es ist ein Fehler aufgetreten: Bitte &uuml;berpr&uuml;fen Sie Ihre Eingaben!";
                         }
+                    } else {
+                        console.warn("Node Data invalid", e.target, inp.className);
                     }
 
                 },

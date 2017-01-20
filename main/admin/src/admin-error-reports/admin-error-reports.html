@@ -244,22 +244,45 @@ Page for managing Error-Reports
           this.$.dataRequest.body = "request=getErrors&page="+this.page;
         },
         _toggleCollapse: function(e) {
-            // Dirty but works, decides whether clicked on the paper-icon-button - wrapper or the icon itself :)
-            var type = (e.path[2].nodeName == "PAPER-ICON-BUTTON") ? 2 : 0;
-            id = e.path[type].subid;
-            this.$$('#collapse-'+id).toggle();
-            if(this.$$('#collapse-'+id).opened) {
-                e.path[type].icon = "expand-less";
+
+            // Check position of fix-element (which is paper-icon-button because it holds the subid - value)
+            var type;
+            for(var i=0; i < e.path.length; i++){
+                if(e.path[i].nodeName == "PAPER-ICON-BUTTON"){
+                    type = e.path.indexOf(e.path[i]);
+                }
+            }
+
+            if(type) {
+                id = e.path[type].subid;
+                this.$$('#collapse-'+id).toggle();
+                if(this.$$('#collapse-'+id).opened) {
+                    e.path[type].icon = "expand-less";
+                } else {
+                    e.path[type].icon = "expand-more";
+                }
             } else {
-                e.path[type].icon = "expand-more";
+                console.warn("[admin-error-reports] fix-element not found in element-list");
             }
         },
         deleteError: function(e) {
-          //Same as in this._toggleCollapse
-          var id = (e.path[0].nodeName == "PAPER-BUTTON") ? e.path[0].subid : e.path[3].subid;
-          var ajax = this.$.dataRequest;
-          ajax.body = "request=deleteError&id="+id;
-          ajax.generateRequest();
+
+            // Check position of fix-element (which is paper-icon-button because it holds the subid - value)
+            var type;
+            for(var i=0; i < e.path.length; i++){
+                if(e.path[i].nodeName == "PAPER-ICON-BUTTON"){
+                    type = e.path.indexOf(e.path[i]);
+                }
+            }
+
+            if(type) {
+                var id = (e.path[0].nodeName == "PAPER-BUTTON") ? e.path[0].subid : e.path[3].subid;
+                var ajax = this.$.dataRequest;
+                ajax.body = "request=deleteError&id="+id;
+                ajax.generateRequest();
+            } else {
+                console.warn("[admin-error-reports] fix-element not found in element-list");
+            }
         }
 
     });
