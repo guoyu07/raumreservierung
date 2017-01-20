@@ -1,7 +1,0 @@
-{
-  "name": "admin",
-  "short_name": "admin",
-  "description": "App for administration",
-  "start_url": "index.html",
-  "display": "standalone"
-}

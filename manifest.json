@@ -1,0 +1,46 @@
+{
+  "name": "raumreservierung",
+  "short_name": "raumreservierung",
+  "description": "Main landingpage for the project",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "img/ic_48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "density": 1.0
+    },
+    {
+      "src": "img/ic_72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "density": 1.5
+    },
+    {
+      "src": "img/ic_96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "density": 2.0
+    },
+    {
+      "src": "img/ic_144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "density": 3.0
+    },
+    {
+      "src": "img/ic_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "density": 4.0
+    },
+    {
+      "src": "img/ic_512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "density": 10.67
+    }
+  ],
+  "display": "standalone",
+  "orientation": "portrait"
+}
