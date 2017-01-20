@@ -78,7 +78,7 @@
             }
         })();
 
-        // Cross-Browser Support for EVENT.path - Variable ( which is neccessary :/ )
+        // Cross-Browser Support for EVENT.path - Variable ( which is necessary :/ )
         if (!("path" in Event.prototype))
             Object.defineProperty(Event.prototype, "path", {
                 get: function() {
