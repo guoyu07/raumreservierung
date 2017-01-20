@@ -79,7 +79,7 @@
             <paper-icon-button icon="menu" paper-drawer-toggle title="Men&uuml; &ouml;ffnen" alt="Men&uuml; &ouml;ffnen"></paper-icon-button>
             <div class="title" style="padding-bottom: 1px;">Administration</div>
             <a href="https://gymnasium-klotzsche.de/">
-              <div class="right"><img src="/raumreservierung/project/img/gykl-logo.gif" width="78px"></div>
+              <div class="right"><img src="../../img/gykl-logo.gif" width="78px"></div>
             </a>
             <div class="bottom fit">
               <paper-tabs fit-container no-slide selected="{{selectedTab}}" scrollable id="tabs">
@@ -209,7 +209,8 @@
                     this.importHref('src/admin-nutzerverwaltung/admin-nutzerverwaltung.html', this._onLoadStart, this._onPageLoadError, true);
                     break;
                 case 1:
-                    this.importHref('URL/TO/PAGE', this._onLoadStart, this._onPageLoadError, true);
+                    // TODO: Add Raumverwaltung :3
+                    this.importHref('src/admin-raumverwaltung/admin-raumverwaltung.html', this._onLoadStart, this._onPageLoadError, true);
                     break;
                 case 2:
                     this.importHref('src/admin-error-reports/admin-error-reports.html', this._onLoadStart, this._onPageLoadError, true);

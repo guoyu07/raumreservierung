@@ -1,7 +1,7 @@
 {
-  "name": "Raumreservierung",
+  "name": "raumreservierung",
   "description": "Gymnasium-Klotzsche Raumreservierung",
-  "main": "index.html",
+  "main": "/",
   "keywords": [
     "gykl",
     "gymnasium",
