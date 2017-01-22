@@ -24,7 +24,7 @@
         </style>
 
         <iron-ajax id="dataRequest"
-                   url="/raumreservierung/project/backend/api/admin-ajax.php"
+                   url="../../../../backend/api/admin-ajax.php"
                    method="POST"
                    body="request=getAllUsers"
                    content-type="application/x-www-form-urlencoded"
@@ -85,9 +85,7 @@
 
             <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
                 <h2>&Auml;nderungen werden best&auml;tigt...</h2>
-                <div style="text-align: center; margin: 0 auto;">
-                    <div class="spinnerWrapper"><paper-spinner active style="margin: 20px auto;"></paper-spinner></div>
-                </div>
+                <div class="spinnerWrapper"><paper-spinner active style="margin: 20px auto;"></paper-spinner></div>
             </paper-dialog>
 
             <paper-dialog id="cd" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>

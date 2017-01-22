@@ -74,7 +74,7 @@
                 }
 
             } else {
-                return array("login" => false, "message" => "Es ist Skript-Fehler (sessionsystem.php.class) aufgetreten.<br>Bitte melden Sie diesen Fehler bei einem Administrator!");
+                return array("login" => false, "message" => "Es ist Skript-Fehler (loginsystem.php.class) aufgetreten.<br>Bitte melden Sie diesen Fehler bei einem Administrator!");
             }
 
         }

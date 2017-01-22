@@ -130,6 +130,11 @@
             userPageLoaded: {
                 type: Boolean,
                 value: false
+            },
+            newContent: {
+                type: Boolean,
+                value: false,
+                observer: '_onNewContentAvailable'
             }
         },
 
@@ -144,7 +149,6 @@
             'logoutRequest.error': '_onLogoutError',
             'goToPage': '_onUserPageRedirect',
             'change-theme-color': '_onThemeColorChange',        // Change content of "theme-color" meta
-            'new-content-available': '_onNewContentAvailable',   // Event Fired by the precache - serviceWorker
             'toastReloadButton.tap': '_reloadPage',
             'toastCloseButton.tap': 'closeNewContentToast'
         },
@@ -382,8 +386,11 @@
             }
         },
         _onNewContentAvailable: function() {
-            this.fire('push', [this.nodeName, "received new-content-available - Event"]);
-            this.$.newContentToast.open();
+            if(this.newContent == true) {
+                this.fire('push', [this.nodeName, "content update detected"]);
+                this.$.newContentToast.open();
+                this.newContent = false;
+            }
         },
         _reloadPage: function() {
             location.reload();

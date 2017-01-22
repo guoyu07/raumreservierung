@@ -12,8 +12,6 @@
     "src/reporting-form/reporting-form.html"
   ],
   "sources": [
-    "src/**/*",
-    "src/raumreservierung-admin/src/**/*",
     "img/*",
     "src/raumreservierung-admin/img/*",
     "backend/**/**/*",
