@@ -1,0 +1,177 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="raumreservierung-login">
+
+    <template>
+
+        <style is="custom-style">
+            :host {
+                display: block;
+                margin: 0 auto;
+                --primary-color: var(--paper-light-green-500);
+                --accent-color: var(--paper-blue-grey-500);
+            }
+            #element {
+                display: block;
+                width: 280px;
+                margin: 0 auto;
+                padding: 10px;
+            }
+            paper-input{
+                width: 100%;
+                margin: 0 auto;
+                @apply(--layout-self-center);
+                --paper-input-container-color: #757575;
+                --paper-input-container-focus-color: #607D8B;
+            }
+            paper-button{
+                margin: 20px auto;
+                --paper-button:{
+                    @apply(--layout-self-center);
+                    width: 100%;
+                    background-color: #607D8B;
+                    color: white;
+                }
+            }
+            .spinnerWrapper {
+                text-align: center;
+            }
+        </style>
+
+        <iron-ajax id="loginRequest"
+                   url="../../backend/api/login-ajax.php"
+                   method="POST"
+                   body=""
+                   timeout="5000"
+                   content-type="application/x-www-form-urlencoded"
+                   handle-as="json"
+                   debounce-rotation="300"></iron-ajax>
+
+        <paper-dialog id="loginRedirectDialog" with-backdrop no-cancel-on-outside-click no-cancel-on-esc-key>
+            <h2>Inhalte werden geladen...</h2>
+            <div class="spinnerWrapper"><paper-spinner active></paper-spinner></div>
+        </paper-dialog>
+
+        <div id="element">
+
+            <paper-input label="Benutzername" type="text"
+                         id="nameInput" allowed-pattern="[A-Za-z0-9-_ÄäÖöÜüß]" required maxlength="24"
+                         error-message="Bitte &uuml;berpr&uuml;fen Sie Ihre Eingaben!"
+                         auto-validate></paper-input>
+            <paper-input label="Passwort" type="password" id="pwInput"
+                         required maxlength="32" error-message="Bitte &uuml;berpr&uuml;fen Sie Ihre Eingaben!"
+                         auto-validate></paper-input>
+            <br>
+            <div style="max-width: 300px" class="contentcenter center"><!-- Button-Wrapper for button to be centered -->
+                <paper-button raised id="loginButton">Anmelden</paper-button>
+                <br>
+                <div class="spinnerWrapper"><paper-spinner id="spinner"></paper-spinner></div>
+                <div id="errorBox" style="color: red;"></div>
+            </div>
+
+        </div>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'raumreservierung-login',
+            listeners:{
+                'loginButton.tap': 'logIn',
+                'loginRequest.error': '_onError',
+                'loginRequest.request': '_onRequest',
+                'loginRequest.response': '_onResponse'
+            },
+
+            properties: {
+                chosenType: String
+            },
+
+            ready: function(){
+                this.fire("pageLoad", this.nodeName);
+            },
+            logIn: function(){
+                var nameInp = this.$.nameInput;
+                var pwInp = this.$.pwInput;
+
+                if(nameInp.validate() === true && nameInp.value != "" && pwInp.validate() === true && pwInp.value != ""){
+                    this._sendLoginRequest(nameInp.value, pwInp.value);
+                }
+            },
+
+            _sendLoginRequest: function(name, pw) {
+                // To Flag & Find the converted ampersands :)
+                var code = "::"+Math.round(Math.random() * (1024) + 1024)+"::";
+
+                name = name.replace(/&/g, "::"+code+"::");
+                pw = pw.replace(/&/g, "::"+code+"::");
+                this.$.loginRequest.body = "name="+name+"&pw="+pw+"&ampcode="+code;
+                this.$.loginRequest.generateRequest();
+            },
+            _onRequest: function() {
+                this.$.spinner.active = true;
+                this.$.loginButton.disabled = true;
+                this.$.errorBox.innerHTML = "";
+                this.$.nameInput.disabled = true;
+                this.$.pwInput.disabled = true;
+            },
+            _onResponse: function() {
+                this.$.spinner.active = false;
+                this.$.loginButton.disabled = false;
+                this.$.errorBox.innerHTML = "";
+                this.$.nameInput.disabled = false;
+                this.$.pwInput.disabled = false, this.$.pwInput.value = "";
+
+                if(this.$.loginRequest.lastResponse){
+                    var r = this.$.loginRequest.lastResponse;
+                    if(r.success !== true){
+                        this.$.errorBox.innerHTML = r.message;
+                    } else {
+
+                        var type;
+
+                        if(r.type == 1){
+                            type = "admin";
+                        } else if(r.type == 2) {
+                            type = "management";
+                        } else if(r.type == 3) {
+                            type = "teacher";
+                        }
+
+                        this.$.loginRedirectDialog.center();
+                        this.$.loginRedirectDialog.open();
+                        this._loadUserPage(type);
+                    }
+                } else {
+                    this.$.errorBox.innerHTML = "Es ist ein Fehler bei der Anfrage aufgetreten.<br>" +
+                        "Bitte versuchen Sie es erneut oder<br>" +
+                        "kontaktieren Sie einen Administrator.";
+                }
+            },
+            _onError: function(e) {
+                this.$.spinner.active = false;
+                this.$.loginButton.disabled = false;
+                var error;
+                if(e.detail.error.message){
+                    error = e.detail.error.message;
+                } else if(e.detail.error.type) {
+                    error = e.detail.error.type;
+                }
+                this.$.errorBox.innerHTML = "Es ist ein unbekannter Fehler aufgetreten! ("+error+")";
+                console.info("Error:", e.detail.error);
+            },
+            _loadUserPage: function(type) {
+                // Redirect will be triggered in module 'raumreservierung-main'
+                this.fire('push', [this.nodeName, "Requested to load page for account-type ["+type+"]"]);
+                this.fire('goToPage', type);
+                this.$.loginRedirectDialog.close();
+            }
+        });
+    </script>
+
+</dom-module>

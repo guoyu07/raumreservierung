@@ -1,0 +1,340 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-location/iron-location.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="raumreservierung-main">
+  <template>
+    <style>
+      :host {
+        display: block;
+        margin: 0 auto;
+        --primary-color: #8BC34A;
+        --accent-color: #607D8B;
+        color: #212121;
+      }
+      #loadIndicator {
+        @apply(--layout-center-center);
+        margin: 0 auto;
+        text-align: center;
+      }
+      .spinnerWrapper {
+        text-align: center;
+      }
+      a {
+        text-decoration: none;
+        color: #212121;
+      }
+    </style>
+
+    <iron-location hash="{{hash}}" id="locator"></iron-location>
+
+    <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
+      <h2>Inhalte werden geladen...</h2>
+      <br>
+      <div class="spinnerWrapper"><paper-spinner active></paper-spinner></div>
+      <br>
+      <p><i>Der erste Ladevorgang kann bei schlechten Internetverbindungen eine Weile dauern. Bitte haben Sie einen Moment Geduld.</i></p>
+    </paper-dialog>
+
+    <paper-dialog id="errorDialog" with-backdrop>
+      <div id="errorContent">
+
+      </div>
+      <p style="text-align: center"><i>Bitte melden Sie diesen Fehler einem Administrator!</i></p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus style="color: #F44336;">OK</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="logoutDialog" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
+      <h2>Sie werden ausgeloggt...</h2>
+      <br>
+      <div class="spinnerWrapper"><paper-spinner active></paper-spinner></div>
+    </paper-dialog>
+
+    <iron-ajax id="userDataRequest"
+               url="../../backend/api/main-ajax.php"
+               method="POST"
+               content-type="application/x-www-form-urlencoded"
+               handle-as="json"
+               timeout="5000"
+               debounce-duration="300"
+               last-response="{{response}}"></iron-ajax>
+    <iron-ajax id="logoutRequest"
+               url="../../backend/api/main-ajax.php"
+               method="POST"
+               content-type="application/x-www-form-urlencoded"
+               handle-as="json"
+               timeout="5000"
+               debounce-duration="300"
+               last-response="{{logoutResponse}}"></iron-ajax>
+
+    <iron-pages id="pages" selected="{{selected}}">
+
+      <!-- Main Start Page -->
+      <raumreservierung-landingpage response="{{response}}"></raumreservierung-landingpage>
+      <!-- E-Mail Confirmation -->
+      <raumreservierung-email-confirmation></raumreservierung-email-confirmation>
+      <!-- Admin Page -->
+      <raumreservierung-admin></raumreservierung-admin>
+
+    </iron-pages>
+
+  </template>
+
+  <script>
+    Polymer({
+
+        is: 'raumreservierung-main',
+
+        properties: {
+            hash: {
+                type: String,
+                observer: '_onHashChange'
+            },
+            selected: {
+                type: Number,
+                observer: '_loadPages'
+            },
+            response: Object,
+            landingPageLoaded: {
+                type: Boolean,
+                value: false
+            },
+            emailPageLoaded: {
+                type: Boolean,
+                value: false
+            },
+            userPageLoaded: {
+                type: Boolean,
+                value: false
+            }
+        },
+
+        listeners: {
+            'push':'_pushToLog',
+            'pageLoad': '_onComponentLoaded',
+            'userDataRequest.request':'_onRequest',
+            'userDataRequest.response':'_onResponse',
+            'userDataRequest.error':'_onError',
+            'logoutRequest.request': '_onLogoutRequest',
+            'logoutRequest.response': '_onLogoutResponse',
+            'logoutRequest.error': '_onLogoutError',
+            'goToPage': '_onUserPageRedirect'
+        },
+
+        ready: function() {
+            this.fire('pageLoad', this.nodeName);
+
+            this.$.userDataRequest.body = "r=getSessionData";
+            this.$.userDataRequest.generateRequest();
+        },
+        _onRequest: function() {
+            this.$.loadIndicator.center();
+            this.$.loadIndicator.open();
+        },
+        _onResponse: function() {
+            this.$.loadIndicator.close();
+            this.response = this.$.userDataRequest.lastResponse;
+            this.loggedin = (this.response.data) ? this.response.data.loggedin : false;
+            if(this.loggedin === true)
+                this._redirect();
+            else
+                this._loadPages();
+        },
+        _onError: function() {
+            this.$.loadIndicator.close();
+        },
+        _onLogoutRequest: function() {
+            this.$.logoutDialog.center();
+            this.$.logoutDialog.open();
+        },
+        _onLogoutResponse: function() {
+            this.$.logoutDialog.close();
+            var res = this.$.logoutRequest.lastResponse;
+            if(res.success) {
+                this.$.pages.select(0);
+                this.hash = "";
+            } else {
+                this.$.errorContent.innerHTML = '<p style="color: red;">Es ist ein Fehler beim Ausloggen aufgetreten! Bitte versuchen Sie es erneut oder Kontaktieren Sie einen Administrator!</p><p><i>('+res.message+')</i></p>';
+                this.$.errorDialog.center();
+                this.$.errorDialog.open();
+            }
+        },
+        _onLogoutError: function() {
+            this.$.errorContent.innerHTML = '<p style="color: red;">Es ist ein Fehler beim Ausloggen aufgetreten! Bitte versuchen Sie es erneut oder Kontaktieren Sie einen Administrator!</p>';
+            this.$.errorDialog.center();
+            this.$.errorDialog.open();
+        },
+        _onHashChange: function() {
+            switch(this.hash){
+                case "index":
+                    this.hash = "";
+                    window.location.reload();
+                    break;
+                case "confirm-email":
+                    this.$.pages.select(1);
+                    this.loadEmailPage();
+                    break;
+                case "logout":
+                    this._triggerLogout();
+                    break;
+                default:
+                    this._loadPages();
+            }
+        },
+        _pushToLog: function(e) {
+            if (e.detail[0] && e.detail[1])
+                console.log("["+e.detail[0]+"] "+e.detail[1]);
+        },
+        loadMainPage: function() {
+            this.$.loadIndicator.open();
+            this.importHref('src/raumreservierung-landingpage/raumreservierung-landingpage.html', this._onLandingpageLoad, this._onLandingpageLoadError, true);
+        },
+        _onLandingpageLoad: function() {
+            this.$.loadIndicator.close();
+            this.landingPageLoaded = true;
+        },
+        _onLandingpageLoadError: function() {
+            this.$.loadIndicator.close();
+            this.$.errorContent.innerHTML = '<p style="color:red;">Die Startseite konnte nicht geladen werden!</p>';
+            this.$.errorDialog.center();
+            this.$.errorDialog.open();
+        },
+        _loadPages: function() {
+            switch(Number(this.selected)){
+                case 0:
+                    if(!this.landingPageLoaded)
+                        this.loadMainPage();
+                    this.$.pages.select(this.selected);
+                    break;
+                case 1:
+                    if(this.hash == "confirm-email") {
+                        if(!this.emailPageLoaded)
+                            this.loadEmailPage();
+                        this.$.pages.select(1);
+                    } else {
+                        if(!this.landingPageLoaded)
+                            this.loadMainPage();
+                        this.$.pages.select(0);
+                    }
+                    break;
+                case 2:
+                    if(!this.userPageLoaded)
+                        this.loadUserPage();
+                    this.$.pages.select(this.selected);
+                    break;
+                default:
+                    this.hash = "";
+                    if(!this.landingPageLoaded)
+                        this.loadMainPage();
+                    this.$.pages.select(0);
+                    break;
+            }
+        },
+        loadEmailPage: function() {
+            this.$.loadIndicator.open();
+            this.importHref('src/raumreservierung-email-confirmation/raumreservierung-email-confirmation.html', this._onEmailLoaded, this._onEmailLoadError, true);
+        },
+        _onEmailLoadError: function(){
+            this.$.loadIndicator.close();
+            this.$.errorContent.innerHTML = '<p style="color: red;">Die Seite f&uuml;r die E-Mail - Best&auml;tigung konnte nicht geladen werden!</p>';
+            this.$.errorDialog.center();
+            this.$.errorDialog.open();
+        },
+        _onEmailLoaded: function() {
+            this.emailPageLoaded = true;
+            this.$.loadIndicator.close();
+        },
+        _onComponentLoaded: function(e) {
+            console.log("["+e.detail+"] component loaded and ready");
+        },
+        _redirect: function() {
+            this.$.loadIndicator.open();
+
+            if(this.response.data.type != "" && Number(this.response.data.type) >= 0) {
+                var type;
+                switch(Number(this.response.data.type)){
+                    case 1:
+                        type = "admin";
+                        break;
+                    case 2:
+                        type = "management";
+                        break;
+                    case 3:
+                        type = "teacher";
+                        break;
+                    default:
+                        type = "teacher";
+                        break;
+                }
+
+                this.type = type;
+                this.fire('goToPage', type);
+
+            } else {
+                this.$.loadIndicator.close();
+                this.$.errorContent.innerHTML = '<p style="color:red;">Der Typ Ihres Accounts konnte nicht ermittelt werden!</p>';
+                this.$.errorDialog.center();
+                this.$.errorDialog.open();
+                this._loadPages();
+            }
+        },
+        loadUserPage: function() {
+            this.$.loadIndicator.open();
+            var type = this.type;
+            this.importHref('src/raumreservierung-'+type+'/raumreservierung-'+type+'.html', this._onUserPageLoad, this._onUserPageLoadError, true);
+        },
+        _onUserPageRedirect: function(e) {
+            // Local Testing Logging
+            // TODO: Remove testing logs :)
+
+            this.type = e.detail;
+
+            if(e.detail = this.type) {
+                this.$.loadIndicator.open();
+                this.fire('push', [this.nodeName, "Received event ["+e.type+"] for type ["+this.type+"]"]);
+                this.importHref('src/raumreservierung-'+this.type+'/raumreservierung-'+this.type+'.html', this._onUserPageLoad, this._onUserPageLoadError, true);
+            } else {
+                this._onTypeMismatch();
+            }
+        },
+        _onTypeMismatch: function() {
+            this.$.loadIndicator.close();
+            this.$.errorContent.innerHTML = '<p style="color: red;">Es ist ein schwerer Fehler bei der Zuteilung der Variablenwerte aufgetreten!</p>';
+            this.$.errorDialog.center();
+            this.$.errorDialog.open();
+            this.loadMainPage();
+            this.$.pages.select(0);
+        },
+        _onUserPageLoad: function() {
+            this.userPageLoaded = true;
+            this.$.loadIndicator.close();
+            var pageIndex = 0;
+            for(var i = 0; i < this.$.pages.items.length; i++){
+                if(this.$.pages.items[i].nodeName.toLowerCase() == ('raumreservierung-'+this.type)){
+                    pageIndex = i;
+                    break;
+                }
+            }
+            this.$.pages.select(pageIndex);
+        },
+        _onUserPageLoadError: function() {
+            this.$.loadIndicator.close();
+            this.$.errorContent.innerHTML = '<p style="color:red;">Die Nutzerseite konnte nicht geladen werden!</p>';
+            this.$.errorDialog.center();
+            this.$.errorDialog.open();
+            this.$.pages.select(0);
+            this.loadMainPage();
+        },
+        _triggerLogout: function() {
+            this.$.logoutRequest.body = "r=logout";
+            this.$.logoutRequest.generateRequest();
+        }
+    });
+  </script>
+</dom-module>

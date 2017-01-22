@@ -12,7 +12,7 @@
         public function __construct($pdo)
         {
             $HTTPS_ONLY = false;  /** TODO: !!!CHANGE THIS TO TRUE WHEN NOT ON LOCAL SERVER!!! */
-            session_set_cookie_params(1800, "/raumreservierung", "localhost", $HTTPS_ONLY, true);   //TODO: Change "localhost" to "" when public
+            session_set_cookie_params(1800, "/raumreservierung/project", "", $HTTPS_ONLY, true);
             session_start();
             session_regenerate_id(true);
             $this->pdo = $pdo;
@@ -110,6 +110,7 @@
         {
             unset($_SESSION['loggedin']);
             session_destroy();
+            return true;
         }
 
         public function getAccType(){

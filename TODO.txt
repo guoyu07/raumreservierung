@@ -1,0 +1,5 @@
+-> Completely rewrite Account activation with Polymer implementation (Full /main/ - folder)
+-> Don't forget the E-Mail - Design
+------------------------------------
+Design-related basic stuff done :)
+Raumreservierung kann kommen ihr Nudeln <3

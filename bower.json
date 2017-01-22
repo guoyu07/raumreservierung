@@ -1,44 +1,32 @@
 {
   "name": "Raumreservierung",
-  "description": "Gymnasium-Klotzsche Raumreservierung",
+  "description": "Raumreservierung des Gymnasiums Dresden-Klotzsche",
   "main": "index.html",
-  "keywords": [
-    "gykl",
-    "gymnasium",
-    "klotzsche",
-    "raumreservierung",
-    "vertretungsplan",
-    "raum",
-    "plan",
-    "reservierung",
-    "lehrer",
-    "schueler",
-    "schüler"
-  ],
-  "authors": [
-    "Moritz Menzel",
-    "Maximilian Seiler",
-    "Benjamin Kirchhoff"
-  ],
-  "license": "GNU GPL v3",
-  "homepage": "*",
-  "private": true,
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
   "dependencies": {
-    "paper-elements": "PolymerElements/Paper-Elements#^1.0.7",
-    "iron-elements": "PolymerElements/iron-elements#^1.0.10",
-    "platinum-https-redirect": "PolymerElements/platinum-https-redirect#^1.0.2",
-    "paper-datatable": "^0.9.8",
-    "platinum-sw": "PolymerElements/platinum-sw#^1.3.0"
+    "polymer": "Polymer/polymer#^1.4.0",
+    "paper-input": "PolymerElements/paper-input#^1.1.22",
+    "paper-spinner": "PolymerElements/paper-spinner#^1.2.1",
+    "iron-ajax": "PolymerElements/iron-ajax#^1.4.3",
+    "iron-pages": "PolymerElements/iron-pages#^1.0.8",
+    "paper-tabs": "PolymerElements/paper-tabs#^1.7.0",
+    "paper-dialog": "PolymerElements/paper-dialog#^1.1.0",
+    "paper-card": "PolymerElements/paper-card#^1.1.4",
+    "paper-drawer-panel": "PolymerElements/paper-drawer-panel#^1.0.11",
+    "paper-item": "PolymerElements/paper-item#^1.2.1",
+    "paper-dialog-scrollable": "PolymerElements/paper-dialog-scrollable#^1.1.5",
+    "app-route": "PolymerElements/app-route#^0.9.3",
+    "paper-menu": "PolymerElements/paper-menu#^1.2.2",
+    "iron-collapse": "PolymerElements/iron-collapse#^1.3.0",
+    "app-layout": "PolymerElements/app-layout#^0.10.6",
+    "paper-fab": "PolymerElements/paper-fab#^1.2.1",
+    "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^1.4.3",
+    "paper-listbox": "PolymerElements/paper-listbox#^1.1.2",
+    "paper-datatable": "David-Mulder/paper-datatable#^0.9.8"
   },
-  "resolutions": {
-    "polymer": "^1.6.0",
-    "paper-styles": "^1.1.4"
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^1.0.0",
+    "web-component-tester": "^4.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
   }
 }

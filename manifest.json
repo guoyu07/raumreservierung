@@ -1,0 +1,69 @@
+{
+  "name": "Raumreservierung",
+  "short_name": "Raumreservierung",
+  "description": "Raumreservierung des Gymnasiums Dresden-Klotzsche",
+  "start_url": ".",
+  "background_color": "#DCEDC8",
+  "theme_color": "#8BC34A",
+  "icons": [
+    {
+      "src": "img/ic_48.png",
+      "sizes": "48x48",
+      "type": "image/png",
+      "density": 1.0
+    },
+    {
+      "src": "img/ic_72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "density": 1.5
+    },
+    {
+      "src": "img/ic_96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "density": 2.0
+    },
+    {
+      "src": "img/ic_128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "img/ic_144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "density": 3.0
+    },
+    {
+      "src": "img/ic_192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "density": 4.0
+    },
+    {
+      "src": "img/ic_240.png",
+      "sizes": "240x240",
+      "type": "img/png",
+      "density": 5.0
+    },
+    {
+      "src": "img/ic_256.png",
+      "sizes": "256x256",
+      "type": "img/png"
+    },
+    {
+      "src": "img/ic_480.png",
+      "sizes": "480x480",
+      "type": "img/png",
+      "density": 10.0
+    },
+    {
+      "src": "img/ic_512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "display": "standalone",
+  "orientation": "portrait"
+}
