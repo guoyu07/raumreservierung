@@ -7,6 +7,7 @@
 <link rel="import" href="../../../../bower_components/iron-collapse/iron-collapse.html">
 <link rel="import" href="../../../../bower_components/app-layout/app-grid/app-grid-style.html">
 <link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/paper-fab/paper-fab.html">
 
 <!--
 `admin-error-reports`
@@ -105,6 +106,14 @@ Page for managing Error-Reports
           background-size: 40%;
         }
       }
+      #reloadErrors {
+        --paper-fab-background: var(--accent-color);
+        color: white;
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 999;
+      }
     </style>
 
     <div id="content">
@@ -120,10 +129,12 @@ Page for managing Error-Reports
                  last-response="{{data}}"></iron-ajax>
 
       <paper-dialog id="loadIndicator" style="text-align: center;" with-backdrop no-close-on-esc-key no-cancel-on-outside-click>
-        <h2>Lade Inhalte...</h2>
+        <h2>Lade Fehlermeldungen...</h2>
         <paper-spinner active></paper-spinner>
       </paper-dialog>
       <paper-card id="errorbox" class="errorCard"></paper-card>
+
+      <paper-fab icon="refresh" id="reloadErrors" title="Fehlerberichte neu laden"></paper-fab>
 
       <template is="dom-if" if="{{data.success}}">
           <template is="dom-if" if="{{data.errors}}">
@@ -197,7 +208,8 @@ Page for managing Error-Reports
         listeners: {
             'dataRequest.request':'_onRequest',
             'dataRequest.response':'_onResponse',
-            'dataRequest.error':'_onAjaxError'
+            'dataRequest.error':'_onAjaxError',
+            'reloadErrors.tap':'_refreshErrorData'
         },
 
       properties: {
@@ -282,6 +294,10 @@ Page for managing Error-Reports
             } else {
                 console.warn("[admin-error-reports] fix-element not found in element-list");
             }
+        },
+        _refreshErrorData: function() {
+            this.$.dataRequest.body = "request=getErrors";
+            this.$.dataRequest.generateRequest();
         }
 
     });
