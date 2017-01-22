@@ -43,6 +43,13 @@
                     ));
                 }
                 break;
+            case "logout":
+                if($sess->logout()) {
+                    echo json_encode(array("success" => true));
+                } else {
+                    echo json_encode(array("success" => false, "message" => "Es ist ein interner Skriptfehler aufgetreten!"));
+                }
+                break;
             default:
                 echo json_encode(array("success" => false, "message" => "Die geforderte Abfrage konnte nicht gefunden werden!"));
 
