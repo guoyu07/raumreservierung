@@ -117,11 +117,15 @@
                 this.$.spinner.active = true;
                 this.$.loginButton.disabled = true;
                 this.$.errorBox.innerHTML = "";
+                this.$.nameInput.disabled = true;
+                this.$.pwInput.disabled = true;
             },
             _onResponse: function() {
                 this.$.spinner.active = false;
                 this.$.loginButton.disabled = false;
                 this.$.errorBox.innerHTML = "";
+                this.$.nameInput.disabled = false;
+                this.$.pwInput.disabled = false, this.$.pwInput.value = "";
 
                 if(this.$.loginRequest.lastResponse){
                     var r = this.$.loginRequest.lastResponse;
@@ -141,7 +145,7 @@
 
                         this.$.loginRedirectDialog.center();
                         this.$.loginRedirectDialog.open();
-                        window.location = "./main/"+type;
+                        this._loadUserPage(type);
                     }
                 } else {
                     this.$.errorBox.innerHTML = "Es ist ein Fehler bei der Anfrage aufgetreten.<br>" +
@@ -160,6 +164,12 @@
                 }
                 this.$.errorBox.innerHTML = "Es ist ein unbekannter Fehler aufgetreten! ("+error+")";
                 console.info("Error:", e.detail.error);
+            },
+            _loadUserPage: function(type) {
+                // Redirect will be triggered in module 'raumreservierung-main'
+                this.fire('push', [this.nodeName, "Requested to load page for account-type ["+type+"]"]);
+                this.fire('goToPage', type);
+                this.$.loginRedirectDialog.close();
             }
         });
     </script>

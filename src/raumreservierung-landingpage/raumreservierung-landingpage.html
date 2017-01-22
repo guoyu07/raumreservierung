@@ -92,7 +92,6 @@
                         <paper-icon-button icon="arrow-back" paper-drawer-toggle style="color: #212121;"></paper-icon-button>
                         <div class="title navHeader">Navigation</div>
                     </paper-toolbar>
-                    <br>
                     <paper-menu>
                         <a href="#index" target="_self">
                             <paper-icon-item>
@@ -104,7 +103,7 @@
                             <iron-icon icon="report" item-icon></iron-icon>
                             Einen Fehler melden
                         </paper-icon-item>
-                        <a href="https://www.gymnasium-klotzsche.de/cont/cms/front_content.php?idcat=121" target="_blank">
+                        <a href="https://www.gymnasium-klotzsche.de/cont/cms/front_content.php?idcat=121" target="_self">
                             <paper-icon-item>
                                 <iron-icon icon="gavel" item-icon></iron-icon>
                                 Impressum
@@ -113,7 +112,7 @@
                         <a href="#confirm-email">
                             <paper-icon-item>
                                 <iron-icon icon="help" item-icon></iron-icon>
-                                Testing
+                                Test Email-Confirmation
                             </paper-icon-item>
                         </a>
                     </paper-menu>
@@ -193,7 +192,7 @@
                     // Because the element needs (even if short) time to render itself
                     this.$.errorFormDialog.center();
                 }, 50);
-                this.fire('pageLoad', this.$.reporting-form.nodeName);
+                this.fire('pageLoad', this.$$('reporting-form').nodeName);
             },
             _onErrorPageLoadError: function() {
                 this.$.errorFormDialog.close();
