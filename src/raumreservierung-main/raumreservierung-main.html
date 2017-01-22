@@ -362,7 +362,6 @@
             for(var i=0; i < metas.length; i++) {
                 if(metas[i].name == "theme-color") {
                     metas[i].content = e.detail;
-                    this.fire('push', [this.nodeName, "Changed Theme-Color to "+color]);
                 }
             }
         }
