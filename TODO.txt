@@ -1,4 +1,4 @@
--> Completely rewrite Account activation with Polymer implementation (Full /main/ - folder)
+-> Account Activation & User Page for Teacher (UserManager not needed yet and maybe not even in future)
 -> Don't forget the E-Mail - Design
 ------------------------------------
 Design-related basic stuff done :)
