@@ -1,8 +1,10 @@
 {
-  "name": "raumreservierung",
-  "short_name": "raumreservierung",
-  "description": "Main landingpage for the project",
-  "start_url": "/",
+  "name": "Raumreservierung",
+  "short_name": "Raumreservierung",
+  "description": "Raumreservierung des Gymnasiums Dresden-Klotzsche",
+  "start_url": ".",
+  "background_color": "#DCEDC8",
+  "theme_color": "#8BC34A",
   "icons": [
     {
       "src": "img/ic_48.png",
@@ -23,6 +25,11 @@
       "density": 2.0
     },
     {
+      "src": "img/ic_128.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
       "src": "img/ic_144.png",
       "sizes": "144x144",
       "type": "image/png",
@@ -35,14 +42,26 @@
       "density": 4.0
     },
     {
+      "src": "img/ic_240.png",
+      "sizes": "240x240",
+      "type": "img/png",
+      "density": 5.0
+    },
+    {
       "src": "img/ic_256.png",
       "sizes": "256x256",
       "type": "img/png"
     },
     {
+      "src": "img/ic_480.png",
+      "sizes": "480x480",
+      "type": "img/png",
+      "density": 10.0
+    },
+    {
       "src": "img/ic_512.png",
       "sizes": "512x512",
-      "type": "image/png",
+      "type": "image/png"
     }
   ],
   "display": "standalone",

@@ -1,6 +1,6 @@
 {
-  "name": "raumreservierung",
-  "description": "Main Landingpage for the Project",
+  "name": "Raumreservierung",
+  "description": "Raumreservierung des Gymnasiums Dresden-Klotzsche",
   "main": "index.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^1.4.0",
