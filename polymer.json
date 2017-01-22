@@ -1,0 +1,23 @@
+{
+  "entrypoint": "index.html",
+  "shell": "src/raumreservierung-main/raumreservierung-main.html",
+  "fragments": [
+    "src/raumreservierung-admin/raumreservierung-admin.html",
+    "src/raumreservierung-admin/src/admin-error-reports/admin-error-reports.html",
+    "src/raumreservierung-admin/src/admin-nutzerverwaltung/admin-nutzerverwaltung.html",
+    "src/raumreservierung-admin/src/admin-raumverwaltung/admin-raumverwaltung.html",
+    "src/raumreservierung-email-confirmation/raumreservierung-email-confirmation.html",
+    "src/raumreservierung-landingpage/raumreservierung-landingpage.html",
+    "src/raumreservierung-login/raumreservierung-login.html",
+    "src/reporting-form/reporting-form.html"
+  ],
+  "sources": [
+    "src/**/*",
+    "src/raumreservierung-admin/src/**/*",
+    "img/*",
+    "src/raumreservierung-admin/img/*"
+  ],
+  "includeDependencies": [
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js"
+  ]
+}
