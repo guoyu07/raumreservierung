@@ -1,5 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <dom-module id="raumreservierung-email-confirmation">
 
     <template>
@@ -7,10 +8,18 @@
         <style>
             :host {
                 display: block;
+                @apply(--layout-vertical);
+            }
+            paper-card {
+                --paper-card: {
+                    @apply(--layout-flex-auto);
+                    @apply(--layout-self-center);
+                    max-width: 90%;
+                };
             }
         </style>
 
-        <paper-card heading="Hello World">
+        <paper-card heading="E-Mail - Best&auml;tigung">
             <div class="card-content">
                 <p><i>Dieser Inhalt ist noch in Arbeit und daher nicht verf&uuml;gbar!</i></p>
             </div>
