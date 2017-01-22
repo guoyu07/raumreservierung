@@ -69,7 +69,7 @@
             </paper-toolbar>
 
             <paper-menu>
-                <a href="/raumreservierung/project">
+                <a href="/">
                     <paper-icon-item>
                         <iron-icon icon="home" item-icon></iron-icon>
                         Startseite
@@ -102,7 +102,7 @@
                 
                 <br><br>
                 
-                <a href="/raumreservierung/project" style="color: white;"><paper-button style="background-color: #607D8B;color: white;"><iron-icon icon="home" style="margin-right: 10px;"></iron-icon>Startseite</paper-button></a>
+                <a href="/" style="color: white;"><paper-button style="background-color: #607D8B;color: white;"><iron-icon icon="home" style="margin-right: 10px;"></iron-icon>Startseite</paper-button></a>
             
             </paper-material>
 
@@ -117,4 +117,4 @@
 HTML;
 
 
-    } else { header('Location: /raumreservierung/project'); }
+    } else { header('Location: /'); }

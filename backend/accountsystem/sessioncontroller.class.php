@@ -11,14 +11,19 @@
     {
         public function __construct($pdo)
         {
-            $HTTPS_ONLY = false;  /** TODO: !!!CHANGE THIS TO TRUE WHEN NOT ON LOCAL SERVER!!! */
-            session_set_cookie_params(1800, "/raumreservierung", "localhost", $HTTPS_ONLY, true);   //TODO: Change "localhost" to "" when public
+            $HTTPS_ONLY = false;  /** !!!CHANGE THIS TO TRUE WHEN NOT ON LOCAL SERVER!!! */
+            session_set_cookie_params(1800, "/raumreservierung/project", "", $HTTPS_ONLY, true);
             session_start();
             session_regenerate_id(true);
             $this->pdo = $pdo;
+            if(empty($_SESSION['loggedin']) || !isset($_SESSION['loggedin'])){
+                session_unset();
+                $_SESSION['loggedin'] = false;
+            }
         }
 
-        public function initialize()
+        //TODO: Implement status observing in AJAX calls xD
+        public function initialize()    //Deprecated, will be moved to session management API
         {
             // :: START LoginSystem Start Routine ::
 
@@ -28,10 +33,7 @@
             } elseif($_SESSION['loggedin'] === true && isset($_SESSION['acctype']) && isset($_SESSION['accstatus'])) {
                 if($_SESSION['accstatus'] == 1){
 
-                    if(str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) !== "/raumreservierung/project/main/activation")
-                    {
-                        header('Location: /raumreservierung/project/main/activation');
-                    }
+
 
 
                 } elseif($_SESSION['accstatus'] == 2) {
@@ -48,7 +50,7 @@
                                 header('Location: /raumreservierung/project/main/notconfirmed');
                             }
                         } else {
-                            //Deactivation routing
+                            //Deactivation routine
                             require_once('userManagement.class.php');
                             $um = new userManagement($this->pdo);
                             if($um !== false) {
@@ -95,7 +97,7 @@
                             break;
                     }
                 }
-            } elseif($_SESSION['loggedin'] !== true && $_SERVER['SCRIPT_NAME'] != "/raumreservierung/project/index.html") {
+            } elseif($_SESSION['loggedin'] !== true && $_SERVER['SCRIPT_NAME'] != "/raumreservierung/project/index.php") {
                 header('Location: /raumreservierung/project/');
             }
 
@@ -106,6 +108,11 @@
         {
             unset($_SESSION['loggedin']);
             session_destroy();
+            return true;
+        }
+
+        public function getAccType(){
+            return $_SESSION['acctype'];
         }
 
     }

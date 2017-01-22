@@ -32,8 +32,6 @@
 
             if($this->pdo){
 
-                $name = htmlentities($name, ENT_QUOTES);
-
                 $iterations = 1024*24;
                 $hash = $this->hash_password($password, $iterations);
                 $pw = $hash['password'];
@@ -246,7 +244,7 @@ HTML;
         }
 
         public function getAllUsers() {
-            $sql = "SELECT accounts.A_ID, accounts.name, accounts.type, accounts.status, accounts.last_login, accounts.email_confirmed, accounts_users.email
+            $sql = "SELECT accounts.A_ID, accounts.name, accounts.type, accounts.status, coalesce(accounts.last_login, '-') as last_login, accounts.email_confirmed, coalesce(accounts_users.email,'-') as email
                     FROM accounts, accounts_users
                     WHERE accounts.name = accounts_users.name
                     ORDER BY A_ID";
@@ -261,7 +259,7 @@ HTML;
 
         public function updateUserData($oldname, $name, $type, $status){
 
-            $sql = "UPDATE accounts SET name=:newname, type=:type, status=:status
+            $sql = "UPDATE accounts SET type=:type, status=:status
                     WHERE accounts.name = :oldname";
             $sql2 = "UPDATE accounts_users SET name=:newname WHERE accounts_users.name = :oldname";
             $r = $this->pdo->prepare($sql);
@@ -269,7 +267,7 @@ HTML;
 
             try {
                 $this->pdo->beginTransaction();
-                $r->execute(array(":newname" => $name, ":type" => $type, ":status" => $status, ":oldname" => $oldname));
+                $r->execute(array(":type" => $type, ":status" => $status, ":oldname" => $oldname));
                 $r2->execute(array(":newname" => $name, ":oldname" => $oldname));
                 $this->pdo->commit();
 
@@ -292,7 +290,7 @@ HTML;
             $sql2 = "DELETE FROM accounts WHERE name=:username";
 
             $r1 = $this->pdo->prepare($sql1);
-            $r2 = $this->pdo->prepare($sql1);
+            $r2 = $this->pdo->prepare($sql2);
 
             try {
                 $this->pdo->beginTransaction();
@@ -322,6 +320,37 @@ HTML;
                 return array("error" => true, "message" => "Fehler bei der Datenbank-Abfrage: ".$e->getMessage());
             }
 
+        }
+
+        public function getErrors(){
+
+            // The LIMIT = 128 is purely case-sensitive, there should never be that much error - reports...
+            // and if someone thinks he has to spam, we have to manually clean the table
+            $sql = "SELECT errorID, name, email, coalesce(page, '-') as page, text, created FROM errorreport ORDER BY created DESC LIMIT 128";
+            $res = $this->pdo->query($sql)->fetchAll();
+
+            for($i=0;$i < count($res);$i++){
+                $res[$i]['text'] = nl2br(preg_replace("/::NEWLINE::/", ' --- ', $res[$i]['text']));
+                $res[$i]['created'] = date("d.m.Y - H:i", strtotime($res[$i]['created']));
+            }
+
+            return array("error" => false, "data" => $res);
+        }
+
+        public function deleteError($id) {
+            $sql = "DELETE FROM errorreport WHERE errorID=:errorid";
+            $r = $this->pdo->prepare($sql);
+
+            try {
+                $this->pdo->beginTransaction();
+                $r->execute(array(":errorid" => $id));
+                $this->pdo->commit();
+
+                return $this->getErrors();
+            } catch (PDOException $e) {
+                $this->pdo->rollBack();
+                return array("error" => true, "message" => "Es ist ein Fehler beim Löschen aufgetreten:<br>".$e->getMessage());
+            }
         }
 
     }

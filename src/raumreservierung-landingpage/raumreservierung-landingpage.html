@@ -1,0 +1,209 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-drawer-panel/paper-drawer-panel.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+<dom-module id="raumreservierung-landingpage">
+    <template>
+        <style>
+            :host {
+                display: block;
+                margin: 0 auto;
+                --primary-color: #8BC34A;
+                --accent-color: #607D8B;
+                color: #212121;
+            }
+            .navHeader {
+                color: #212121;
+                font-size: 22px;
+                margin: 0 auto;
+                text-align: center;
+                padding: 5px 0;
+                width: auto;
+                text-decoration: none;
+            }
+            #contentCard {
+                margin-top: 20px;
+                @apply(--layout-self-center);
+            }
+            #content {
+                @apply(--layout-vertical);
+            }
+            .spinnerWrapper {
+                text-align: center;
+            }
+            a {
+                text-decoration: none;
+                color: #212121;
+            }
+            paper-icon-item:hover {
+                cursor: pointer;
+            }
+        </style>
+
+        <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
+            <h2>L&auml;dt, bitte warten...</h2>
+            <paper-spinner active></paper-spinner>
+        </paper-dialog>
+
+        <paper-dialog id="errorDialog" with-backdrop>
+            <div id="errorContent">
+
+            </div>
+            <p style="text-align: center"><i>Bitte melden Sie diesen Fehler einem Administrator!</i></p>
+            <div class="buttons">
+                <paper-button dialog-confirm autofocus style="color: #F44336;">OK</paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="errorFormDialog" with-backdrop>
+            <div>
+                <paper-icon-button icon="close" style="color: #616161;
+                           position: absolute; z-index: 999;
+                           right: 5px; top: 5px;"
+                                   on-click="closeErrorReport"
+                                   title="Schlie&szlig;en"></paper-icon-button>
+            </div>
+            <paper-dialog-scrollable>
+                <div id="errorFormWrapper">
+                    <br>
+                    <h2>Lade das Error-Formular...</h2>
+                    <div class="spinnerWrapper" style="min-width: 100px;"><br><paper-spinner active></paper-spinner></div>
+                </div>
+            </paper-dialog-scrollable>
+        </paper-dialog>
+
+        <paper-drawer-panel disable-edge-swipe disable-swipe>
+
+            <div drawer>
+                <paper-material elevation="1" style="height: 100%;">
+                    <paper-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
+                        <paper-icon-button icon="arrow-back" paper-drawer-toggle style="color: #212121;"></paper-icon-button>
+                        <div class="title navHeader">Navigation</div>
+                    </paper-toolbar>
+                    <paper-menu>
+                        <a href="#index" target="_self">
+                            <paper-icon-item>
+                                <iron-icon icon="home" item-icon></iron-icon>
+                                Startseite
+                            </paper-icon-item>
+                        </a>
+                        <paper-icon-item id="reportErrorItem" on-click="_openReportForm">
+                            <iron-icon icon="report" item-icon></iron-icon>
+                            Einen Fehler melden
+                        </paper-icon-item>
+                        <a href="https://www.gymnasium-klotzsche.de/cont/cms/front_content.php?idcat=121" target="_self">
+                            <paper-icon-item>
+                                <iron-icon icon="gavel" item-icon></iron-icon>
+                                Impressum
+                            </paper-icon-item>
+                        </a>
+                        <a href="#confirm-email">
+                            <paper-icon-item>
+                                <iron-icon icon="help" item-icon></iron-icon>
+                                Test Email-Confirmation
+                            </paper-icon-item>
+                        </a>
+                    </paper-menu>
+                    <div style="position: absolute; bottom: 0; width: 100%; border-top: 1px solid #E0E0E0; background-color: #F5F5F5; height: auto;">
+                        <p style="text-align: center; font-size: 12px;"><b>Raumreservierung 2017</b><br>Moritz Menzel,<br>Benjamin Kirchhoff,<br>Maximilian Seiler<br><br>Published under GNU GPL v3.0</p>
+                    </div>
+                </paper-material>
+            </div>
+
+            <paper-header-panel mode="standard" main>
+                <paper-toolbar style="color: #212121;">
+                    <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+                    <div class="title" style="padding-bottom: 1px;">Raumreservierung</div>
+                    <a href="https://www.gymnasium-klotzsche.de" target="_self">
+                        <img src="../../img/gykllogoColored.png" width="70px" class="right" title="Gymnasium Dresden-Klotzsche">
+                    </a>
+                </paper-toolbar>
+
+                <div id="content">
+
+                    <paper-card id="contentCard" heading="Anmeldung">
+                        <div class="card-content">
+                            <div class="spinnerWrapper"><paper-spinner id="pageLoadIndicator"></paper-spinner></div>
+                        </div>
+                    </paper-card>
+
+                </div>
+
+            </paper-header-panel>
+
+        </paper-drawer-panel>
+    </template>
+
+    <script>
+        Polymer({
+
+            is: 'raumreservierung-landingpage',
+
+            properties: {
+                response: Object,
+                username: String,
+                literalType: String,
+                redirectStamped: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+
+            listeners: {
+            },
+
+            ready: function() {
+                this.fire('pageLoad', this.nodeName);
+                this._importLoginPage();
+            },
+            _importLoginPage: function() {
+                this.$.pageLoadIndicator.active = true;
+                this.importHref('src/raumreservierung-login/raumreservierung-login.html', this._onPageImportEnd, this._onPageImportError, true);
+            },
+            _onPageImportError: function() {
+                this.$.pageLoadIndicator.active = false;
+                this.$.errorContent.innerHTML = '<h2>Fehler!</h2><p style="color:red">Es ist ein Fehler beim Laden des Log-In - Elements aufgetreten!</p>';
+                this.$.errorDialog.center();
+                this.$.errorDialog.open();
+            },
+            _onPageImportEnd: function() {
+                this.$.pageLoadIndicator.active = false;
+                this.$.contentCard.getElementsByClassName('card-content')[0].innerHTML = "<raumreservierung-login></raumreservierung-login>";
+            },
+            _openReportForm: function() {
+                this.$.errorFormDialog.open();
+                this.importHref('src/reporting-form/reporting-form.html', this._onErrorPageLoad, this._onErrorPageLoadError, true);
+            },
+            _onErrorPageLoad: function() {
+                this.$.errorFormWrapper.innerHTML = '<reporting-form loggedin="[[loggedin]]" name="[[name]]"></reporting-form>';
+                this.async(function(){
+                    // Because the element needs (even if short) time to render itself
+                    this.$.errorFormDialog.center();
+                }, 50);
+                this.fire('pageLoad', this.$$('reporting-form').nodeName);
+            },
+            _onErrorPageLoadError: function() {
+                this.$.errorFormDialog.close();
+                this.$.errorContent.innerHTML = '<p style="color: red;">Das Error-Formular konnte nicht geladen werden!</p>';
+                this.$.errorDialog.center();
+                this.$.errorDialog.open();
+            },
+            closeErrorReport: function() {
+                this.$.errorFormDialog.close();
+            }
+        });
+    </script>
+
+</dom-module>

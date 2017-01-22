@@ -153,7 +153,7 @@ HTML;
                             Impressum
                         </paper-icon-item>
                     </a>
-                    <a href="/raumreservierung/main/errorreport">
+                    <a href="/raumreservierung/project/main/errorreport">
                         <paper-icon-item>
                             <iron-icon icon="announcement" item-icon></iron-icon>
                             Einen Fehler melden

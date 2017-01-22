@@ -1,0 +1,38 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../bower_components/paper-card/paper-card.html">
+
+<dom-module id="admin-raumverwaltung">
+    <template>
+        <style>
+            :host {
+                display: block;
+                margin: 20px auto 0 auto;
+            }
+        </style>
+
+        <paper-card heading="Administrator - Raumverwaltung">
+            <div class="card-content">
+                <p style="text-align: center;"><i>~ Diese Seite ist noch in Arbeit ~</i></p>
+            </div>
+        </paper-card>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'admin-raumverwaltung',
+
+            properties: {
+
+            },
+
+            listeners: {
+
+            },
+
+            ready: function() {
+                this.fire('pageLoaded');                // Trigger-Event for raumreservierung-admin
+                this.fire('pageLoad', this.nodeName);   // Trigger-Event for raumreservierung-main
+            }
+        });
+    </script>
+</dom-module>
