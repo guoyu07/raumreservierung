@@ -63,7 +63,7 @@
                             $_SESSION['email'] = $res['email'];
                             return array("login" => true);
                         } else {
-                            return array("login" => false, "message" => "Fehler: Bitte &uuml;berpr&uuml;fen Sie Ihre Eingaben!");
+                            return array("login" => false, "message" => "Fehler: Bitte &uuml;berpr&uuml;fen Sie Ihr Passwort!");
                         }
                     } else {
                         return array("login" => false, "message" => "Fehler: Der eingegebene Name konnte nicht gefunden werden!");

@@ -110,6 +110,7 @@
         {
             unset($_SESSION['loggedin']);
             session_destroy();
+            return true;
         }
 
         public function getAccType(){
