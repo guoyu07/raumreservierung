@@ -158,7 +158,7 @@
                         d1.center();
                         
                         var xhr = window.XMLHttpRequest ? new XMLHttpRequest() : new ActiveXObject("Microsoft.XMLHTTP");
-                        xhr.open("POST", "../../backend/accountsystem/ajaxActivateAccount.php");
+                        xhr.open("POST", "../../backend/api/ajaxActivateAccount.php");
                         xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
     
                         xhr.timeout = 10000; //Timeout after 10 Seconds (Mail might Take a while)
