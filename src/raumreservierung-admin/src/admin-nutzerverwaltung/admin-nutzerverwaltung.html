@@ -18,6 +18,9 @@
                 width: 90%;
                 background-color: #F5F5F5;
             }
+            .spinnerWrapper {
+                text-align: center;
+            }
         </style>
 
         <iron-ajax id="dataRequest"
@@ -83,7 +86,7 @@
             <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
                 <h2>&Auml;nderungen werden best&auml;tigt...</h2>
                 <div style="text-align: center; margin: 0 auto;">
-                    <paper-spinner active style="margin: 20px auto;"></paper-spinner>
+                    <div class="spinnerWrapper"><paper-spinner active style="margin: 20px auto;"></paper-spinner></div>
                 </div>
             </paper-dialog>
 
