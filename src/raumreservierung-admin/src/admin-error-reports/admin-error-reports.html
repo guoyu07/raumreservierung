@@ -198,9 +198,6 @@ Page for managing Error-Reports
   </template>
 
   <script>
-
-    var loaded = Object();
-
     Polymer({
 
       is: 'admin-error-reports',
@@ -214,13 +211,12 @@ Page for managing Error-Reports
 
       properties: {
         data: {
-          type: Object,
-          observer: '_onResponse'
+          type: Object
         },
-        page: {
-            type: Number,
-            value: 1,
-            observer: '_onPageChange'
+        reset: {
+            type: Boolean,
+            value: false,
+            observer: '_onResetChange'
         }
       },
 
@@ -239,7 +235,6 @@ Page for managing Error-Reports
 
         },
         _onResponse: function() {
-
           this.data = this.$.dataRequest.lastResponse;
           this.$.loadIndicator.close();
           this.$.errorbox.innerHTML = "";
@@ -250,9 +245,6 @@ Page for managing Error-Reports
           this.$.loadIndicator.close();
           this.$.errorbox.innerHTML = "Es ist ein Skriptfehler aufgetreten:<br>"+e.detail;
 
-        },
-        _onPageChange: function() {
-          this.$.dataRequest.body = "request=getErrors&page="+this.page;
         },
         _toggleCollapse: function(e) {
 
@@ -298,8 +290,14 @@ Page for managing Error-Reports
         _refreshErrorData: function() {
             this.$.dataRequest.body = "request=getErrors";
             this.$.dataRequest.generateRequest();
+        },
+        _onResetChange: function() {
+          if(this.reset == true){
+              this.data = Object({});
+              this.fire('push', [this.nodeName, "data reset"]);
+              this.reset = false;
+          }
         }
-
     });
   </script>
 </dom-module>

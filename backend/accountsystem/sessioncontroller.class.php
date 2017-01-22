@@ -11,7 +11,7 @@
     {
         public function __construct($pdo)
         {
-            $HTTPS_ONLY = false;  /** TODO: !!!CHANGE THIS TO TRUE WHEN NOT ON LOCAL SERVER!!! */
+            $HTTPS_ONLY = false;  /** !!!CHANGE THIS TO TRUE WHEN NOT ON LOCAL SERVER!!! */
             session_set_cookie_params(1800, "/raumreservierung/project", "", $HTTPS_ONLY, true);
             session_start();
             session_regenerate_id(true);
@@ -22,7 +22,8 @@
             }
         }
 
-        public function initialize()
+        //TODO: Implement status observing in AJAX calls xD
+        public function initialize()    //Deprecated, will be moved to session management API
         {
             // :: START LoginSystem Start Routine ::
 
@@ -32,10 +33,7 @@
             } elseif($_SESSION['loggedin'] === true && isset($_SESSION['acctype']) && isset($_SESSION['accstatus'])) {
                 if($_SESSION['accstatus'] == 1){
 
-                    if(str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) !== "/raumreservierung/project/main/activation")
-                    {
-                        header('Location: /raumreservierung/project/main/activation');
-                    }
+
 
 
                 } elseif($_SESSION['accstatus'] == 2) {

@@ -189,6 +189,15 @@
             echo json_encode(array("success" => false, "message" => "Es sind zu wenig Daten angegeben worden!"));
         }
     } else {
-        $sess->logout();
-        echo json_encode(array("success" => false, "message" => "Ihre Accountdaten sind ungültig. Bitte loggen Sie sich aus und wieder ein!"));
+        if(isset($_SESSION['accstatus'])) {
+            if($_SESSION['accstatus'] == 1) {
+                echo json_encode(array("success" => false, "message" => "Ihre Accountdaten sind ungültig. Bitte loggen Sie sich aus und wieder ein!", "accstatus" => 1));
+            } elseif ($_SESSION['accstatus'] == 2) {
+                echo json_encode(array("success" => false, "message" => "Ihre Accountdaten sind ungültig. Bitte loggen Sie sich aus und wieder ein!", "accstatus" => 2));
+            } else {
+                echo json_encode(array("success" => false, "message" => "Ihre Accountdaten sind ungültig. Bitte loggen Sie sich aus und wieder ein!"));
+            }
+        } else {
+            echo json_encode(array("success" => false, "message" => "Ihre Accountdaten sind ungültig. Bitte loggen Sie sich aus und wieder ein!"));
+        }
     }

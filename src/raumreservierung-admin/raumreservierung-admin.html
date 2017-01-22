@@ -83,6 +83,24 @@
       }
     </style>
 
+    <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
+      <h2>Inhalte werden geladen...</h2>
+      <br>
+      <div class="spinnerWrapper"><paper-spinner active></paper-spinner></div>
+      <br>
+      <p><i>Der erste Ladevorgang kann bei schlechten Internetverbindungen eine Weile dauern. Bitte haben Sie einen Moment Geduld.</i></p>
+    </paper-dialog>
+
+    <paper-dialog id="errorDialog" with-backdrop>
+      <div id="errorContent">
+
+      </div>
+      <p style="text-align: center"><i>Bitte melden Sie diesen Fehler einem Administrator!</i></p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus style="color: #F44336;">OK</paper-button>
+      </div>
+    </paper-dialog>
+
     <paper-drawer-panel force-narrow disable-edge-swipe disable-swipe id="drawerPanel">
 
       <div drawer>
@@ -138,25 +156,13 @@
           <iron-pages id="adminPages" selected="{{selectedPage}}">
 
             <div id="page1" class="layout vertical center">
-              <paper-card>
-                <paper-spinner active></paper-spinner>
-                <p style="color: #757575;">Loading Usermanager...<br></p>
-              </paper-card>
               <admin-nutzerverwaltung id="nutzerverwaltung-origin"></admin-nutzerverwaltung>
             </div>
             <div id="page2" class="layout vertical center">
-              <paper-card>
-                <paper-spinner active></paper-spinner>
-                <p style="color: #757575;">Loading Roommanager...<br></p>
-              </paper-card>
               <admin-raumverwaltung></admin-raumverwaltung>
             </div>
             <div id="page3" class="layout vertical center">
-              <paper-card>
-                <paper-spinner active></paper-spinner>
-                <p style="color: #757575;">Loading Errormanager...<br></p>
-              </paper-card>
-              <admin-error-reports></admin-error-reports>
+              <admin-error-reports id="errorreport-origin"></admin-error-reports>
             </div>
 
             <!-- Welcome Page -->
@@ -208,7 +214,7 @@
             this.selectedPage = this.selectedTab;
         },
         _onPageChanged: function(){
-
+            this.$.loadIndicator.open();
             // Lock Tabs
             for(var i=0; i < this.$.tabs.items.length; i++) {
                 this.$.tabs.items[i].disabled = true;
@@ -231,6 +237,7 @@
             }
         },
         _freeTabs: function() {
+            this.$.loadIndicator.close();
             for(var i=0; i < this.$.tabs.items.length; i++) {
                 this.$.tabs.items[i].disabled = false;
             }
@@ -239,26 +246,9 @@
             this._freeTabs();
         },
         _onPageLoad: function() {
-
             this._freeTabs();
-
-            switch (this.selectedTab) {
-                case 0:
-                    this.$.page1.querySelector('paper-card').style.display = "none";
-                    break;
-                case 1:
-                    this.$.page2.querySelector('paper-card').style.display = "none";
-                    break;
-                case 2:
-                    this.$.page3.querySelector('paper-card').style.display = "none";
-                    break;
-                default:
-                    this.selectedTab = 3;
-                    break;
-            }
         },
         _onPageLoadError: function(){
-
             this._freeTabs();
 
             var errorObj = Object();
@@ -274,20 +264,25 @@
 
             switch (errorObj.selectedPage) {
                 case 0:
-                    this.$.page1.querySelector('paper-card').heading = "Fehler beim Laden der Seite!";
-                    this.$.page1.querySelector('paper-card').innerHTML = errorText;
+                    this.$.errorContent.innerHTML = errorText;
                     break;
                 case 1:
-                    this.$.page2.querySelector('paper-card').heading = "Fehler beim Laden der Seite!";
-                    this.$.page2.querySelector('paper-card').innerHTML = errorText;
+                    this.$.errorContent.innerHTML = errorText;
                     break;
                 case 2:
-                    this.$.page3.querySelector('paper-card').heading = "Fehler beim Laden der Seite!";
-                    this.$.page3.querySelector('paper-card').innerHTML = errorText;
+                    this.$.errorContent.innerHTML = errorText;
             }
+
+            this.$.errorDialog.open();
 
         },
         _onLogoutRequest: function() {
+            console.clear();
+            this.fire('push', [this.nodeName, "logout triggered"]);
+            this.$$('#nutzerverwaltung-origin').reset = true;
+            this.$$('#errorreport-origin').reset = true;
+            this.selectedPage = 0;
+            this.selectedTab = 0;
             this.$.drawerPanel.closeDrawer();
             location.hash = "logout";
         }

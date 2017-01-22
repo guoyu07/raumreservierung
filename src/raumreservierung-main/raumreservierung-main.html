@@ -79,8 +79,8 @@
       <raumreservierung-landingpage response="{{response}}"></raumreservierung-landingpage>
       <!-- E-Mail Confirmation -->
       <raumreservierung-email-confirmation></raumreservierung-email-confirmation>
-      <!-- Admin Page -->
-      <raumreservierung-admin></raumreservierung-admin>
+      <!-- User Page -->
+      <div id="userpage"></div>
 
     </iron-pages>
 
@@ -231,7 +231,7 @@
                 case 0:
                     if(!this.landingPageLoaded)
                         this.loadMainPage();
-                    this.$.pages.select(this.selected);
+                    this.$.pages.select(0);
                     break;
                 case 1:
                     if(this.hash == "confirm-email") {
@@ -247,7 +247,7 @@
                 case 2:
                     if(!this.userPageLoaded)
                         this.loadUserPage();
-                    this.$.pages.select(this.selected);
+                    this.$.pages.select(2);
                     break;
                 default:
                     this.hash = "";
@@ -333,16 +333,11 @@
             this.$.pages.select(0);
         },
         _onUserPageLoad: function() {
+            this.$.userpage.innerHTML = "<raumreservierung-"+this.type+"></raumreservierung-"+this.type+">";
             this.userPageLoaded = true;
             this.$.loadIndicator.close();
-            var pageIndex = 0;
-            for(var i = 0; i < this.$.pages.items.length; i++){
-                if(this.$.pages.items[i].nodeName.toLowerCase() == ('raumreservierung-'+this.type)){
-                    pageIndex = i;
-                    break;
-                }
-            }
-            this.$.pages.select(pageIndex);
+            // UserPage is always Numero Dos :D
+            this.$.pages.select(2);
         },
         _onUserPageLoadError: function() {
             this.$.loadIndicator.close();

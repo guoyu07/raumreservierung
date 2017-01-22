@@ -133,16 +133,13 @@
 
                 properties: {
                     selectedRows: Array,
-                    users: {
-                        type: Object,
-                        reflectToAttribute: true,
-                        notify: true
-                    },
-                    userAmount: {
-                        type: Number,
-                        value: 0
-                    },
-                    lastClicked: Number
+                    users: Object,
+                    lastClicked: Number,
+                    reset: {
+                        type: Boolean,
+                        value: false,
+                        observer: '_onResetChange'
+                    }
                 },
 
                 listeners: {
@@ -188,6 +185,16 @@
                         }
 
                     } else {
+                        if(!Number(this.users.accstatus).empty) {
+                            switch(this.users.accstatus){
+                                case 1:
+                                    location.hash = "activation";
+                                    break;
+                                case 2:
+                                    location.hash = "waiting-for-confirmation";
+                                    break;
+                            }
+                        }
                         this.$.errorbox.innerHTML = "Es ist ein Fehler beim Abrufen der Daten aufgetreten:<br>"+this.users.message;
                         this.$.usertable.style.display = "none";
                         this.$.addUserButton.style.display = "none";
@@ -341,6 +348,15 @@
                 handleError: function(e) {
                     var error = (e.detail.error.message) ? e.detail.error.message : (e.detail.error.type) ? e.detail.error.type : "";
                     this.$.errorBox.innerHTML = "Es ist ein Fehler bei der Abfrage aufgetreten!<br>(" + error + ")";
+                },
+                _onResetChange: function() {
+                    if(this.reset == true) {
+                        this.$.usertable.reset();
+                        this.fire('push', [this.nodeName, "table reset"]);
+                        this.users.data = Object({});
+                        this.fire('push', [this.nodeName, "data reset"]);
+                        this.reset = false;
+                    }
                 }
             });
 
