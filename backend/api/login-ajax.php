@@ -6,19 +6,23 @@
      * Time: 21:40
      */
 
-    require_once('sessioncontroller.class.php');
+    require_once('../accountsystem/sessioncontroller.class.php');
     require_once('../db/conf/dbconf.php');
     $sess = new SessionController($pdo);
-    $sess->initialize();
+    // $sess->initialize(); Old Line, keeping it as reminder not to use it anymore :D
 
-    if(isset($_POST['name']) && isset($_POST['pw'])){
+    if(isset($_POST['name']) && isset($_POST['pw']) && isset($_POST['ampcode'])){
         $name = $_POST['name'];
         $pw = $_POST['pw'];
+        $code = $_POST['ampcode'];
 
-        require_once('sessionsystem.class.php');
-        $session = new SessionSystem($name, $pw, $pdo);
+        $name = convertAMP($name, $code);
+        $pw = convertAMP($pw, $code);
 
-        $result = $session->login();
+        require_once('../accountsystem/loginsystem.class.php');
+        $login = new loginSystem($name, $pw, $pdo);
+
+        $result = $login->login();
 
         if(!isset($result['error'])){
             if($result['login'] === true){
@@ -38,4 +42,8 @@
 
     } else {
         echo json_encode(array("success" => false, "message" => "Fehler: Es konnten nicht alle Daten &uuml;bermittelt werden!"));
+    }
+
+    function convertAMP($s, $c){
+        return preg_replace("/::$c::/", "&", $s);
     }

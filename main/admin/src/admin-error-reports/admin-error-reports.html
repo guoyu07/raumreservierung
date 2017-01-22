@@ -142,9 +142,9 @@ Page for managing Error-Reports
                       </div>
                       <iron-collapse id="collapse-[[submission.errorID]]">
                         <hr>
-                        <div>Seite des Fehlers:<br>[[submission.page]]</div>
+                        <div style="word-wrap: break-word;">Seite des Fehlers:<br>.../raumreservierung/project/[[submission.page]]</div>
                         <br>
-                        <div style="text-align: justify;">[[submission.text]]</div>
+                        <div style="word-wrap: break-word;">[[submission.text]]</div>
                         <br>
                         <div class="card-actions">
 
@@ -217,7 +217,6 @@ Page for managing Error-Reports
           console.log('[admin-error-reports] element loaded and ready');
 
           this.$.dataRequest.body = "request=getErrors";
-          this.$.dataRequest.timeout = 5000;
           this.$.dataRequest.generateRequest();
         },
         _onRequest: function() {
@@ -253,7 +252,7 @@ Page for managing Error-Reports
                 }
             }
 
-            if(type) {
+            if(!type.empty) {
                 id = e.path[type].subid;
                 this.$$('#collapse-'+id).toggle();
                 if(this.$$('#collapse-'+id).opened) {
@@ -270,13 +269,13 @@ Page for managing Error-Reports
             // Check position of fix-element (which is paper-icon-button because it holds the subid - value)
             var type;
             for(var i=0; i < e.path.length; i++){
-                if(e.path[i].nodeName == "PAPER-ICON-BUTTON"){
+                if(e.path[i].nodeName == "PAPER-BUTTON"){
                     type = e.path.indexOf(e.path[i]);
                 }
             }
 
-            if(type) {
-                var id = (e.path[0].nodeName == "PAPER-BUTTON") ? e.path[0].subid : e.path[3].subid;
+            if(!type.empty) {
+                var id = e.path[type].subid;
                 var ajax = this.$.dataRequest;
                 ajax.body = "request=deleteError&id="+id;
                 ajax.generateRequest();

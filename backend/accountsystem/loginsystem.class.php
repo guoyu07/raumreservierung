@@ -7,7 +7,7 @@
      * Time: 22:40
      */
 
-    class SessionSystem
+    class loginSystem
     {
         public function __construct($name, $pw, $pdo){
 

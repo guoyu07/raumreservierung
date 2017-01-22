@@ -1,13 +1,8 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-location/iron-location.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html">
-<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
-<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
-<link rel="import" href="../../bower_components/paper-drawer-panel/paper-drawer-panel.html">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 
 <dom-module id="raumreservierung-main">
   <template>
@@ -24,63 +19,43 @@
         margin: 0 auto;
         text-align: center;
       }
-      #errorbox {
-        --paper-card: {
-          @apply(--layout-vertical);
-          @apply(--layout-flex);
-        }
-      }
-      .navHeader {
-        color: #212121;
-        font-size: 22px;
-        margin: 0 auto;
+      .spinnerWrapper {
         text-align: center;
-        padding: 5px 0;
-        width: auto;
+      }
+      a {
         text-decoration: none;
+        color: #212121;
       }
     </style>
 
-    <iron-ajax id="mainRequest"
-               url="../backend/api/main-ajax.php"
-               method="POST"
-               body=""
-               content-type="application/x-www-form-urlencoded"
-               handle-as="json"
-               timeout="5000"
-               debounce-duration="300"
-               last-response="{{response}}"></iron-ajax>
+    <iron-location hash="{{hash}}"></iron-location>
 
     <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
-      <h2>L&auml;dt, bitte warten...</h2>
-      <paper-spinner active></paper-spinner>
+      <h2>Inhalte werden geladen...</h2>
+      <br>
+      <div class="spinnerWrapper"><paper-spinner active></paper-spinner></div>
+      <br>
+      <p><i>Der erste Ladevorgang kann bei schlechten Internetverbindungen eine Weile dauern. Bitte haben Sie einen Moment Geduld.</i></p>
     </paper-dialog>
-    <paper-card id="errorbox"></paper-card>
 
-    <template is="dom-if" if="{{!loggedin}}">
+    <paper-dialog id="errorDialog" with-backdrop>
+      <div id="errorContent">
 
-      <paper-drawer-panel disable-edge-swipe disable-swipe>
+      </div>
+      <p style="text-align: center"><i>Bitte melden Sie diesen Fehler einem Administrator!</i></p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus style="color: #F44336;">OK</paper-button>
+      </div>
+    </paper-dialog>
 
-        <div drawer>
-          <paper-toolbar style="background-color: #F5F5F5; border-bottom: 1px solid #E0E0E0;">
-            <paper-icon-button icon="arrow-back" paper-drawer-toggle style="color: #212121;"></paper-icon-button>
-            <div class="title navHeader">Navigation</div>
-          </paper-toolbar>
-        </div>
+    <iron-pages id="pages" selected="{{selected}}">
 
-        <paper-header-panel mode="waterfall" main>
-          <paper-toolbar style="color: #212121;">
-            <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
-            <div class="title" style="padding-bottom: 1px;">Raumreservierung</div>
-            <a href="https://www.gymnasium-klotzsche.de" target="_blank">
-              <img src="../../img/gykllogoColored.png" width="70px" class="right" title="Gymnasium Dresden-Klotzsche">
-            </a>
-          </paper-toolbar>
-        </paper-header-panel>
+      <!-- Main Start Page -->
+      <raumreservierung-landingpage></raumreservierung-landingpage>
+      <!-- E-Mail Confirmation -->
+      <raumreservierung-email-confirmation></raumreservierung-email-confirmation>
 
-      </paper-drawer-panel>
-
-    </template>
+    </iron-pages>
 
   </template>
 
@@ -90,33 +65,81 @@
         is: 'raumreservierung-main',
 
         properties: {
-            response: Object,
-            loggedin: {
-                type: Boolean,
-                value: false
-            }
+            hash: {
+                type: String,
+                observer: '_onHashChange'
+            },
+            selected: Number
         },
 
         listeners: {
-            'mainRequest.request':'_onRequest',
-            'mainRequest.response':'_onResponse',
-            'mainRequest.error':'_onError'
+            'push':'_pushToLog',
+            'pageLoad': '_onComponentLoaded'
         },
 
         ready: function() {
-            console.log('[raumreservierung-main] element loaded and ready');
+            this.fire('pageLoad', this.nodeName);
+            switch(this.selected){
+                case 0:
+                    this.loadMainPage();
+                    break;
+                case 1:
+                    this.loadEmailPage();
+                    break;
+                default:
+                    this.loadMainPage();
+                    this.select(0);
+                    break;
+            }
         },
-        _onRequest: function() {
-            this.$.loadIndicator.center();
+        _onHashChange: function() {
+            switch(this.hash){
+                case "index":
+                    this.hash = "";
+                    window.location.reload();
+                    break;
+                case "confirm-email":
+                    this.$.pages.select(1);
+                    this.loadEmailPage();
+                    break;
+                default:
+                    this.$.pages.select(0);
+            }
+        },
+        _pushToLog: function(e) {
+            if (e.detail[0] && e.detail[1])
+                console.log("["+e.detail[0]+"] "+e.detail[1]);
+        },
+        loadMainPage: function() {
             this.$.loadIndicator.open();
+            this.importHref('src/raumreservierung-landingpage/raumreservierung-landingpage.html', this._onLandingpageLoad, this._onLandingpageLoadError, true);
         },
-        _onResponse: function() {
+        _onLandingpageLoad: function() {
+            this.$.pages.select(0);
             this.$.loadIndicator.close();
         },
-        _onError: function() {
+        _onLandingpageLoadError: function() {
             this.$.loadIndicator.close();
+            this.$.errorContent.innerHTML = '<p style="color:red;">Die Startseite konnte nicht geladen werden!</p>';
+            this.$.errorDialog.center();
+            this.$.errorDialog.open();
+        },
+        loadEmailPage: function() {
+            this.$.loadIndicator.open();
+            this.importHref('src/raumreservierung-email-confirmation/raumreservierung-email-confirmation.html', this._onEmailLoaded, this._onEmailLoadError, true);
+        },
+        _onEmailLoadError: function(){
+            this.$.loadIndicator.close();
+            this.$.errorContent.innerHTML = '<p style="color: red;">Die Seite f&uuml;r die E-Mail - Best&auml;tigung konnte nicht geladen werden!</p>';
+            this.$.errorDialog.center();
+            this.$.errorDialog.open();
+        },
+        _onEmailLoaded: function() {
+            this.$.loadIndicator.close();
+        },
+        _onComponentLoaded: function(e) {
+            console.log("["+e.detail+"] component loaded and ready");
         }
-
     });
   </script>
 </dom-module>

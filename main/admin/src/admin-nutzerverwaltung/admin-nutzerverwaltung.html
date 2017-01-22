@@ -150,6 +150,7 @@
                     'change': 'handleCellChange',
                     'dataRequest.request': 'newRequest',
                     'dataRequest.response': 'handleResponse',
+                    'dataRequest.error': 'handleError',
                     'deletionButton.tap': 'triggerDeletion',
                     'cd.iron-overlay-closed': 'cancelDeletion',
                     'deletionConfirmation.tap': 'finalDelete',
@@ -164,7 +165,6 @@
                     console.log('[admin-nutzerverwaltung] element loaded and ready');
 
                     var ajax = this.$.dataRequest;
-                    ajax.timeout = 5000;
                     ajax.generateRequest();
 
                 },
@@ -336,6 +336,10 @@
                         ajax.generateRequest();
 
                     }
+                },
+                handleError: function(e) {
+                    var error = (e.detail.error.message) ? e.detail.error.message : (e.detail.error.type) ? e.detail.error.type : "";
+                    this.$.errorBox.innerHTML = "Es ist ein Fehler bei der Abfrage aufgetreten!<br>(" + error + ")";
                 }
             });
 

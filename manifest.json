@@ -35,10 +35,14 @@
       "density": 4.0
     },
     {
+      "src": "img/ic_256.png",
+      "sizes": "256x256",
+      "type": "img/png"
+    },
+    {
       "src": "img/ic_512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "density": 10.67
     }
   ],
   "display": "standalone",
