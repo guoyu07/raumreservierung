@@ -1,4 +1,4 @@
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
@@ -52,15 +52,6 @@
             }
         </style>
 
-        <iron-ajax id="mainRequest"
-                   url="../../backend/api/main-ajax.php"
-                   method="POST"
-                   content-type="application/x-www-form-urlencoded"
-                   handle-as="json"
-                   timeout="5000"
-                   debounce-duration="300"
-                   last-response="{{response}}"></iron-ajax>
-
         <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
             <h2>L&auml;dt, bitte warten...</h2>
             <paper-spinner active></paper-spinner>
@@ -93,84 +84,67 @@
             </paper-dialog-scrollable>
         </paper-dialog>
 
-        <template is="dom-if" if="{{!loggedin}}" id="loginTemplate">
+        <paper-drawer-panel disable-edge-swipe disable-swipe>
 
-            <paper-drawer-panel disable-edge-swipe disable-swipe>
-
-                <div drawer>
-                    <paper-material elevation="1" style="height: 100%;">
-                        <paper-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
-                            <paper-icon-button icon="arrow-back" paper-drawer-toggle style="color: #212121;"></paper-icon-button>
-                            <div class="title navHeader">Navigation</div>
-                        </paper-toolbar>
-                        <br>
-                        <paper-menu>
-                            <a href="#index" target="_self">
-                                <paper-icon-item>
-                                    <iron-icon icon="home" item-icon></iron-icon>
-                                    Startseite
-                                </paper-icon-item>
-                            </a>
-                            <paper-icon-item id="reportErrorItem" on-click="_openReportForm">
-                                <iron-icon icon="report" item-icon></iron-icon>
-                                Einen Fehler melden
-                            </paper-icon-item>
-                            <a href="https://www.gymnasium-klotzsche.de/cont/cms/front_content.php?idcat=121" target="_blank">
-                                <paper-icon-item>
-                                    <iron-icon icon="gavel" item-icon></iron-icon>
-                                    Impressum
-                                </paper-icon-item>
-                            </a>
-                            <a href="#confirm-email">
-                                <paper-icon-item>
-                                    <iron-icon icon="help" item-icon></iron-icon>
-                                    Testing
-                                </paper-icon-item>
-                            </a>
-                        </paper-menu>
-                        <div style="position: absolute; bottom: 0; width: 100%; border-top: 1px solid #E0E0E0; background-color: #F5F5F5; height: auto;">
-                            <p style="text-align: center; font-size: 12px;"><b>Raumreservierung 2017</b><br>Moritz Menzel,<br>Benjamin Kirchhoff,<br>Maximilian Seiler<br><br>Published under GNU GPL v3.0</p>
-                        </div>
-                    </paper-material>
-                </div>
-
-                <paper-header-panel mode="standard" main>
-                    <paper-toolbar style="color: #212121;">
-                        <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
-                        <div class="title" style="padding-bottom: 1px;">Raumreservierung</div>
-                        <a href="https://www.gymnasium-klotzsche.de" target="_blank">
-                            <img src="../../img/gykllogoColored.png" width="70px" class="right" title="Gymnasium Dresden-Klotzsche">
-                        </a>
+            <div drawer>
+                <paper-material elevation="1" style="height: 100%;">
+                    <paper-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
+                        <paper-icon-button icon="arrow-back" paper-drawer-toggle style="color: #212121;"></paper-icon-button>
+                        <div class="title navHeader">Navigation</div>
                     </paper-toolbar>
-
-                    <div id="content">
-
-                        <paper-card id="contentCard" heading="Anmeldung">
-                            <div class="card-content">
-                                <div class="spinnerWrapper"><paper-spinner id="pageLoadIndicator"></paper-spinner></div>
-                            </div>
-                        </paper-card>
-
-                    </div>
-
-                </paper-header-panel>
-
-            </paper-drawer-panel>
-
-        </template>
-
-        <template is="dom-if" if="{{loggedin}}" id="redirectTemplate">
-
-            <paper-dialog id="redirectDialog" with-backdrop opened no-cancel-on-esc-key no-cancel-on-outside-click>
-                <h2>Sie werden weitergeleitet...</h2>
-                <div style="text-align: center;">
-                    <div class="spinnerWrapper" style="margin-top: 20px;"><paper-spinner active></paper-spinner></div>
                     <br>
-                    <i>Sie sind bereits eingeloggt ([[username]]) und werden nun zur [[literalType]]seite weitergeleitet.</i>
-                </div>
-            </paper-dialog>
+                    <paper-menu>
+                        <a href="#index" target="_self">
+                            <paper-icon-item>
+                                <iron-icon icon="home" item-icon></iron-icon>
+                                Startseite
+                            </paper-icon-item>
+                        </a>
+                        <paper-icon-item id="reportErrorItem" on-click="_openReportForm">
+                            <iron-icon icon="report" item-icon></iron-icon>
+                            Einen Fehler melden
+                        </paper-icon-item>
+                        <a href="https://www.gymnasium-klotzsche.de/cont/cms/front_content.php?idcat=121" target="_blank">
+                            <paper-icon-item>
+                                <iron-icon icon="gavel" item-icon></iron-icon>
+                                Impressum
+                            </paper-icon-item>
+                        </a>
+                        <a href="#confirm-email">
+                            <paper-icon-item>
+                                <iron-icon icon="help" item-icon></iron-icon>
+                                Testing
+                            </paper-icon-item>
+                        </a>
+                    </paper-menu>
+                    <div style="position: absolute; bottom: 0; width: 100%; border-top: 1px solid #E0E0E0; background-color: #F5F5F5; height: auto;">
+                        <p style="text-align: center; font-size: 12px;"><b>Raumreservierung 2017</b><br>Moritz Menzel,<br>Benjamin Kirchhoff,<br>Maximilian Seiler<br><br>Published under GNU GPL v3.0</p>
+                    </div>
+                </paper-material>
+            </div>
 
-        </template>
+            <paper-header-panel mode="standard" main>
+                <paper-toolbar style="color: #212121;">
+                    <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+                    <div class="title" style="padding-bottom: 1px;">Raumreservierung</div>
+                    <a href="https://www.gymnasium-klotzsche.de" target="_blank">
+                        <img src="../../img/gykllogoColored.png" width="70px" class="right" title="Gymnasium Dresden-Klotzsche">
+                    </a>
+                </paper-toolbar>
+
+                <div id="content">
+
+                    <paper-card id="contentCard" heading="Anmeldung">
+                        <div class="card-content">
+                            <div class="spinnerWrapper"><paper-spinner id="pageLoadIndicator"></paper-spinner></div>
+                        </div>
+                    </paper-card>
+
+                </div>
+
+            </paper-header-panel>
+
+        </paper-drawer-panel>
     </template>
 
     <script>
@@ -180,12 +154,6 @@
 
             properties: {
                 response: Object,
-                loggedin: {
-                    type: Boolean,
-                    value: false,
-                    reflectToAttribute: false,
-                    notify: false
-                },
                 username: String,
                 literalType: String,
                 redirectStamped: {
@@ -195,112 +163,25 @@
             },
 
             listeners: {
-                'mainRequest.request':'_onRequest',
-                'mainRequest.response':'_onResponse',
-                'mainRequest.error':'_onError',
-                'loginTemplate.dom-change':'_onLoginStamp',
-                'redirectTemplate.dom-change':'_onRedirectStamp'
             },
 
             ready: function() {
                 this.fire('pageLoad', this.nodeName);
-
-                this.$.mainRequest.body = "r=getSessionData";
-                this.$.mainRequest.generateRequest();
+                this._importLoginPage();
             },
-            _onLoginStamp: function() {
-                if(!this.loggedin) {
-                    this.importHref('src/raumreservierung-login/raumreservierung-login.html', this._onPageImportEnd, this._onPageImportError, true);
-                    this._onPageImportStart();
-                    this.fire('push', [this.nodeName, "showing template for login"]);
-                }
-
-            },
-            _onRedirectStamp: function() {
-                if(this.loggedin) {
-                    this.fire('push', [this.nodeName, "showing template for redirect"]);
-                    this.redirectStamped = true;
-                }
-            },
-            _onRequest: function() {
-                this.$.loadIndicator.center();
-                this.$.loadIndicator.open();
-            },
-            _onResponse: function() {
-                this.$.loadIndicator.close();
-                this.response = this.$.mainRequest.lastResponse;
-                if(this.response.success) {
-                    this.username = this.response.data.name;
-                    switch(this.response.data.type){
-                        case "1":
-                            this.literalType = "Administrator";
-                            break;
-                        case "2":
-                            this.literalType = "Nutzerverwaltungs";
-                            break;
-                        case "3":
-                            this.literalType = "Lehrer";
-                            break;
-                    }
-                    this.loggedin = (this.response.data) ? this.response.data.loggedin : false;
-                    if(this.redirectStamped){
-                        this._redirect();
-                    } else {
-                        this.$.redirectTemplate.addEventListener('dom-change', function() {
-                            this._redirect();
-                        }.bind(this));
-                    }
-                } else {
-                    this.loggedin = false;
-                    this.$.errorContent.innerHTML = '<h2>Fehler!</h2><p style="color: red;">'+this.response.message+'</p>';
-                    this.$.errorDialog.center();
-                    this.$.errorDialog.open();
-                }
-
-            },
-            _onError: function() {
-                this.$.loadIndicator.close();
-            },
-            _onPageImportStart: function() {
-                if(this.$$('#pageLoadIndicator')) {
-                    this.$$('#pageLoadIndicator').active = true;
-                }
+            _importLoginPage: function() {
+                this.$.pageLoadIndicator.active = true;
+                this.importHref('src/raumreservierung-login/raumreservierung-login.html', this._onPageImportEnd, this._onPageImportError, true);
             },
             _onPageImportError: function() {
-                if(this.$$('#pageLoadIndicator')) {
-                    this.$$('#pageLoadIndicator').active = false;
-                }
+                this.$.pageLoadIndicator.active = false;
                 this.$.errorContent.innerHTML = '<h2>Fehler!</h2><p style="color:red">Es ist ein Fehler beim Laden des Log-In - Elements aufgetreten!</p>';
                 this.$.errorDialog.center();
                 this.$.errorDialog.open();
             },
             _onPageImportEnd: function() {
-                if(this.$$('#pageLoadIndicator')) {
-                    this.$$('#pageLoadIndicator').active = false;
-                }
-                this.$$('#contentCard').getElementsByClassName('card-content')[0].innerHTML = "<raumreservierung-login></raumreservierung-login>";
-            },
-            _redirect: function() {
-                this.$$('#redirectDialog').open();
-
-                switch(this.response.data.type){
-                    case "1":
-                        window.location = "../main/admin/";
-                        break;
-                    case "2":
-                        window.location = "../main/management";
-                        break;
-                    case "3":
-                        window.location = "../main/teacher";
-                        break;
-                    default:
-                        this.$$('#redirectDialog').close();
-                        this.$.errorContent.innerHTML = '<p style="color:red;">Der Typ Ihres Accounts konnte nicht ermittelt werden!</p>';
-                        this.$.errorDialog.center();
-                        this.$.errorDialog.open();
-                        // To not show a blank page!
-                        this.loggedin = false;
-                }
+                this.$.pageLoadIndicator.active = false;
+                this.$.contentCard.getElementsByClassName('card-content')[0].innerHTML = "<raumreservierung-login></raumreservierung-login>";
             },
             _openReportForm: function() {
                 this.$.errorFormDialog.open();
@@ -312,7 +193,7 @@
                     // Because the element needs (even if short) time to render itself
                     this.$.errorFormDialog.center();
                 }, 50);
-                this.fire('pageLoad', this.$$('reporting-form').nodeName);
+                this.fire('pageLoad', this.$.reporting-form.nodeName);
             },
             _onErrorPageLoadError: function() {
                 this.$.errorFormDialog.close();
@@ -322,7 +203,7 @@
             },
             closeErrorReport: function() {
                 this.$.errorFormDialog.close();
-            },
+            }
         });
     </script>
 

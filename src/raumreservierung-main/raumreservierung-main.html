@@ -3,6 +3,7 @@
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
 <dom-module id="raumreservierung-main">
   <template>
@@ -48,10 +49,19 @@
       </div>
     </paper-dialog>
 
+    <iron-ajax id="userDataRequest"
+               url="../../backend/api/main-ajax.php"
+               method="POST"
+               content-type="application/x-www-form-urlencoded"
+               handle-as="json"
+               timeout="5000"
+               debounce-duration="300"
+               last-response="{{response}}"></iron-ajax>
+
     <iron-pages id="pages" selected="{{selected}}">
 
       <!-- Main Start Page -->
-      <raumreservierung-landingpage></raumreservierung-landingpage>
+      <raumreservierung-landingpage response="{{response}}"></raumreservierung-landingpage>
       <!-- E-Mail Confirmation -->
       <raumreservierung-email-confirmation></raumreservierung-email-confirmation>
 
@@ -69,28 +79,39 @@
                 type: String,
                 observer: '_onHashChange'
             },
-            selected: Number
+            selected: Number,
+            response: Object
         },
 
         listeners: {
             'push':'_pushToLog',
-            'pageLoad': '_onComponentLoaded'
+            'pageLoad': '_onComponentLoaded',
+            'userDataRequest.request':'_onRequest',
+            'userDataRequest.response':'_onResponse',
+            'userDataRequest.error':'_onError'
         },
 
         ready: function() {
             this.fire('pageLoad', this.nodeName);
-            switch(this.selected){
-                case 0:
-                    this.loadMainPage();
-                    break;
-                case 1:
-                    this.loadEmailPage();
-                    break;
-                default:
-                    this.loadMainPage();
-                    this.select(0);
-                    break;
-            }
+
+            this.$.userDataRequest.body = "r=getSessionData";
+            this.$.userDataRequest.generateRequest();
+        },
+        _onRequest: function() {
+            this.$.loadIndicator.center();
+            this.$.loadIndicator.open();
+        },
+        _onResponse: function() {
+            this.$.loadIndicator.close();
+            this.response = this.$.userDataRequest.lastResponse;
+            this.loggedin = (this.response.data) ? this.response.data.loggedin : false;
+            if(this.loggedin === true)
+                this._redirect();
+            else
+                this._loadPages();
+        },
+        _onError: function() {
+            this.$.loadIndicator.close();
         },
         _onHashChange: function() {
             switch(this.hash){
@@ -124,6 +145,22 @@
             this.$.errorDialog.center();
             this.$.errorDialog.open();
         },
+        _loadPages: function() {
+            switch(this.selected){
+                case 0:
+                    this.loadMainPage();
+                    this.$.pages.select(0);
+                    break;
+                case 1:
+                    this.loadEmailPage();
+                    this.$.pages.select(1);
+                    break;
+                default:
+                    this.loadMainPage();
+                    this.$.pages.select(0);
+                    break;
+            }
+        },
         loadEmailPage: function() {
             this.$.loadIndicator.open();
             this.importHref('src/raumreservierung-email-confirmation/raumreservierung-email-confirmation.html', this._onEmailLoaded, this._onEmailLoadError, true);
@@ -139,6 +176,28 @@
         },
         _onComponentLoaded: function(e) {
             console.log("["+e.detail+"] component loaded and ready");
+        },
+        _redirect: function() {
+            this.$.loadIndicator.open();
+
+            switch(this.response.data.type){
+                case "1":
+                    window.location = "main/admin/";
+                    break;
+                case "2":
+                    window.location = "main/management";
+                    break;
+                case "3":
+                    window.location = "main/teacher";
+                    break;
+                default:
+                    this.$.loadIndicator.close();
+                    this.$.errorContent.innerHTML = '<p style="color:red;">Der Typ Ihres Accounts konnte nicht ermittelt werden!</p>';
+                    this.$.errorDialog.center();
+                    this.$.errorDialog.open();
+                    this._loadPages();
+                    break;
+            }
         }
     });
   </script>
