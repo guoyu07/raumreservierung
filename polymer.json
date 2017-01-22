@@ -16,7 +16,8 @@
     "src/raumreservierung-admin/src/**/*",
     "img/*",
     "src/raumreservierung-admin/img/*",
-    "backend/**/**/*"
+    "backend/**/**/*",
+    ".htaccess"
   ],
   "includeDependencies": [
     "bower_components/webcomponentsjs/webcomponents-lite.min.js"

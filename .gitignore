@@ -1,3 +1,4 @@
 .idea
 /localutilities/splank.xml
 /localutilities/splanr.xml
+.build/
