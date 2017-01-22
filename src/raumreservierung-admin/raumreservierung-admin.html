@@ -9,6 +9,10 @@
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
 
 <dom-module id="raumreservierung-admin">
   <template>
@@ -53,18 +57,61 @@
       #page4 h1, #page4 p{
         text-align: center;
       }
+      .paper-item-link {
+        color: inherit;
+        text-decoration: none;
+      }
+      paper-icon-item {
+        --paper-item: {
+          background-color: #F5F5F5;
+        }
+      }
+      paper-menu {
+        background-color: #F5F5F5;
+      }
+      paper-icon-item:hover {
+        cursor: pointer;
+      }
+      .navHeader {
+        color: #212121;
+        font-size: 22px;
+        margin: 0 auto;
+        text-align: center;
+        padding: 5px 0;
+        width: auto;
+        text-decoration: none;
+      }
     </style>
 
     <paper-drawer-panel force-narrow disable-edge-swipe disable-swipe id="drawerPanel">
 
       <div drawer>
 
-        <div style="text-align:center" id="drawerSpinnerWrapper">
-          <paper-spinner active id="drawerSpinner" style="margin: 0 auto;text-align:center;padding-top: 10px;"></paper-spinner>
-          <p style="color: #757575">Loading content...</p>
-        </div>
+        <paper-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
+          <paper-icon-button icon="arrow-back" paper-drawer-toggle style="color: #212121;"></paper-icon-button>
+          <div class="title navHeader">Navigation</div>
+        </paper-toolbar>
 
-        <admin-app-drawer-content></admin-app-drawer-content>
+        <paper-menu>
+
+            <paper-icon-item id="logoutButton">
+              <iron-icon icon="power-settings-new" item-icon></iron-icon>
+              <paper-item-body two-line>
+                <div>Ausloggen</div>
+                <div secondary>Abmelden und zur Startseite</div>
+              </paper-item-body>
+            </paper-icon-item>
+          <a href="https://www.gymnasium-klotzsche.de/cont/cms/front_content.php?idcat=121" target="_self" class="paper-item-link">
+            <paper-icon-item>
+              <iron-icon icon="gavel" item-icon></iron-icon>
+              <paper-item-body two-line>
+                <div>Impressum</div>
+                <div secondary>Impressum des Gymnasium Dresden-Klotzsche</div>
+              </paper-item-body>
+            </paper-icon-item>
+          </a>
+
+        </paper-menu>
 
       </div>
 
@@ -107,7 +154,7 @@
             <div id="page3" class="layout vertical center">
               <paper-card>
                 <paper-spinner active></paper-spinner>
-                <p style="color: #757575;">Loading Error-Messages...<br></p>
+                <p style="color: #757575;">Loading Errormanager...<br></p>
               </paper-card>
               <admin-error-reports></admin-error-reports>
             </div>
@@ -150,22 +197,12 @@
       },
 
       listeners: {
-          'pageLoaded':'_onPageLoad' // Custom event fired by Elements when ready :)
+          'pageLoaded':'_onPageLoad', // Custom event fired by Elements when ready :)
+          'logoutButton.tap': '_onLogoutRequest'
       },
 
         ready: function() {
           this.fire('pageLoad', this.nodeName);
-          // Asynchronous load of Drawer content
-          this.importHref('src/raumreservierung-admin/src/admin-app-drawer-content/admin-app-drawer-content.html', this._onDrawerLoad, null, true);
-        },
-        _onDrawerLoad: function(){
-            this.$.drawerSpinner.active = false;
-            this.$.drawerSpinnerWrapper.style.display = "none";
-        },
-        _onPathChange: function(){
-            if (this.path.includes('logout')) {
-                window.location += '#logout';
-            }
         },
         _onTabChanged: function(){
             this.selectedPage = this.selectedTab;
@@ -249,6 +286,10 @@
                     this.$.page3.querySelector('paper-card').innerHTML = errorText;
             }
 
+        },
+        _onLogoutRequest: function() {
+            this.$.drawerPanel.closeDrawer();
+            location.hash = "logout";
         }
 
     });
