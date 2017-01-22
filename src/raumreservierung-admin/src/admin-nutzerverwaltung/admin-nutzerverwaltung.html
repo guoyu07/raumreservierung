@@ -257,14 +257,12 @@
                 applyFilter: function(){
                     // Moved the whole filter definition to this part because it has to be generated
                     // With the new input value
-                    //
-                    // @nsiv predefined before usage for compatibility reasons with the "this" - Object :)
-                    var nsiv = this.$.nameSearchInput.value;
-                    this.$.usertable.filter = function(item, key, items, value=nsiv){
+                    this.$.usertable.filter = function(item, key, items){
+                        var value = this.$.nameSearchInput.value;
                         if(item.name.includes(value) || items.name == value){
                             return(item);
                         }
-                    };
+                    }.bind(this);
                     this.$.usertable.reload();
                 },
                 triggerDeletion: function(){
