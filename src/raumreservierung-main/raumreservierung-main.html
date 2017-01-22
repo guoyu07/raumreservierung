@@ -98,7 +98,7 @@
             },
             selected: {
                 type: Number,
-                observer: '_loadPages'
+                observer: '_onSelectedChanged'
             },
             response: Object,
             landingPageLoaded: {
@@ -124,7 +124,8 @@
             'logoutRequest.request': '_onLogoutRequest',
             'logoutRequest.response': '_onLogoutResponse',
             'logoutRequest.error': '_onLogoutError',
-            'goToPage': '_onUserPageRedirect'
+            'goToPage': '_onUserPageRedirect',
+            'change-theme-color': '_onThemeColorChange' // change content of "theme-color" meta
         },
 
         ready: function() {
@@ -132,6 +133,26 @@
 
             this.$.userDataRequest.body = "r=getSessionData";
             this.$.userDataRequest.generateRequest();
+        },
+        _onSelectedChanged: function() {
+            this._loadPages();
+
+            // Set Theme Colors
+            var color = "#689F38";
+            switch(this.selected){
+                case 0:
+                    color = "#689F38";
+                    break;
+                case 1:
+                    color = "#689F38";
+                    break;
+                case 2:
+                    color = "#3F51B5";
+                    break;
+                default:
+                    color = "#689F38";
+            }
+            this.fire('change-theme-color', color);
         },
         _onRequest: function() {
             this.$.loadIndicator.center();
@@ -334,6 +355,16 @@
         _triggerLogout: function() {
             this.$.logoutRequest.body = "r=logout";
             this.$.logoutRequest.generateRequest();
+        },
+        _onThemeColorChange: function(e) {
+            var color = e.detail;
+            var metas = document.getElementsByTagName('meta');
+            for(var i=0; i < metas.length; i++) {
+                if(metas[i].name == "theme-color") {
+                    metas[i].content = e.detail;
+                    this.fire('push', [this.nodeName, "Changed Theme-Color to "+color]);
+                }
+            }
         }
     });
   </script>
