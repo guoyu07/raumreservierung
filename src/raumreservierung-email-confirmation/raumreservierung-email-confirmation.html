@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <dom-module id="raumreservierung-email-confirmation">
 
     <template>
@@ -9,7 +10,11 @@
             }
         </style>
 
-        <h2>Hello World</h2>
+        <paper-card heading="Hello World">
+            <div class="card-content">
+                <p><i>Dieser Inhalt ist noch in Arbeit und daher nicht verf&uuml;gbar!</i></p>
+            </div>
+        </paper-card>
 
     </template>
 
@@ -24,6 +29,10 @@
 
             listeners: {
 
+            },
+
+            ready: function() {
+                this.fire('pageLoad', this.nodeName);
             }
 
         });

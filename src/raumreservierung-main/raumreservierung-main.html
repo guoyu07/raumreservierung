@@ -5,6 +5,7 @@
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 
 <dom-module id="raumreservierung-main">
   <template>
@@ -28,9 +29,26 @@
         text-decoration: none;
         color: #212121;
       }
+      .toastButton {
+        text-transform: none;
+        color: #eeff41;
+      }
     </style>
 
     <iron-location hash="{{hash}}" id="locator"></iron-location>
+
+    <!-- Toast if new content is available -->
+    <paper-toast id="newContentToast"
+                 text="Es wurden neue Inhalte heruntergeladen!"
+                 duration="-1" always-on-top with-backdrop
+                 no-cancel-on-outside-click
+                 no-cancel-on-esc-key>
+      <br>
+      <div style="margin: 0 auto; text-align:center;">
+        <paper-button class="toastButton" id="toastReloadButton">Jetzt anzeigen</paper-button>
+        <paper-button class="toastButton" id="toastCloseButton">Sp&auml;ter</paper-button>
+      </div>
+    </paper-toast>
 
     <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
       <h2>Inhalte werden geladen...</h2>
@@ -125,7 +143,10 @@
             'logoutRequest.response': '_onLogoutResponse',
             'logoutRequest.error': '_onLogoutError',
             'goToPage': '_onUserPageRedirect',
-            'change-theme-color': '_onThemeColorChange' // change content of "theme-color" meta
+            'change-theme-color': '_onThemeColorChange',        // Change content of "theme-color" meta
+            'new-content-available': '_onNewContentAvailable',   // Event Fired by the precache - serviceWorker
+            'toastReloadButton.tap': '_reloadPage',
+            'toastCloseButton.tap': 'closeNewContentToast'
         },
 
         ready: function() {
@@ -359,6 +380,16 @@
                     metas[i].content = e.detail;
                 }
             }
+        },
+        _onNewContentAvailable: function() {
+            this.fire('push', [this.nodeName, "received new-content-available - Event"]);
+            this.$.newContentToast.open();
+        },
+        _reloadPage: function() {
+            location.reload();
+        },
+        closeNewContentToast: function() {
+            this.$.newContentToast.close();
         }
     });
   </script>
