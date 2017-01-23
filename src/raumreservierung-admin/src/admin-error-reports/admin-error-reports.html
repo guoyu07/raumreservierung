@@ -293,7 +293,8 @@ Page for managing Error-Reports
         },
         _onResetChange: function() {
           if(this.reset == true){
-              this.data = Object({});
+              if(this.data)
+                  this.data = Object({});
               this.fire('push', [this.nodeName, "data reset"]);
               this.reset = false;
           }

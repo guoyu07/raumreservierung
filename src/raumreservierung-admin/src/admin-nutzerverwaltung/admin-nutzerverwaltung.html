@@ -352,7 +352,8 @@
                     if(this.reset == true) {
                         this.$.usertable.reset();
                         this.fire('push', [this.nodeName, "table reset"]);
-                        this.users.data = Object({});
+                        if(this.users.data)
+                                this.users.data = Object({});
                         this.fire('push', [this.nodeName, "data reset"]);
                         this.reset = false;
                     }
