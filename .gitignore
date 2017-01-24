@@ -3,6 +3,5 @@
 /localutilities/splanr.xml
 /build/
 
-# for template see: /dbconf_template.php
-dbconf_localhost.php
+# for template see: /backend/db/conf/dbconf_template.php
 backend/db/conf/dbconf.php
