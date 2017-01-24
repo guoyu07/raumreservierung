@@ -283,7 +283,7 @@
             var errorPlain = JSON.stringify(errorObj);
 
             var errorText = '<p style="color: red;">Das angeforderte Element konnte nicht geladen werden oder wurde nicht gefunden.<br>Bitte &uuml;berpr&uuml;fen Sie den Pfad zu Seite '+(this.selectedPage+1)+'</b>!</p>';
-            errorText += '<p style="word-break: break-all;">'+errorPlain+'</p>';
+            errorText += '<p style="word-wrap: break-word;">'+errorPlain+'</p>';
 
             switch (errorObj.selectedPage) {
                 case 0:
