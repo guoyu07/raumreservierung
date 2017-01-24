@@ -17,8 +17,7 @@
     "backend/**/**/*",
     ".htaccess",
     "manifest.json",
-    "LICENSE",
-    "sw-import.js"
+    "LICENSE"
   ],
   "includeDependencies": [
     "bower_components/webcomponentsjs/webcomponents-lite.min.js"
