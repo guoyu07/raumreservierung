@@ -2,4 +2,7 @@
 /localutilities/splank.xml
 /localutilities/splanr.xml
 /build/
+
+# for template see: /dbconf_template.php
 dbconf_localhost.php
+backend/db/
