@@ -3,7 +3,7 @@
   "short_name": "Raumreservierung",
   "description": "Raumreservierung des Gymnasiums Dresden-Klotzsche",
   "start_url": ".",
-  "background_color": "#F1F8E9",
+  "background_color": "#F5F5F5",
   "theme_color": "#8BC34A",
   "icons": [
     {
