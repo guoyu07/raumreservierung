@@ -26,7 +26,7 @@
 
         if(!isset($result['error'])){
             if($result['login'] === true){
-                echo json_encode(array("success" => true, "type" => $_SESSION['acctype']));
+                echo json_encode(array("success" => true, "type" => $_SESSION['acctype'], "status" => $_SESSION['accstatus']));
             } else {
                 echo json_encode(array("success" => false, "message" => $result['message']));
             }

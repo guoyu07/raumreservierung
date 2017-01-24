@@ -36,7 +36,14 @@
 
         public function logout()
         {
-            unset($_SESSION['loggedin']);
+            // Delete Session, not just its content
+            // Idea from php.net/manual/de/function.session_destroy.php
+            $_SESSION = array();
+            if(ini_get('session.use_cookies')) {
+                $cp = session_get_cookie_params();
+                setcookie(session_name(), '', time() - 42000, $cp['path'], $cp['domain'], $cp['secure'], $cp['httponly']);
+            }
+
             session_destroy();
             return true;
         }
