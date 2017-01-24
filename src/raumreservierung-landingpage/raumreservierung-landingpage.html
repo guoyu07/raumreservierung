@@ -50,6 +50,16 @@
             paper-icon-item:hover {
                 cursor: pointer;
             }
+            @media (max-width: 500px){
+                #errorFormDialog {
+                    width: 80%;
+                }
+            }
+            @media (min-width: 499px){
+                #errorFormDialog{
+                    width: 400px;
+                }
+            }
         </style>
 
         <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>

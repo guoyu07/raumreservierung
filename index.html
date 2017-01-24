@@ -104,7 +104,8 @@
             });
     </script>
 
-    <!-- import serviceWorker to register & control precache events -->
+    <!-- import serviceWorker to register & control precache events
+
     <script>
         /**
          * Copyright 2015 Google Inc. All rights reserved.
@@ -131,6 +132,7 @@
             // *Don't* register service worker file in, e.g., a scripts/ sub-directory!
             // See https://github.com/slightlyoff/ServiceWorker/issues/468
             navigator.serviceWorker.register('service-worker.js').then(function(reg) {
+                // for manually updating the SW on every page load (to check for different checksums)
                 // updatefound is fired if service-worker.js changes.
                 reg.onupdatefound = function() {
                     // The updatefound event implies that reg.installing is set; see
@@ -160,13 +162,13 @@
                         }
                     };
                 };
-                // for manually updating the SW on every page load (to check for different checksums)
-                reg.update();
             }).catch(function(e) {
                 console.error('Error during service worker registration:', e);
             });
         }
     </script>
+
+    -->
 
     <link rel="import" href="src/raumreservierung-main/raumreservierung-main.html">
 

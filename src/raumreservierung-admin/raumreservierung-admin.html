@@ -247,6 +247,25 @@
         },
         _onLoadStart: function() {
             this._freeTabs();
+            var e;
+            switch(this.selectedTab){
+                case 0:
+                    // Trigger Data Reload on Tab Change if error on initial load
+                    e = this.$$('admin-nutzerverwaltung');
+                    if(e.users)
+                        if(!e.users.success)
+                            e.reloadData = true;
+                    break;
+                case 1:
+                    break;
+                case 2:
+                    // Trigger Data Reload on Tab Change if error on initial load
+                    e = this.$$('admin-error-reports');
+                    if(e.data)
+                        if(!e.data.success)
+                            e.reloadData = true;
+                    break;
+            }
         },
         _onPageLoad: function() {
             this._freeTabs();

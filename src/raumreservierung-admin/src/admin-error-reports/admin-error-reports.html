@@ -22,7 +22,7 @@ Page for managing Error-Reports
         margin: 0 auto;
         width: 100%;
 
-        --app-grid-columns: auto;
+        --app-grid-columns: 1;
         --app-grid-item-height: 100%;
         --app-grid-gutter: 10px;
         --app-grid-expandible-item-columns: auto;
@@ -36,8 +36,8 @@ Page for managing Error-Reports
       .errorCard {
         --paper-card: {
           @apply(--layout-vertical);
-          @apply(--layout-flex);
-          padding: 0 10px;
+          @apply(--layout-flex-auto);
+          padding: 10px auto;
           word-break: break-all;
         }
       }
@@ -46,6 +46,7 @@ Page for managing Error-Reports
         list-style: none;
         margin: 0 auto;
         padding: 0;
+        @apply(--layout-vertical);
       }
       .item {
         min-width: 215px;
@@ -53,7 +54,9 @@ Page for managing Error-Reports
       .contentCard{
         --paper-card: {
           @apply(--layout-vertical);
-          @apply(--layout-flex);
+          @apply(--layout-flex-auto);
+          padding: 10px auto;
+          word-break: break-all;
         }
       }
       .card-header{
@@ -119,9 +122,9 @@ Page for managing Error-Reports
     <div id="content">
 
       <iron-ajax id="dataRequest"
-                 url="../../../../backend/api/admin-ajax.php"
+                 url="../../../../backend/api/admin-error-api.php"
                  method="POST"
-                 body=""
+                 body="request=getErrors"
                  content-type="application/x-www-form-urlencoded"
                  handle-as="json"
                  debounce-duration="300"
@@ -181,13 +184,12 @@ Page for managing Error-Reports
             </div>
           </template>
       </template>
-
       <template is="dom-if" if="{{!data.success}}">
-        <paper-card heading="Fehler bei der Anfrage!" class="errorCard">
+        <paper-card heading="Es ist ein Fehler aufgetreten!" class="contentCard" style="padding: 10px;">
           <p>
             Der Server hat einen Fehler gemeldet:<br>
             <span style="color: red;">
-              {{data.message}}
+              [[data.message]]
             </span>
           </p>
         </paper-card>
@@ -211,12 +213,17 @@ Page for managing Error-Reports
 
       properties: {
         data: {
-          type: Object
+          type: Object,
         },
         reset: {
             type: Boolean,
             value: false,
             observer: '_onResetChange'
+        },
+        reloadData: {
+            type: Boolean,
+            value: false,
+            observer: '_onExtRefresh'
         }
       },
 
@@ -224,8 +231,9 @@ Page for managing Error-Reports
           this.fire('pageLoaded');
           this.fire('pageLoad', this.nodeName);
 
-          this.$.dataRequest.body = "request=getErrors";
-          this.$.dataRequest.generateRequest();
+          this.users = Object({});
+
+          this._refreshErrorData();
         },
         _onRequest: function() {
 
@@ -235,6 +243,7 @@ Page for managing Error-Reports
 
         },
         _onResponse: function() {
+
           this.data = this.$.dataRequest.lastResponse;
           this.$.loadIndicator.close();
           this.$.errorbox.innerHTML = "";
@@ -293,10 +302,17 @@ Page for managing Error-Reports
         },
         _onResetChange: function() {
           if(this.reset == true){
-              if(this.data)
+              if(this.data){
                   this.data = Object({});
+              }
               this.fire('push', [this.nodeName, "data reset"]);
               this.reset = false;
+          }
+        },
+        _onExtRefresh: function() {
+          if(this.reloadData == true){
+              this._refreshErrorData();
+              this.reloadData = false;
           }
         }
     });

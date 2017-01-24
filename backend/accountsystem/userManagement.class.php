@@ -330,7 +330,8 @@ HTML;
             $res = $this->pdo->query($sql)->fetchAll();
 
             for($i=0;$i < count($res);$i++){
-                $res[$i]['text'] = nl2br(preg_replace("/::NEWLINE::/", ' --- ', $res[$i]['text']));
+                $res[$i]['text'] = preg_replace("/::NEWLINE::/", ' --- ', $res[$i]['text']);
+                $res[$i]['text'] = preg_replace("/::AMP::/", "&", $res[$i]['text']);
                 $res[$i]['created'] = date("d.m.Y - H:i", strtotime($res[$i]['created']));
             }
 

@@ -23,86 +23,16 @@
         }
 
         //TODO: Implement status observing in AJAX calls xD
-        public function initialize()    //Deprecated, will be moved to session management API
-        {
-            // :: START LoginSystem Start Routine ::
-
-            if(empty($_SESSION['loggedin']) || !isset($_SESSION['loggedin'])){
-                session_unset();
-                $_SESSION['loggedin'] = false;
-            } elseif($_SESSION['loggedin'] === true && isset($_SESSION['acctype']) && isset($_SESSION['accstatus'])) {
-                if($_SESSION['accstatus'] == 1){
-
-
-
-
-                } elseif($_SESSION['accstatus'] == 2) {
-
-                    if(isset($_SESSION['last_status_change'])){
-
-                        $change = strtotime($_SESSION['last_status_change']);
-                        $expire = $change + (3600*11);
-                        $now = time();
-
-                        if($expire > $now){
-                            //Still active
-                            if(str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) !== "/raumreservierung/project/main/notconfirmed"){
-                                header('Location: /raumreservierung/project/main/notconfirmed');
-                            }
-                        } else {
-                            //Deactivation routine
-                            require_once('userManagement.class.php');
-                            $um = new userManagement($this->pdo);
-                            if($um !== false) {
-                                $um->deactivateUser($_SESSION['name']);
-                            }
-                            if(str_replace('/index.php', '', $_SERVER['SCRIPT_NAME']) !== "/raumreservierung/project/main/notconfirmed"){
-                                header('Location: /raumreservierung/project/main/notconfirmed');
-                            }
-                        }
-
-                    } else {
-                        $this->logout();
-                        if(str_replace('/index.php', '', $_SERVER['SCRIPT_NAME'] !== "/raumreservierung/project")){
-                            header('Location: /raumreservierung/project');
-                        }
-                    }
-
-                } elseif($_SESSION['accstatus'] == 3){
-                    $file = str_replace('/index.php','', $_SERVER['SCRIPT_NAME']);
-                    switch($_SESSION['acctype']) {
-                        case "1":
-                            //Global Admin
-                            $url = "/raumreservierung/project/main/admin";
-                            if($file != $url && $file != $url."#raumverwaltung" && $file != $url."#nutzerverwaltung")
-                            {
-                                header('Location: '.$url);
-                            }
-                            break;
-                        case "2":
-                            //User Management
-                            $url = "/raumreservierung/project/main/management";
-                            if($file != $url)
-                            {
-                                header('Location: '.$url);
-                            }
-                            break;
-                        case "3":
-                            //Teacher
-                            $url = "/raumreservierung/project/main/teacher";
-                            if($file != $url)
-                            {
-                                header('Location: '.$url);
-                            }
-                            break;
-                    }
-                }
-            } elseif($_SESSION['loggedin'] !== true && $_SERVER['SCRIPT_NAME'] != "/raumreservierung/project/index.php") {
-                header('Location: /raumreservierung/project/');
-            }
-
-            // :: END LoginSystem Start Routine ::
-        }
+        /**
+         * create function
+         * accstatus 1 --> #activate-account
+         * accstatus 2 --> #waiting-for-confirmation
+         * accstatus 3 --> _redirectUserPage()
+         *  --> UserPage by acctype
+         *      acctype 1 --> Admin
+         *      acctype 2 --> UserManagement
+         *      acctype 3 --> Teacher
+         */
 
         public function logout()
         {

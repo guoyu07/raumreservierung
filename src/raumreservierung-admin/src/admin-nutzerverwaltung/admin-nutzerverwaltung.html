@@ -24,7 +24,7 @@
         </style>
 
         <iron-ajax id="dataRequest"
-                   url="../../../../backend/api/admin-ajax.php"
+                   url="../../../../backend/api/admin-user-api.php"
                    method="POST"
                    body="request=getAllUsers"
                    content-type="application/x-www-form-urlencoded"
@@ -134,12 +134,19 @@
 
                 properties: {
                     selectedRows: Array,
-                    users: Object,
+                    users: {
+                        type: Object
+                    },
                     lastClicked: Number,
                     reset: {
                         type: Boolean,
                         value: false,
                         observer: '_onResetChange'
+                    },
+                    reloadData: {
+                        type: Boolean,
+                        value: false,
+                        observer: '_onExtRefresh'
                     }
                 },
 
@@ -186,16 +193,7 @@
                         }
 
                     } else {
-                        if(!Number(this.users.accstatus).empty) {
-                            switch(this.users.accstatus){
-                                case 1:
-                                    location.hash = "activation";
-                                    break;
-                                case 2:
-                                    location.hash = "waiting-for-confirmation";
-                                    break;
-                            }
-                        }
+
                         this.$.errorbox.innerHTML = "Es ist ein Fehler beim Abrufen der Daten aufgetreten:<br>"+this.users.message;
                         this.$.usertable.style.display = "none";
                         this.$.addUserButton.style.display = "none";
@@ -229,8 +227,6 @@
                         } else {
                             this.$.errorbox.innerHTML = "Es ist ein Fehler aufgetreten: Bitte &uuml;berpr&uuml;fen Sie Ihre Eingaben!";
                         }
-                    } else {
-                        console.warn("Node Data invalid", e.target, inp.className);
                     }
 
                 },
@@ -293,17 +289,17 @@
                         names.push(selectedRows[i].name);
                     }
 
+                    this.$.usertable.deselectAll();
+
                     ajax.body = "request=delete&names="+JSON.stringify(names);
                     ajax.generateRequest();
 
-                    this.$.usertable.deselectAll();
-
                 },
                 updateData: function(){
+                    this.$.usertable.deselectAll();
                     var ajax = this.$.dataRequest;
                     ajax.body = "request=getAllUsers";
                     ajax.generateRequest();
-                    this.$.usertable.deselectAll();
                 },
                 cancelDeletion: function(){
                     var cdc = this.$.cdc;
@@ -350,12 +346,20 @@
                 },
                 _onResetChange: function() {
                     if(this.reset == true) {
-                        this.$.usertable.reset();
-                        this.fire('push', [this.nodeName, "table reset"]);
-                        if(this.users.data)
+                        if(this.users){
+                            if(this.users.data){
                                 this.users.data = Object({});
-                        this.fire('push', [this.nodeName, "data reset"]);
+                                this.$.usertable.reload();
+                                this.fire('push', [this.nodeName, "data reset"]);
+                            }
+                        }
                         this.reset = false;
+                    }
+                },
+                _onExtRefresh: function() {
+                    if(this.reloadData == true){
+                        this.updateData();
+                        this.reloadData = false;
                     }
                 }
             });

@@ -3,7 +3,7 @@
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/paper-spinner/paper-spinner-lite.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 
 <dom-module id="reporting-form">
 
@@ -46,10 +46,25 @@
                 font-size: 22px;
                 margin: 30px auto 15px auto;
             }
+            #areaWrapper, #areaWrapper > *{
+                max-height: 200px;
+                overflow-y: auto;
+                margin: 0 auto;
+                padding: 0;
+            }
+
+            #descInput, #dynamicInput, #linkInput{
+                padding: 0 10px;
+            }
+            /** Hide Scrollbars on Webkit browsers for better visual experience */
+            #descInput::-webkit-scrollbar{ display: none; }
+            #descInput{
+                overflow: auto;
+            }
         </style>
 
         <iron-ajax id="sendReport"
-                   url="/raumreservierung/project/backend/api/sendError.php"
+                   url="../../backend/api/sendError.php"
                    method="post"
                    content-type="application/x-www-form-urlencoded"
                    handle-as="json"
@@ -63,14 +78,15 @@
             <p class="header">Kontaktformular</p>
 
             <paper-input id="dynamicInput" label="" allowed-pattern="[A-Za-z0-1.-_ÖöÄäÜüß@~:;,]" auto-validate required></paper-input>
-            <paper-input id="linkInput" label="Seite des Fehlers" maxlength="42" error-message="Bitte Eingaben &uuml;berpr&uuml;fen!" allowed-pattern="[A-Za-z0-9_\-#/?.=]"><div prefix>.../project/</div></paper-input>
-            <paper-textarea id="descInput" type="text" label="Erkl&auml;rung des Fehlers" required auto-validate error-message="Bitte &uuml;berpr&uuml;fen Sie Ihre Eingaben!" rows="2" max-rows="6" type="text" char-counter maxlength="2048"></paper-textarea>
-
+            <paper-input id="linkInput" label="Seite des Fehlers" maxlength="42" error-message="Bitte Eingaben &uuml;berpr&uuml;fen!" allowed-pattern="[A-Za-z0-9_\-#/?.=]"><div prefix>../</div></paper-input>
+            <div id="areaWrapper">
+                <paper-textarea id="descInput" type="text" label="Erkl&auml;rung des Fehlers" required auto-validate error-message="Bitte Eingaben &uuml;berpr&uuml;fen!" rows="2" max-rows="4" type="text" char-counter maxlength="2048"></paper-textarea>
+            </div>
             <div id="errorBox" style="margin-top: 26px; margin-bottom: 10px; text-align: center; color: red;"></div>
 
             <paper-button id="sendButton">Absenden</paper-button>
-
-            <paper-spinner-lite active id="spinner"></paper-spinner-lite>
+            <br>
+            <div style="text-align: center;margin:0 auto;width:100%;display:none;" id="spinner"><paper-spinner active></paper-spinner></div>
 
         </div>
 
@@ -128,7 +144,7 @@
 
                     var dynval = dyn.value;
                     var pval = page.value;
-                    var dval = String(desc.value).replace(/(?:\r\n|\r|\n)/g, '::NEWLINE::');
+                    var dval = String(desc.value).replace(/(?:\r\n|\r|\n)/g, '::NEWLINE::').replace(/&/g, '::AMP::');
 
                     if(this.loggedin) {
                         this.$.sendReport.body = "request=error&name="+dynval+"&msg="+dval+"&page="+pval;
