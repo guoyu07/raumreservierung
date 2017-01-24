@@ -144,6 +144,6 @@
             echo json_encode(array("success" => false, "message" => "Es sind zu wenig Daten angegeben worden!"));
         }
     } else {
-        echo json_encode(array("success" => false, "message" => "Sie müssen (als Administrator) eingeloggt sein, um diese Aktion durchführen zu können!"));
+        echo json_encode(array("success" => false, "message" => "Sie müssen (als Administrator) eingeloggt sein, um diese Aktion durchführen zu können!", "sessionError" => true));
 
     }

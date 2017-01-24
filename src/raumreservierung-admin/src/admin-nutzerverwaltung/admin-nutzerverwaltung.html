@@ -193,10 +193,15 @@
                         }
 
                     } else {
-
                         this.$.errorbox.innerHTML = "Es ist ein Fehler beim Abrufen der Daten aufgetreten:<br>"+this.users.message;
                         this.$.usertable.style.display = "none";
                         this.$.addUserButton.style.display = "none";
+
+                        if(this.users.sessionError){
+                            // Fire Session Error to host page
+                            this.fire('admin-page-session-error');
+                        }
+
                     }
 
                 },

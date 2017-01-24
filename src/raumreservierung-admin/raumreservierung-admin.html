@@ -207,7 +207,8 @@
 
       listeners: {
           'pageLoaded':'_onPageLoad', // Custom event fired by Elements when ready :)
-          'logoutButton.tap': '_onLogoutRequest'
+          'logoutButton.tap': '_onLogoutRequest',
+          'admin-page-session-error': '_onLogoutRequest'    // Fired by custom elements when session data is invalid
       },
 
         ready: function() {
@@ -303,12 +304,11 @@
             this.fire('push', [this.nodeName, "logout triggered"]);
             this.$$('#nutzerverwaltung-origin').reset = true;
             this.$$('#errorreport-origin').reset = true;
-            this.selectedPage = 0;
-            this.selectedTab = 0;
+            this.selectedPage = 3;
+            this.selectedTab = 3;
             this.$.drawerPanel.closeDrawer();
             location.hash = "logout";
         }
-
     });
   </script>
 </dom-module>

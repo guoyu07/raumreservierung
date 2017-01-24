@@ -248,6 +248,11 @@ Page for managing Error-Reports
           this.$.loadIndicator.close();
           this.$.errorbox.innerHTML = "";
 
+          if(!this.data.success && this.data.sessionError){
+              // Fire Session Error to host page
+              this.fire('admin-page-session-error');
+          }
+
         },
         _onAjaxError: function(e) {
 
