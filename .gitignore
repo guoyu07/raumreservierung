@@ -5,4 +5,4 @@
 
 # for template see: /dbconf_template.php
 dbconf_localhost.php
-backend/db/
+backend/db/conf/dbconf.php
