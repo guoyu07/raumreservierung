@@ -9,7 +9,8 @@
     "src/raumreservierung-email-confirmation/raumreservierung-email-confirmation.html",
     "src/raumreservierung-landingpage/raumreservierung-landingpage.html",
     "src/raumreservierung-login/raumreservierung-login.html",
-    "src/reporting-form/reporting-form.html"
+    "src/reporting-form/reporting-form.html",
+    "src/raumreservierung-email-confirmation/raumreservierung-email-confirmation.html"
   ],
   "sources": [
     "img/*",

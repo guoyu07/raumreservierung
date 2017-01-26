@@ -135,7 +135,8 @@
                 type: Boolean,
                 value: false,
                 observer: '_onNewContentAvailable'
-            }
+            },
+            query: String
         },
 
         listeners: {
@@ -158,6 +159,7 @@
 
             this.$.userDataRequest.body = "r=getSessionData";
             this.$.userDataRequest.generateRequest();
+
         },
         _onSelectedChanged: function() {
             this._loadPages();

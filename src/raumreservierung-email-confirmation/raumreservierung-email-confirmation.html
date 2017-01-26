@@ -1,6 +1,15 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/iron-location/iron-location.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <dom-module id="raumreservierung-email-confirmation">
 
     <template>
@@ -9,22 +18,91 @@
             :host {
                 display: block;
                 @apply(--layout-vertical);
+                --primary-color: #8BC34A;
+                --accent-color: #607D8B;
+                color: #212121;
+            }
+            .cardWrapper{
+                @apply(--layout-vertical);
             }
             paper-card {
                 --paper-card: {
-                    @apply(--layout-flex-auto);
                     @apply(--layout-self-center);
-                    max-width: 90%;
                     margin-top: 20px;
                 };
             }
+            .spinnerWrapper{
+                text-align: center;
+            }
+            .card-button{
+                color: #1976D2;
+            }
         </style>
 
-        <paper-card heading="E-Mail - Best&auml;tigung">
-            <div class="card-content">
-                <p><i>Diese Seite ist noch in Arbeit und daher nicht verf&uuml;gbar!</i></p>
+        <iron-location id="locator" query="{{query}}" dwell-time="2"></iron-location>
+
+        <iron-ajax id="confirmRequest"
+                   debounce-duration="300"
+                   url="../../backend/api/confirm-email.php"
+                   method="POST"
+                   content-type="application/x-www-form-urlencoded"
+                   handle-as="json"
+                   body="[[query]]"
+                   last-response="{{response}}"
+                   timeout="5000"></iron-ajax>
+
+        <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
+            <h2>Aktivierung, bitte warten...</h2>
+            <div class="spinnerWrapper"><paper-spinner active></paper-spinner></div>
+        </paper-dialog>
+
+        <paper-dialog id="errorDialog" with-backdrop>
+            <div id="errorContent">[[response.message]]</div>
+            <div class="buttons">
+                <paper-button dialog-confirm style="color: red;">OK</paper-button>
             </div>
-        </paper-card>
+        </paper-dialog>
+
+
+        <paper-header-panel mode="standard">
+            <paper-toolbar style="color: #212121;">
+                <paper-icon-button onclick="location.hash='index'" icon="arrow-back" style="margin-right: 12px;" title="Zur&uuml;ck zur Startseite"></paper-icon-button>
+                <div class="title" style="padding-bottom: 1px;">Account - Aktivierung</div>
+            </paper-toolbar>
+        </paper-header-panel>
+            <!-- DNYAMIC CONTENT -->
+
+            <template is="dom-if" if="{{response.success}}">
+              <div class="cardWrapper">
+                <paper-card>
+                    <div class="card-content">
+                        <h2>Aktivierung erfolgreich!</h2>
+                        <p style="color: #33691E;">
+                            [[response.message]]
+                        </p>
+                    </div>
+                    <div class="card-actions">
+                        <paper-button onclick="location.hash='index'" class="card-button">Jetzt einloggen!</paper-button>
+                    </div>
+                </paper-card>
+              </div>
+            </template>
+
+            <template is="dom-if" if="{{!response.success}}">
+              <div class="cardWrapper">
+                <paper-card>
+                    <div class="card-content">
+                        <h2>Es ist ein Fehler bei der Aktivierung aufgetreten:</h2>
+                        <p style="color: red;">
+                            [[response.message]]
+                        </p>
+                    </div>
+                    <div class="card-actions">
+                        <paper-button onclick="location.hash='index'" class="card-button">Zur Startseite</paper-button>
+                    </div>
+                </paper-card>
+              </div>
+            </template>
 
     </template>
 
@@ -34,17 +112,37 @@
             is: 'raumreservierung-email-confirmation',
 
             properties: {
-
+                response: {
+                    type: Object,
+                    reflectToAttribute: false,
+                    notify: false
+                },
+                query: String
             },
 
             listeners: {
-
+                'confirmRequest.request':'_onRequest',
+                'confirmRequest.response':'_onResponse',
+                'confirmRequest.error':'_onError'
             },
 
             ready: function() {
                 this.fire('pageLoad', this.nodeName);
+                this.$.locator.query = this.$.locator.query.toLowerCase();
+                this.$.confirmRequest.generateRequest();
+            },
+            _onRequest: function() {
+                this.$.loadIndicator.open();
+            },
+            _onResponse: function() {
+                this.$.loadIndicator.close();
+                this.response = this.$.confirmRequest.lastResponse;
+            },
+            _onError: function() {
+                this.$.loadIndicator.close();
+                this.$.errorContent.innerHTML = '<h2>Es ist ein Fehler aufgetreten:</h2><p style="color: red;">'+this.response.message+'</p>';
+                this.$.errorDialog.open();
             }
-
         });
     </script>
 
