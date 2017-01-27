@@ -116,45 +116,12 @@
 <head>
 <title>Account - Aktivierung</title>
 <meta charset=utf-8>
-<style>html{height:100%}body{height:auto;color:#797979;font-size:14px;font-family:Verdana,sans-serif;line-height:15px}#page{width:100%;min-height:100%;position:relative;background:#fff;margin:0 auto}#header{height:95px;width:100%;background-color:#f2f4e4;border-bottom:1px solid #797979;margin:0 auto}#content{width:100%;text-align:center;margin:0 auto;float:left;background-color:#fff}#footer{width:auto;padding:0 20px;min-height:30px;font-size:12px;margin:10px auto;clear:both;background:#ccc;color:#333;position:relative;text-align:center}#footer>*{padding-top:8px}h1{font-size:19px;color:#787f19;margin:15px auto;font-weight:400;line-height:23px}h3{font-size:13px;color:#526709;font-weight:700;margin-top:15px;margin-bottom:15px;line-height:17px}.section-header{color:#797979;font-weight:700}a{color:#797979;text-decoration:underline;line-height:24px}a:hover,a:active{color:#526709}</style>
+<style>
+
+</style>
 </head>
 <body>
-<div id=page>
-<div id=header>
-<h2 style=padding-top:35px;text-align:center>Gymnasium Klotzsche</h2>
-</div>
-<div id=content>
-<h1>Hallo, $name!</h1>
-<p style="margin: 20px auto;">
-Sie haben es fast geschafft!<br>
-Um Ihr Konto f&uuml;r die Raumreservierung des Gymnasiums Klotzsche<br>
-zu aktivieren, m&uuml;ssen Sie best&auml;tigen, dass dies Ihre<br>
-E-Mail - Adresse ist.<br><br>
-Klicken Sie dazu einfach auf den untenstehenden Link oder<br>
-kopieren Sie ihn in die URL - Zeile Ihres Browsers<br>
-und dr&uuml;cken anschlie&szlig;end die Eingabetaste.<br>
-</p>
-<a href="https://gykl-rr.lima.zone/?code=$activationcode&name=$name#confirm-email" style=word-break:break-all>>> E-Mail - Adresse ( $email ) best&auml;tigen und Account "$name" aktivieren <<</a>
-<hr>
-<p style="font-size:11px;margin: 50px auto;">
-Diese E-Mail wurde im Rahmen der Anmeldung f&uuml;r die<br>
-Raumreservierung des Gymnasiums Dresden-Klotzsche<br>
-mit dem Namen "$name" und der E-Mail - Adresse<br>
-"$email" gesandt.<br>
-Sollten Sie sich nicht auf der <a href="https://www.gymnasium-klotzsche.de/">Website des Gymnasiums<br>
-Dresden-Klotzsche</a> angemeldet haben, ignorieren<br>
-Sie diese E-Mail einfach.<br><br>
-Sollten Sie Probleme oder Fragen haben, finden Sie die<br>
-Kontaktdaten f&uuml;r das Gymnasium Klotzsche <a href="https://www.gymnasium-klotzsche.de/cont/cms/front_content.php?idcat=121&lang=1">hier.</a><br>
-<br>
-Vielen Dank f&uuml;r Ihr Verst&auml;ndnis,<br>Ihr Team der Raumreservierung!
-</p>
-</p>
-</div>
-<div id=footer>
-<p>&copy; Raumreservierung2017 by Moritz Menzel, Benjamin Kirchhoff, Maximilian Seiler</p>
-</div>
-</div>
+<!-- MINIFIED HTML CONTENT COMING SOON -->
 </body>
 </html>
 HTML;
