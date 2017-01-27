@@ -9,9 +9,8 @@
     require_once('../accountsystem/sessioncontroller.class.php');
     require_once('../db/conf/dbconf.php');
     $sess = new SessionController($pdo);
-    // $sess->initialize(); Old Line, keeping it as reminder not to use it anymore :D
 
-    if(isset($_POST['name']) && isset($_POST['pw']) && isset($_POST['ampcode'])){
+    if(isset($_POST['name']) && isset($_POST['pw']) && isset($_POST['ampcode']) && $_SESSION['loggedin'] != true){
         $name = $_POST['name'];
         $pw = $_POST['pw'];
         $code = $_POST['ampcode'];
