@@ -21,12 +21,6 @@
             }
 
         }
-        public function checkStatus(){
-            return $this->session['loggedin'];
-        }
-        public function getUsername(){
-            return $this->username;
-        }
         public function login(){
 
             if($this->pdo){
