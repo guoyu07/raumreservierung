@@ -47,9 +47,4 @@
             session_destroy();
             return true;
         }
-
-        public function getAccType(){
-            return $_SESSION['acctype'];
-        }
-
     }

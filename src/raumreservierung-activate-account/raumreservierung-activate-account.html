@@ -1,0 +1,282 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../raumreservierung-privacy/raumreservierung-privacy.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+
+<dom-module id="raumreservierung-activate-account">
+  <template>
+    <style>
+      :host {
+        display: block;
+        --primary-color:#8BC34A;
+        --accent-color:#607D8B;
+        color: #212121;
+      }
+      .contentWrapper{
+        @apply(--layout-vertical);
+      }
+      paper-card{
+        @apply(--layout-self-center);
+        margin-top: 20px;
+        padding: 10px;
+        max-width: 90%;
+      }
+      .spinnerWrapper{
+        text-align: center;
+      }
+      .pseudoLink, a{
+        color: #3F51B5;
+        -webkit-transition: color 0.2s;
+        -moz-transition: color 0.2s;
+        -ms-transition: color 0.2s;
+        -o-transition: color 0.2s;
+        transition: color 0.2s;
+        text-decoration: none;
+      }
+      .pseudoLink:hover, a:hover{
+        cursor: pointer;
+        color: #2196F3;
+      }
+      a:focus, a:active{
+        color: #3F51B5;
+      }
+      .cardButton{
+        color: #3F51B5;
+      }
+      #inputWrapper{
+        width: 90%;
+        margin: 0 auto;
+        margin-bottom: 20px;
+      }
+      #inputWrapper > paper-input{
+        width: 90%;
+        margin: 0 auto;
+      }
+    </style>
+
+    <iron-ajax id="dataRequest"
+               method="POST"
+               content-type="application/x-www-form-urlencoded"
+               url="../../backend/api/ajaxActivateAccount.php"
+               last-response="{{response}}"
+               handle-as="json"
+               debounce-duration="300"
+               timeout="5000"></iron-ajax>
+
+    <raumreservierung-privacy id="privacy"></raumreservierung-privacy>
+
+    <paper-dialog id="errorDialog" with-backdrop>
+      <h2>Es ist ein Fehler aufgetreten:</h2>
+      <div id="errorContent" style="color: red;">
+        TestContent
+      </div>
+      <p style="text-align: center;"><i>Das tut uns leid :-(</i></p>
+      <div class="buttons">
+        <paper-button dialog-confirm style="color: red;">OK</paper-button>
+      </div>
+    </paper-dialog>
+
+    <paper-dialog id="loadIndicator" no-cancel-on-esc-key no-cancel-on-outside-click with-backdrop>
+      <h2>L&auml;dt, bitte warten...</h2>
+      <div class="spinnerWrapper"><paper-spinner active></paper-spinner></div>
+    </paper-dialog>
+
+    <paper-header-panel mode="standard">
+        <paper-toolbar style="color: #212121;">
+          <paper-icon-button style="margin-right: 12px;" icon="arrow-back" onclick="location.hash='logout';" title="Zur&uuml;ck zur Startseite"></paper-icon-button>
+          <div class="title" style="padding-bottom: 1px;">Account - Aktivierung</div>
+        </paper-toolbar>
+    </paper-header-panel>
+
+      <template is="dom-if" if="[[response.success]]">
+
+        <iron-pages selected="{{stage}}">
+
+          <div class="contentWrapper">
+            <paper-card heading="Hallo, [[response.name]]!">
+              <p>
+                Sie haben sich erfolgreich bei der Raumreservierung eingeloggt!<br>
+                Um die Raumreservierung nutzen zu k&ouml;nnen, m&uuml;ssen Sie Ihr Passwort &auml;ndern, sowie
+                Ihre pers&ouml;nliche E-Mail mit Ihrem Account verkn&uuml;pfen.<br><br>
+                <i>
+                  (Ihre E-Mail dient zur eindeutigen Identifizierung Ihrer Person und zur Wiederherstellung Ihres Passwortes
+                  im Falle eines Verlustes. Ebenfalls werden Sie ggf. von uns informiert, sollte eine sehr gro&szlig;e &Auml;nderung
+                  am System der Raumreservierung vorgenommen werden. Weitere Informationen erhalten Sie in den
+                  <span class="pseudoLink" on-click="togglePrivacy">Datenschutzbestimmungen</span>)
+                </i>
+              </p>
+              <div class="card-actions" style="float: right;">
+                <paper-button class="cardButton" onclick="location.hash='logout'">Abbrechen</paper-button>
+                <paper-button class="cardButton" on-click="nextStage">Weiter</paper-button>
+              </div>
+            </paper-card>
+          </div>
+
+          <div class="contentWrapper">
+            <paper-card heading="Aktivierung Ihres [[response.type]]s">
+
+              <div id="inputWrapper">
+                <paper-input type="email" id="activate-input-email" label="E-Mail - Adresse" allowed-pattern="[A-Za-z0-9öäüß@_\-.:,;#*+&%$!?=]" auto-validate maxlength="96" minlength="4" error-message="Bitte geben Sie g&uuml;ltige Werte ein!"></paper-input>
+                <paper-input type="password" id="activate-input-pw1" error-message="Bitte geben Sie mindestens 8 Zeichen ein!" label="Neues Passwort eingeben" auto-validate minlength="8" maxlength="64"></paper-input>
+                <paper-input type="password" id="activate-input-pw2" on-keyup="checkDifference" error-message="Bitte wiederholen Sie Ihre Passwort!" label="Passwort wiederholen" auto-validate minlength="6" maxlength="64"></paper-input>
+              </div>
+
+              <div class="card-actions" style="float: right;">
+                <paper-button class="cardButton" on-click="previousStage">Zur&uuml;ck</paper-button>
+                <paper-button class="cardButton" on-click="activateAccount">Best&auml;tigen</paper-button>
+              </div>
+            </paper-card>
+          </div>
+
+          <div class="contentWrapper">
+            <paper-card heading="Aktivierung erfolgreich!">
+              <p>
+                Wir haben eine Best&auml;tigungsmail an die von Ihnen angegebene E-Mail - Adresse geschickt!<br>
+                Sollten Sie Ihre E-Mail - Adresse nicht innerhalb der n&auml;chsten 12 Stunden best&auml;tigen,
+                wird Ihr Konto wieder in den Urprungszustand versetzt (d.h. Sie m&uuml;ssten es ggf. erneut aktivieren).
+                <br>
+                Sie k&ouml;nnen die Raumreservierung aus Sicherheitsgr&uuml;nden erst nutzen, wenn Sie
+                Ihren Account aktiviert haben!<br><br>
+                Vielen Dank f&uuml;r Ihr Verst&auml;ndnis,<br>
+                Ihr Team der Raumreservierung :-)
+              </p>
+              <div class="card-actions" style="float: right;">
+                <paper-button class="cardButton" onclick="location.hash='logout'">Zur Startseite</paper-button>
+              </div>
+            </paper-card>
+          </div>
+
+        </iron-pages>
+
+      </template>
+      <template is="dom-if" if="[[!response.success]]">
+        <div class="contentWrapper">
+          <paper-card heading="Fehler!">
+            <div class="card-content">
+              [[response.message]]
+            </div>
+            <div class="buttons" style="float: right;">
+              <paper-button style="color: #3F51B5;" onclick="location.reload()">Zur&uuml;ck</paper-button>
+              <paper-button style="color: #3F51B5;" onclick="location.hash='logout'">Ausloggen</paper-button>
+            </div>
+          </paper-card>
+        </div>
+      </template>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'raumreservierung-activate-account',
+
+      listeners: {
+          'dataRequest.request':'_onRequest',
+          'dataRequest.response':'_onResponse',
+          'dataRequest.error':'_onError'
+      },
+
+      properties: {
+          response: Object,
+          reload: {
+              type: Boolean,
+              value: false,
+              observer: '_onReload'
+          },
+          stage: {
+              type: Number,
+              value: 0
+          }
+      },
+
+      ready: function() {
+        this.fire('pageLoad', this.nodeName);
+        this.$.dataRequest.body = "request=getUserData";
+        this.$.dataRequest.generateRequest();
+      },
+      _onRequest: function() {
+          this.$.loadIndicator.open();
+      },
+      _onResponse: function() {
+          this.$.loadIndicator.close();
+          this.response = this.$.dataRequest.lastResponse;
+          if(!this.response.success) {
+              if(this.response.request == "getUserData") {
+                  if(this.response.invalid) {
+                      this.fire('activate-account-session-error');
+                  } else {
+                      if(this.response.message)
+                          this.$.errorContent.innerHTML = this.request.message;
+                      else
+                          this.$.errorContent.innerHTML = "Es konnte keine Fehlermeldung empfangen werden!";
+
+                      this.$.errorDialog.open();
+                  }
+              } else if(this.response.request == "activateAccount") {
+                  this.$.errorContent.innerHTML = this.response.message;
+                  this.$.errorDialog.center();
+                  this.$.errorDialog.open();
+              }
+          } else {
+              if(this.response.request == "activateAccount"){
+                  // Account Activated :3
+                  // Final stage :)
+                  this.stage = 2;
+              }
+          }
+      },
+      _onError: function(e) {
+          this.$.loadIndicator.close();
+          this.$.errorContent.innerHTML = "Fehler bei der Datenabfrage ("+e.type+" -> "+e.detail.error.type+")";
+          console.log(e.detail.error);
+          this.$.errorDialog.center();
+          this.$.errorDialog.open();
+      },
+      _onReload: function() {
+          if(this.reload == true){
+              this.$.dataRequest.body = "request=getUserData";
+              this.$.dataRequest.generateRequest();
+              this.reload = false;
+          }
+      },
+      togglePrivacy: function() {
+          this.$.privacy.toggle();
+      },
+      nextStage: function() {
+          this.stage++;
+      },
+      previousStage: function() {
+          this.stage--;
+      },
+      checkDifference: function() {
+          var pw1 = this.$$('#activate-input-pw1');
+          var pw2 = this.$$('#activate-input-pw2');
+          if(pw1.value != pw2.value){
+              pw2.invalid = true;
+          }
+      },
+      activateAccount: function() {
+          var email = this.$$('#activate-input-email');
+          var pw1 = this.$$('#activate-input-pw1');
+          var pw2 = this.$$('#activate-input-pw2');
+
+          if(email.validate() && pw1.validate() && pw2.validate() && pw1.value == pw2.value) {
+              pw1 = pw1.value.replace(/&/g, '::AMP::').replace(/\"/g, '::QUOT::');
+              email = email.value.replace(/&/g, '::AMP::').replace(/\"/, '::QUOT::');
+              this.$.dataRequest.body = "name="+this.response.name+"&pw="+pw1+"&email="+email;
+              this.$.dataRequest.generateRequest();
+          } else {
+              pw1.value = "", pw1.invalid = true;
+              pw2.value = "", pw2.invalid = true;
+          }
+      }
+    });
+  </script>
+</dom-module>

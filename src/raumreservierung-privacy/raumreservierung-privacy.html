@@ -1,0 +1,182 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="raumreservierung-privacy">
+    <template>
+        <style>
+            :host{
+                display: block;
+            }
+            a{
+                color: #3F51B5;
+                -webkit-transition: color 0.2s;
+                -moz-transition: color 0.2s;
+                -ms-transition: color 0.2s;
+                -o-transition: color 0.2s;
+                transition: color 0.2s;
+                text-decoration: none;
+            }
+            a:hover{
+                cursor: pointer;
+                color: #2196F3;
+            }
+            a:focus, a:active{
+                color: #3F51B5;
+            }
+        </style>
+        <paper-dialog id="dialog" opened="{{opened}}" with-backdrop>
+            <h2>Datenschutzbestimmungen</h2>
+            <paper-dialog-scrollable>
+                <p>
+                    Die Nutzung unserer Seite ist ohne eine Angabe von personenbezogenen Daten m&ouml;glich.
+                    F&uuml;r die Nutzung einzelner Services unserer Seite k&ouml;nnen sich hierf&uuml;r abweichende Regelungen ergeben,
+                    die in diesem Falle nachstehend gesondert erl&auml;utert werden. Ihre personenbezogenen Daten
+                    (z.B. Name, Anschrift, E-Mail, Telefonnummer, u.&auml;.) werden von uns nur gem&auml;&szlig; den Bestimmungen des
+                    deutschen Datenschutzrechts verarbeitet. Daten sind dann personenbezogen, wenn sie eindeutig einer
+                    bestimmten nat&uuml;rlichen Person zugeordnet werden k&ouml;nnen. Die rechtlichen Grundlagen des Datenschutzes
+                    finden Sie im Bundesdatenschutzgesetz (BDSG) und dem Telemediengesetz (TMG). Nachstehende Regelungen
+                    informieren Sie insoweit &uuml;ber die Art, den Umfang und Zweck der Erhebung, die Nutzung und die
+                    Verarbeitung von personenbezogenen Daten durch den Anbieter (Gymnasium Dresden-Klotzsche).
+                    <br>
+                    Wir weisen darauf hin, dass die internetbasierte Daten&uuml;bertragung Sicherheitsl&uuml;cken aufweist,
+                    ein l&uuml;ckenloser Schutz vor Zugriffen durch Dritte somit unm&ouml;glich ist.
+                </p>
+                <h3>Cookies</h3>
+                <p>
+                    Wir verwenden auf unserer Seite sog. Cookies zum Wiedererkennen mehrfacher Nutzung unseres Angebots,
+                    durch denselben Nutzer/Internetanschlussinhaber. Cookies sind kleine Textdateien, die Ihr Internet-Browser
+                    auf Ihrem Rechner ablegt und speichert. Sie dienen dazu, unseren Internetauftritt und unsere Angebote
+                    zu optimieren. Es handelt sich dabei zumeist um sog. "Session-Cookies", die nach dem Ende Ihres
+                    Besuches wieder gel&ouml;scht werden.<br>
+                    Teilweise geben diese Cookies jedoch Informationen ab, um Sie automatisch wieder zu erkennen.
+                    Diese Wiedererkennung erfolgt aufgrund der in den Cookies gespeicherten IP-Adresse. Die so erlangten
+                    Informationen dienen dazu, unsere Angebote zu optimieren und Ihnen einen leichteren Zugang auf unsere
+                    Seite zu erm&ouml;glichen.<br>
+                    Sie k&ouml;nnen die Installation der Cookies durch eine entsprechende Einstellung Ihres Browsers
+                    verhindern; wir weisen Sie jedoch darauf hin, dass Sie in diesem Fall gegebenenfalls nicht s&auml;mtliche
+                    Funktionen unserer Website vollumf&auml;nglich nutzen k&ouml;nnen.
+                </p>
+                <h3>Serverdaten</h3>
+                <p>
+                    Aus technischen Gr&uuml;nden werden u.a. folgende Daten, die Ihr Internet-Browser an uns bzw. an unseren
+                    Webspace-Provider &uuml;bermittelt, erfasst (sogenannte Serverlogfiles):
+                    <ul>
+                        <li>Browsertyp und -version</li>
+                        <li>verwendetes Betriebssystem</li>
+                        <li>Webseite, von der aus Sie uns besuchen (Referrer URL)</li>
+                        <li>Webseite, die Sie besuchen</li>
+                        <li>Datum und Uhrzeit Ihres Zugriffs</li>
+                        <li>Ihre Internet Protokoll (IP)-Adresse</li>
+                    </ul>
+                    Diese anonymen Daten werden getrennt von Ihren eventuell angegebenen personenbezogenen Daten
+                gespeichert und lassen so keine R&uuml;ckschl&uuml;sse auf eine bestimmte Person zu. Sie werden zu statistischen
+                Zwecken ausgewertet, um unseren Internetauftritt und unsere Angebote optimieren zu k&ouml;nnen.
+                </p>
+                <h3>Registrierungsfunktion</h3>
+                <p>
+                    Wir bieten Ihnen auf unserer Seite die M&ouml;glichkeit, sich dort zu registrieren. Die im Zuge dieser
+                    Registrierung eingegebenen Daten, die aus der Eingabemaske des Registrierungsformular ersichtlich sind
+                    (speziell E-Mail - Adresse) werden ausschlie&szlig;lich f&uuml;r die Verwendung unseres Angebots erhoben und
+                    gespeichert. Mit Ihrer Registrierung auf unserer Seite werden wir zudem Ihre IP-Adresse und das Datum
+                    sowie die Uhrzeit Ihrer Registrierung speichern. Dies dient in dem Fall, dass ein Dritter Ihre Daten
+                    missbraucht und sich mit diesen Daten ohne Ihr Wissen auf unserer Seite registriert, als Absicherung
+                    unsererseits.  Eine Weitergabe an Dritte erfolgt nicht. Ein Abgleich der so erhobenen Daten mit Daten,
+                    die m&ouml;glicherweise durch andere Komponenten unserer Seite erhoben werden, erfolgt ebenfalls nicht.
+                </p>
+                <h3>Kontaktm&ouml;glichkeit</h3>
+                <p>
+                    Wir bieten Ihnen auf unserer Seite die M&ouml;glichkeit, mit uns per E-Mail und/oder &uuml;ber ein
+                    Kontaktformular in Verbindung zu treten. In diesem Fall werden die vom Nutzer gemachten Angaben
+                    zum Zwecke der Bearbeitung seiner Kontaktaufnahme gespeichert. Eine Weitergabe an Dritte erfolgt
+                    nicht. Ein Abgleich der so erhobenen Daten mit Daten, die m&ouml;glicherweise durch andere Komponenten
+                    unserer Seite erhoben werden, erfolgt ebenfalls nicht.
+                </p>
+                <h3>Einsatz von Google-Analytics mit Anonymisierungsfunktion</h3>
+                <p>
+                    Wir setzen auf unserer Seite Google-Analytics, einen Webanalysedienst der Firma Google Inc.,
+                    1600 Amphitheatre Parkway, Mountain View, CA 94043 USA, nachfolgend „Google“ ein. Google-Analytics
+                    verwendet sog. „Cookies“, Textdateien, die auf Ihrem Computer gespeichert werden und hierdurch eine
+                    Analyse der Benutzung der Website durch Sie erm&ouml;glichen.<br>
+                    Die durch diese Cookies erzeugten Informationen, beispielsweise Zeit, Ort und H&auml;ufigkeit Ihres
+                    Webseiten-Besuchs einschlie&szlig;lich Ihrer IP-Adresse, werden an Google in den USA &uuml;bertragen und
+                    dort gespeichert.<br>
+                    Wir verwenden auf unserer Website Google-Analytics mit dem Zusatz "_gat._anonymizeIp". Ihre IP-Adresse
+                    wird in diesem Fall von Google schon innerhalb von Mitgliedstaaten der Europ&auml;ischen Union oder
+                    in anderen Vertragsstaaten des Abkommens &uuml;ber den Europ&auml;ischen Wirtschaftsraum gek&uuml;rzt und dadurch anonymisiert.<br>
+                    Google wird diese Informationen benutzen, um Ihre Nutzung unserer Seite auszuwerten, um Reports
+                    &uuml;ber die Websiteaktivit&auml;ten f&uuml;r uns zusammenzustellen und um weitere mit der Websitenutzung
+                    und der Internetnutzung verbundene Dienstleistungen zu erbringen. Auch wird Google diese
+                    Informationen gegebenenfalls an Dritte &uuml;bertragen, sofern dies gesetzlich vorgeschrieben
+                    oder soweit Dritte diese Daten im Auftrag von Google verarbeiten.<br>
+                    Google wird, nach eigenen Angaben, in keinem Fall Ihre IP-Adresse mit anderen Daten von Google in
+                    Verbindung bringen. Sie k&ouml;nnen die Installation der Cookies durch eine entsprechende Einstellung
+                    Ihrer Browser-Software verhindern; wir weisen Sie jedoch darauf hin, dass Sie in diesem Fall
+                    gegebenenfalls nicht s&auml;mtliche Funktionen unserer Website vollumf&auml;nglich nutzen k&ouml;nnen.<br>
+                    <br>
+                    Des Weiteren bietet Google f&uuml;r die g&auml;ngigsten Browser ein Deaktivierungs-Add-on an, welches Ihnen
+                    mehr Kontrolle dar&uuml;ber gibt, welche Daten von Google zu der von Ihnen aufgerufenen Websites erfasst
+                    werden. Das Add-on teilt dem JavaScript (ga.js) von Google Analytics mit, dass keine Informationen
+                    zum Website-Besuch an Google Analytics &uuml;bermittelt werden sollen. Das Deaktivierungs-Add-on f&uuml;r
+                    Browser von Google Analytics verhindert aber nicht, dass Informationen an uns oder an andere von
+                    uns gegebenenfalls eingesetzte Webanalyse-Services &uuml;bermittelt werden. Weitere Informationen zur
+                    Installation des Browser Add-on erhalten Sie &uuml;ber nachfolgenden Link:
+                    <a href="https://tools.google.com/dlpage/gaoptout?hl=de" target="_blank">https://tools.google.com/dlpage/gaoptout?hl=de</a>
+                </p>
+                <h3>Auskunft/Widerruf/L&ouml;schung</h3>
+                <p>
+                    Sie k&ouml;nnen sich aufgrund des Bundesdatenschutzgesetzes bei Fragen zur Erhebung, Verarbeitung oder
+                    Nutzung Ihrer personenbezogenen Daten und deren Berichtigung, Sperrung, L&ouml;schung oder einem Widerruf
+                    einer erteilten Einwilligung unentgeltlich an uns wenden. Wir weisen darauf hin, dass Ihnen ein
+                    Recht auf Berichtigung falscher Daten oder L&ouml;schung personenbezogener Daten zusteht, sollte diesem
+                    Anspruch keine gesetzliche Aufbewahrungspflicht entgegenstehen.
+                </p>
+                <p>
+                    <i>
+                        <a target="_blank" href="https://www.ratgeberrecht.eu/leistungen/muster-datenschutzerklaerung.html">
+                            Muster-Datenschutzerkl&auml;rung
+                        </a>
+                        der
+                        <a target="_blank" href="https://www.ratgeberrecht.eu/">
+                            Anwaltskanzlei Wei&szlig; &amp; Partner
+                        </a>
+                    </i>
+                </p>
+            </paper-dialog-scrollable>
+            <div class="buttons">
+                <paper-button style="color: #3F51B5;" dialog-confirm>Schlie&szlig;en</paper-button>
+            </div>
+        </paper-dialog>
+    </template>
+    <script>
+        Polymer({
+            is: 'raumreservierung-privacy',
+
+            properties: {
+                opened: Boolean,
+                toggle: function() {
+                    this.$.dialog.center();
+                    this.toggle();
+                }
+            },
+
+            listeners: {
+
+            },
+
+            ready: function() {
+                this.fire('pageLoad', this.nodeName);
+            },
+            toggle: function() {
+                if(this.opened) {
+                    this.$.dialog.close();
+                    this.opened = false;
+                } else {
+                    this.$.dialog.open();
+                    this.opened = true;
+                }
+            }
+        })
+    </script>
+</dom-module>

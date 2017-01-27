@@ -134,7 +134,7 @@ Klicken Sie dazu einfach auf den untenstehenden Link oder<br>
 kopieren Sie ihn in die URL - Zeile Ihres Browsers<br>
 und dr&uuml;cken anschlie&szlig;end die Eingabetaste.<br>
 </p>
-<a href="https://gykl-rr.lima.zone/raumreservierung/project/backend/emailconfirmation.php?code=$activationcode&name=$name" style=word-break:break-all>>> E-Mail - Adresse ( $email ) best&auml;tigen und Account "$name" aktivieren <<</a>
+<a href="https://gykl-rr.lima.zone/?code=$activationcode&name=$name#confirm-email" style=word-break:break-all>>> E-Mail - Adresse ( $email ) best&auml;tigen und Account "$name" aktivieren <<</a>
 <hr>
 <p style="font-size:11px;margin: 50px auto;">
 Diese E-Mail wurde im Rahmen der Anmeldung f&uuml;r die<br>
@@ -351,6 +351,25 @@ HTML;
             } catch (PDOException $e) {
                 $this->pdo->rollBack();
                 return array("error" => true, "message" => "Es ist ein Fehler beim Löschen aufgetreten:<br>".$e->getMessage());
+            }
+        }
+
+        public function changePassword($name, $pw) {
+            $sql = "UPDATE accounts_users SET password=:pw, salt=:salt, iterations=:iterations WHERE accounts_users.name=:name";
+            $a = $this->hash_password($pw);
+            $pw = $a['password'];
+            $salt = $a['salt'];
+            $iterations = $a['iterations'];
+
+            $r = $this->pdo->prepare($sql);
+
+            try{
+                $this->pdo->beginTransaction();
+                $r->execute(array(":pw" => $pw, ":salt" => $salt, ":iterations" => $iterations, ":name" => $name));
+                $this->pdo->commit();
+                return array("error" => false);
+            } catch( PDOException $e ) {
+                return array("error" => true, "message" => "Es ist ein Fehler beim Ändern des Passwortes aufgetreten: ".$e->getMessage());
             }
         }
 

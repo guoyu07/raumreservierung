@@ -134,22 +134,38 @@
                     if(r.success !== true){
                         this.$.errorBox.innerHTML = r.message;
                     } else {
+                        if(r.status != null) {
+                            // It took me more than 30 mins to figure out that missing `Number()` was causing an error :)
+                            switch(Number(r.status)){
+                                case 1:
+                                    // Deactivated
+                                    this._loadUserPage("deactivated-account");
+                                    break;
+                                case 2:
+                                    // Temporary & Waiting
+                                    this._loadUserPage("temporary-account");
+                                    break;
+                                case 3:
+                                    // Activated & Confirmed
+                                    var type;
 
-                        //TODO BEFORE: CHECK FOR ACCSTATUS :) (DEACTIVATED, WAITING)
+                                    if(r.type == 1){
+                                        type = "admin";
+                                    } else if(r.type == 2) {
+                                        type = "management";
+                                    } else if(r.type == 3) {
+                                        type = "teacher";
+                                    }
 
-                        var type;
-
-                        if(r.type == 1){
-                            type = "admin";
-                        } else if(r.type == 2) {
-                            type = "management";
-                        } else if(r.type == 3) {
-                            type = "teacher";
+                                    this._loadUserPage(type);
+                                    break;
+                                default:
+                                    location.hash = "logout";
+                                    break;
+                            }
+                        } else {
+                            location.hash = "logout";
                         }
-
-                        this.$.loginRedirectDialog.center();
-                        this.$.loginRedirectDialog.open();
-                        this._loadUserPage(type);
                     }
                 } else {
                     this.$.errorBox.innerHTML = "Es ist ein Fehler bei der Anfrage aufgetreten.<br>" +
@@ -170,6 +186,8 @@
                 console.info("Error:", e.detail.error);
             },
             _loadUserPage: function(type) {
+                this.$.loginRedirectDialog.center();
+                this.$.loginRedirectDialog.open();
                 // Redirect will be triggered in module 'raumreservierung-main'
                 this.fire('push', [this.nodeName, "Requested to load page for account-type ["+type+"]"]);
                 this.fire('goToPage', type);

@@ -74,6 +74,8 @@
       <div class="spinnerWrapper"><paper-spinner active></paper-spinner></div>
     </paper-dialog>
 
+    <div id="dynamicBox"></div>
+
     <iron-ajax id="userDataRequest"
                url="../../backend/api/main-ajax.php"
                method="POST"
@@ -99,6 +101,8 @@
       <raumreservierung-email-confirmation></raumreservierung-email-confirmation>
       <!-- User Page -->
       <div id="userpage"></div>
+      <!-- Account - Aktivierung -->
+      <raumreservierung-activate-account></raumreservierung-activate-account>
 
     </iron-pages>
 
@@ -131,6 +135,10 @@
                 type: Boolean,
                 value: false
             },
+            activationPageLoaded: {
+                type: Boolean,
+                value: false
+            },
             newContent: {
                 type: Boolean,
                 value: false,
@@ -140,33 +148,34 @@
         },
 
         listeners: {
-            'push':'_pushToLog',
+            'push': '_pushToLog',
             'pageLoad': '_onComponentLoaded',
-            'userDataRequest.request':'_onRequest',
-            'userDataRequest.response':'_onResponse',
-            'userDataRequest.error':'_onError',
+            'userDataRequest.request': '_onRequest',
+            'userDataRequest.response': '_onResponse',
+            'userDataRequest.error': '_onError',
             'logoutRequest.request': '_onLogoutRequest',
             'logoutRequest.response': '_onLogoutResponse',
             'logoutRequest.error': '_onLogoutError',
             'goToPage': '_onUserPageRedirect',
             'change-theme-color': '_onThemeColorChange',        // Change content of "theme-color" meta
             'toastReloadButton.tap': '_reloadPage',
-            'toastCloseButton.tap': 'closeNewContentToast'
+            'toastCloseButton.tap': 'closeNewContentToast',
+            'activate-account-session-error': '_onSessionError'
         },
 
-        ready: function() {
+        ready: function () {
             this.fire('pageLoad', this.nodeName);
 
             this.$.userDataRequest.body = "r=getSessionData";
             this.$.userDataRequest.generateRequest();
 
         },
-        _onSelectedChanged: function() {
+        _onSelectedChanged: function () {
             this._loadPages();
 
             // Set Theme Colors
             var color = "#689F38";
-            switch(this.selected){
+            switch (this.selected) {
                 case 0:
                     color = "#689F38";
                     break;
@@ -176,50 +185,53 @@
                 case 2:
                     color = "#3F51B5";
                     break;
+                case 3:
+                    color = "#689F38";
+                    break;
                 default:
                     color = "#689F38";
             }
             this.fire('change-theme-color', color);
         },
-        _onRequest: function() {
+        _onRequest: function () {
             this.$.loadIndicator.center();
             this.$.loadIndicator.open();
         },
-        _onResponse: function() {
+        _onResponse: function () {
             this.$.loadIndicator.close();
             this.response = this.$.userDataRequest.lastResponse;
             this.loggedin = (this.response.data) ? this.response.data.loggedin : false;
-            if(this.loggedin === true)
+            if (this.loggedin === true)
                 this._redirect();
             else
                 this._loadPages();
         },
-        _onError: function() {
+        _onError: function () {
             this.$.loadIndicator.close();
         },
-        _onLogoutRequest: function() {
+        _onLogoutRequest: function () {
             this.$.logoutDialog.center();
             this.$.logoutDialog.open();
         },
-        _onLogoutResponse: function() {
+        _onLogoutResponse: function () {
             this.$.logoutDialog.close();
             var res = this.$.logoutRequest.lastResponse;
-            if(res.success) {
+            if (res.success) {
                 this.$.pages.select(0);
                 this.hash = "";
             } else {
-                this.$.errorContent.innerHTML = '<p style="color: red;">Es ist ein Fehler beim Ausloggen aufgetreten! Bitte versuchen Sie es erneut oder Kontaktieren Sie einen Administrator!</p><p><i>('+res.message+')</i></p>';
+                this.$.errorContent.innerHTML = '<p style="color: red;">Es ist ein Fehler beim Ausloggen aufgetreten! Bitte versuchen Sie es erneut oder Kontaktieren Sie einen Administrator!</p><p><i>(' + res.message + ')</i></p>';
                 this.$.errorDialog.center();
                 this.$.errorDialog.open();
             }
         },
-        _onLogoutError: function() {
+        _onLogoutError: function () {
             this.$.errorContent.innerHTML = '<p style="color: red;">Es ist ein Fehler beim Ausloggen aufgetreten! Bitte versuchen Sie es erneut oder Kontaktieren Sie einen Administrator!</p>';
             this.$.errorDialog.center();
             this.$.errorDialog.open();
         },
-        _onHashChange: function() {
-            switch(this.hash){
+        _onHashChange: function () {
+            switch (this.hash) {
                 case "index":
                     this.hash = "";
                     window.location.reload();
@@ -235,94 +247,115 @@
                     this._loadPages();
             }
         },
-        _pushToLog: function(e) {
+        _pushToLog: function (e) {
             if (e.detail[0] && e.detail[1])
-                console.log("["+e.detail[0]+"] "+e.detail[1]);
+                console.log("[" + e.detail[0] + "] " + e.detail[1]);
         },
-        loadMainPage: function() {
+        loadMainPage: function () {
             this.$.loadIndicator.open();
             this.importHref('src/raumreservierung-landingpage/raumreservierung-landingpage.html', this._onLandingpageLoad, this._onLandingpageLoadError, true);
         },
-        _onLandingpageLoad: function() {
+        _onLandingpageLoad: function () {
             this.$.loadIndicator.close();
             this.landingPageLoaded = true;
         },
-        _onLandingpageLoadError: function() {
+        _onLandingpageLoadError: function () {
             this.$.loadIndicator.close();
             this.$.errorContent.innerHTML = '<p style="color:red;">Die Startseite konnte nicht geladen werden!</p>';
             this.$.errorDialog.center();
             this.$.errorDialog.open();
         },
-        _loadPages: function() {
-            switch(Number(this.selected)){
+        _loadPages: function () {
+            switch (Number(this.selected)) {
                 case 0:
-                    if(!this.landingPageLoaded)
+                    if (!this.landingPageLoaded)
                         this.loadMainPage();
                     this.$.pages.select(0);
                     break;
                 case 1:
-                    if(this.hash == "confirm-email") {
-                        if(!this.emailPageLoaded)
+                    if (this.hash == "confirm-email") {
+                        if (!this.emailPageLoaded)
                             this.loadEmailPage();
                         this.$.pages.select(1);
                     } else {
-                        if(!this.landingPageLoaded)
+                        if (!this.landingPageLoaded)
                             this.loadMainPage();
                         this.$.pages.select(0);
                     }
                     break;
                 case 2:
-                    if(!this.userPageLoaded)
+                    if (!this.userPageLoaded)
                         this.loadUserPage();
                     this.$.pages.select(2);
                     break;
+                case 3:
+                    if (!this.activationPageLoaded) {
+                        this.loadActivationPage();
+                    } else {
+                        this.$$('raumreservierung-activate-account').reload = true;
+                        this.$.pages.select(3);
+                    }
+                    break;
                 default:
                     this.hash = "";
-                    if(!this.landingPageLoaded)
+                    if (!this.landingPageLoaded)
                         this.loadMainPage();
                     this.$.pages.select(0);
                     break;
             }
         },
-        loadEmailPage: function() {
+        loadEmailPage: function () {
             this.$.loadIndicator.open();
             this.importHref('src/raumreservierung-email-confirmation/raumreservierung-email-confirmation.html', this._onEmailLoaded, this._onEmailLoadError, true);
         },
-        _onEmailLoadError: function(){
+        _onEmailLoadError: function () {
             this.$.loadIndicator.close();
             this.$.errorContent.innerHTML = '<p style="color: red;">Die Seite f&uuml;r die E-Mail - Best&auml;tigung konnte nicht geladen werden!</p>';
             this.$.errorDialog.center();
             this.$.errorDialog.open();
         },
-        _onEmailLoaded: function() {
+        _onEmailLoaded: function () {
             this.emailPageLoaded = true;
             this.$.loadIndicator.close();
         },
-        _onComponentLoaded: function(e) {
-            console.log("["+e.detail+"] component loaded and ready");
+        _onComponentLoaded: function (e) {
+            console.log("[" + e.detail + "] component loaded and ready");
         },
-        _redirect: function() {
+        _redirect: function () {
             this.$.loadIndicator.open();
 
-            if(this.response.data.type != "" && Number(this.response.data.type) >= 0) {
-                var type;
-                switch(Number(this.response.data.type)){
+            if (this.response.data.type != "" && Number(this.response.data.type) >= 0 && Number(this.response.data.status) >= 0) {
+                switch (Number(this.response.data.status)) {
                     case 1:
-                        type = "admin";
+                        // Decativated
+                        this.fire('goToPage', "deactivated-account");
                         break;
                     case 2:
-                        type = "management";
+                        // Temporary
+                        //TODO: Dialog & Auto logout
+                        this.showTemporaryDialog();
                         break;
                     case 3:
-                        type = "teacher";
-                        break;
-                    default:
-                        type = "teacher";
-                        break;
-                }
+                        // Activated
+                        var type;
+                        switch (Number(this.response.data.type)) {
+                            case 1:
+                                type = "admin";
+                                break;
+                            case 2:
+                                type = "management";
+                                break;
+                            case 3:
+                                type = "teacher";
+                                break;
+                            default:
+                                type = "teacher";
+                                break;
+                        }
 
-                this.type = type;
-                this.fire('goToPage', type);
+                        this.type = type;
+                        this.fire('goToPage', type);
+                }
 
             } else {
                 this.$.loadIndicator.close();
@@ -332,26 +365,43 @@
                 this._loadPages();
             }
         },
-        loadUserPage: function() {
+        loadUserPage: function () {
             this.$.loadIndicator.open();
             var type = this.type;
-            this.importHref('src/raumreservierung-'+type+'/raumreservierung-'+type+'.html', this._onUserPageLoad, this._onUserPageLoadError, true);
+            this.importHref('src/raumreservierung-' + type + '/raumreservierung-' + type + '.html', this._onUserPageLoad, this._onUserPageLoadError, true);
         },
-        _onUserPageRedirect: function(e) {
-            // Local Testing Logging
-            // TODO: Remove testing logs :)
+        _onUserPageRedirect: function (e) {
 
             this.type = e.detail;
 
-            if(e.detail = this.type) {
+            if (e.detail == "admin" || e.detail == "manager" || e.detail == "teacher") {
                 this.$.loadIndicator.open();
-                this.fire('push', [this.nodeName, "Received event ["+e.type+"] for type ["+this.type+"]"]);
-                this.importHref('src/raumreservierung-'+this.type+'/raumreservierung-'+this.type+'.html', this._onUserPageLoad, this._onUserPageLoadError, true);
+                this.fire('push', [this.nodeName, "Received event [" + e.type + "] for type [" + this.type + "]"]);
+                this.importHref('src/raumreservierung-' + this.type + '/raumreservierung-' + this.type + '.html', this._onUserPageLoad, this._onUserPageLoadError, true);
             } else {
-                this._onTypeMismatch();
+                switch (e.detail) {
+                    case "deactivated-account":
+                        if (!this.activationPageLoaded && !this.landingPageLoaded) {
+                            this.addEventListener('pageLoad', function (e) {
+                                if (e.detail == "raumreservierung-landingpage".toUpperCase()) {
+                                    this.loadActivationPage();
+                                }
+                            });
+                        } else if (!this.activationPageLoaded && this.landingPageLoaded) {
+                            this.loadActivationPage();
+                        } else {
+                            this.$.pages.select(3);
+                        }
+                        break;
+                    case "temporary-account":
+                        this.showTemporaryDialog();
+                        break;
+                    default:
+                        this._onTypeMismatch();
+                }
             }
         },
-        _onTypeMismatch: function() {
+        _onTypeMismatch: function () {
             this.$.loadIndicator.close();
             this.$.errorContent.innerHTML = '<p style="color: red;">Es ist ein schwerer Fehler bei der Zuteilung der Variablenwerte aufgetreten!</p>';
             this.$.errorDialog.center();
@@ -359,14 +409,14 @@
             this.loadMainPage();
             this.$.pages.select(0);
         },
-        _onUserPageLoad: function() {
-            this.$.userpage.innerHTML = "<raumreservierung-"+this.type+"></raumreservierung-"+this.type+">";
+        _onUserPageLoad: function () {
+            this.$.userpage.innerHTML = "<raumreservierung-" + this.type + "></raumreservierung-" + this.type + ">";
             this.userPageLoaded = true;
             this.$.loadIndicator.close();
             // UserPage is always Numero Dos :D
             this.$.pages.select(2);
         },
-        _onUserPageLoadError: function() {
+        _onUserPageLoadError: function () {
             this.$.loadIndicator.close();
             this.$.errorContent.innerHTML = '<p style="color:red;">Die Nutzerseite konnte nicht geladen werden!</p>';
             this.$.errorDialog.center();
@@ -374,31 +424,69 @@
             this.$.pages.select(0);
             this.loadMainPage();
         },
-        _triggerLogout: function() {
+        _triggerLogout: function () {
             this.$.logoutRequest.body = "r=logout";
             this.$.logoutRequest.generateRequest();
         },
-        _onThemeColorChange: function(e) {
+        _onThemeColorChange: function (e) {
             var color = e.detail;
             var metas = document.getElementsByTagName('meta');
-            for(var i=0; i < metas.length; i++) {
-                if(metas[i].name == "theme-color") {
+            for (var i = 0; i < metas.length; i++) {
+                if (metas[i].name == "theme-color") {
                     metas[i].content = e.detail;
                 }
             }
         },
-        _onNewContentAvailable: function() {
-            if(this.newContent == true) {
+        _onNewContentAvailable: function () {
+            if (this.newContent == true) {
                 this.fire('push', [this.nodeName, "content update detected"]);
                 this.$.newContentToast.open();
                 this.newContent = false;
             }
         },
-        _reloadPage: function() {
+        _reloadPage: function () {
             location.reload();
         },
-        closeNewContentToast: function() {
+        closeNewContentToast: function () {
             this.$.newContentToast.close();
+        },
+        loadActivationPage: function () {
+            this.$.loadIndicator.open();
+            this.importHref('src/raumreservierung-activate-account/raumreservierung-activate-account.html', this._onActivationPageLoad, this._onActivationPageLoadError, true);
+        },
+        _onActivationPageLoad: function () {
+            this.$.loadIndicator.close();
+            this.activationPageLoaded = true;
+            this.$.pages.select(3);
+        },
+        _onActivationPageLoadError: function () {
+            this.$.loadIndicator.close();
+            this.$.errorContent.innerHTML = '<p style="color: red;">Es ist ein Fehler beim Laden der Aktivierungsseite aufgetreten!</p>';
+            this.$.errorDialog.open();
+            this.$.pages.select(0);
+        },
+        _onSessionError: function () {
+            this.selected = 0;
+        },
+        showTemporaryDialog: function() {
+            if(this.$$('#tempDialog')){
+                this.$$('#tempDialog').open();
+            } else {
+                var dialog = document.createElement('paper-dialog');
+                dialog.withBackdrop = true;
+                dialog.noCancelOnEscKey = true;
+                dialog.noCancelOnOutsideClick = true;
+                dialog.id = "tempDialog";
+                dialog.innerHTML = '<h3>Hallo!</h3><p>Wir m&ouml;chten Sie darauf hinweisen, ' +
+                    'dass sie, um die Raumreservierung nutzen zu k&ouml;nnen, Ihre E-Mail - Adresse best&auml;tigen m&uuml;ssen!<br><br>' +
+                    '- Wir haben Ihnen bereits eine E-Mail zugesandt, bitte &uuml;berpr&uuml;fen Sie Ihr E-Mail Postfach!<br><br>' +
+                    'Vielen Dank f&uuml;r Ihr Verst&auml;ndnis,<br>Ihr Team der Raumreservierung :-)</p>' +
+                    '<div class="buttons"><paper-button dialog-confirm style="color: #3F51B5;">Schlie&szlig;en</paper-button></div>';
+                Polymer.dom(this.$.dynamicBox).appendChild(dialog).open();
+            }
+
+            this._triggerLogout();
+
         }
     });
   </script>
