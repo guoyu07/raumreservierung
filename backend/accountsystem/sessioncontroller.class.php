@@ -12,7 +12,7 @@
         public function __construct($pdo)
         {
             $HTTPS_ONLY = false;  /** !!!CHANGE THIS TO TRUE WHEN NOT ON LOCAL SERVER!!! */
-            session_set_cookie_params(1800, "/raumreservierung/project", "", $HTTPS_ONLY, true);
+            session_set_cookie_params(1800, "/", "localhost", $HTTPS_ONLY, true);
             session_start();
             session_regenerate_id(true);
             $this->pdo = $pdo;
@@ -43,8 +43,10 @@
                 $cp = session_get_cookie_params();
                 setcookie(session_name(), '', time() - 42000, $cp['path'], $cp['domain'], $cp['secure'], $cp['httponly']);
             }
-
             session_destroy();
+
+            // Instant Restart of session, otherwise some parts of the system won't work properly
+            $this->__construct($this->pdo);
             return true;
         }
     }
