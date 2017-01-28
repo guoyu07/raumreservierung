@@ -17,6 +17,8 @@
                 -o-transition: color 0.2s;
                 transition: color 0.2s;
                 text-decoration: none;
+
+                word-wrap: break-word;
             }
             a:hover{
                 cursor: pointer;
@@ -158,6 +160,10 @@
                 toggle: function() {
                     this.$.dialog.center();
                     this.toggle();
+                },
+                open: function() {
+                    this.$.dialog.center();
+                    this.open();
                 }
             },
 
@@ -175,6 +181,11 @@
                 } else {
                     this.$.dialog.open();
                     this.opened = true;
+                }
+            },
+            open: function() {
+                if(!this.opened){
+                    this.$.dialog.open();
                 }
             }
         })
