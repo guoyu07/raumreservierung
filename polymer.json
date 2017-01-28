@@ -10,7 +10,10 @@
     "src/raumreservierung-landingpage/raumreservierung-landingpage.html",
     "src/raumreservierung-login/raumreservierung-login.html",
     "src/reporting-form/reporting-form.html",
-    "src/raumreservierung-email-confirmation/raumreservierung-email-confirmation.html"
+
+    "src/raumreservierung-privacy/raumreservierung-privacy.html",
+    "src/raumreservierung-activate-account/raumreservierung-activate-account.html",
+    "src/raumreservierung-imprint/raumreservierung-imprint.html"
   ],
   "sources": [
     "img/*",
@@ -21,6 +24,7 @@
     "LICENSE"
   ],
   "includeDependencies": [
-    "bower_components/webcomponentsjs/webcomponents-lite.min.js"
+    "bower_components/webcomponentsjs/webcomponents-lite.min.js",
+    "bower_components/polymer/polymer.html"
   ]
 }
