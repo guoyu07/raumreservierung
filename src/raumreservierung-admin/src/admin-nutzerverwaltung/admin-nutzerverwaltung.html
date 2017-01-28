@@ -35,15 +35,16 @@
 
         <div id="content">
 
-            <div id="headbar" style="height:120px;border-radius: 5px; margin: 15px auto;color:#212121;">
+            <div id="headbar" style="height:auto;border-radius: 5px; margin: 15px auto;color:#212121;">
                 <h3 id="headtext" style="padding: 10px;font-size:20px;">Benutzer in der Datenbank (Aktuell {{userAmount}}):</h3>
                 <paper-icon-button title="Tabelle neu laden" icon="autorenew" id="reloadButton" style="float: right;background-color: #E91E63;color:white; border-radius: 100px;"></paper-icon-button>
                 <paper-input id="nameSearchInput" on-input="applyFilter" maxlength="32" label="Nach Namen suchen" style="width: 200px; margin-top: -40px; padding: 10px;">
                     <div prefix><iron-icon icon="account-box" style="margin-right: 10px;"></iron-icon></div>
                 </paper-input>
 
-                <div id="deleteButtonWrapper" style="width: 310px; margin-top: -10px; padding: 10px; text-align: center; display: none;">
-                    <paper-button id="deletionButton" style="background-color: #E91E63;color: white;"></paper-button>
+                <div id="deleteButtonWrapper" style="width: 310px; margin-top: -10px; padding: 10px; display: none;">
+                    <paper-button id="deletionButton" style="background-color: #E91E63;margin-bottom: 10px; color: white;"></paper-button>
+                    <paper-button id="resetButton" style="background-color: #E91E63; margin-top: 10px; color: white;"></paper-button>
                 </div>
 
             </div>
@@ -96,6 +97,17 @@
                 <div class="buttons">
                     <paper-button dialog-dismiss>Abbrechen</paper-button>
                     <paper-button dialog-confirm id="deletionConfirmation">Best&auml;tigen</paper-button>
+                </div>
+            </paper-dialog>
+
+            <paper-dialog id="resetDialog" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
+                <h2>&Auml;nderungen best&auml;tigen</h2>
+                <paper-dialog-scrollable>
+                    <div id="resetDialogContent"></div>
+                </paper-dialog-scrollable>
+                <div class="buttons">
+                    <paper-button dialog-dismiss>Abbrechen</paper-button>
+                    <paper-button dialog-confirm id="resetConfirmation">Best&auml;tigen</paper-button>
                 </div>
             </paper-dialog>
 
@@ -162,7 +174,9 @@
                     'deletionConfirmation.tap': 'finalDelete',
                     'reloadButton.tap': 'updateData',
                     'addUserButton.tap': 'addNewUser',
-                    'addUserFinal.tap': 'addUserToDatabase'
+                    'addUserFinal.tap': 'addUserToDatabase',
+                    'resetButton.tap':'triggerReset',
+                    'resetConfirmation.tap':'finalReset'
                 },
 
                 ready: function () {
@@ -239,14 +253,16 @@
                     this.$.selectedRows = this.$.usertable.selectedKeys;
                     var deleteBox = this.$.deleteButtonWrapper;
                     var button = this.$.deletionButton;
+                    var button2 = this.$.resetButton;
 
                     if (this.$.selectedRows.length != 0) {
                         var length = this.$.selectedRows.length;
-                        this.$.headtext.innerHTML = "Ausgew&auml;hlte Nutzer (" + length + ") l&ouml;schen?";
+                        this.$.headtext.innerHTML = "Ausgew&auml;hlte Nutzer: " + length;
                         this.$.nameSearchInput.style.display = "none";
 
                         deleteBox.style.display = "block";
                         button.innerHTML = '<iron-icon icon="delete" style="margin-right: 10px;"></iron-icon>'+length+" Nutzer l&ouml;schen!";
+                        button2.innerHTML = '<iron-icon icon="restore" style="margin-right: 10px;"></iron-icon>'+length+" Nutzer<br>zur&uuml;cksetzen!";
 
                     } else {
                         this.$.headtext.innerHTML = "Benutzer in der Datenbank (Aktuell "+this.userAmount+"):";
@@ -254,6 +270,7 @@
 
                         deleteBox.style.display = "none";
                         button.innerHTML = "";
+                        button2.innerHTML = "";
                     }
                 },
                 applyFilter: function(){
@@ -366,6 +383,41 @@
                         this.updateData();
                         this.reloadData = false;
                     }
+                },
+
+                /** TODO */
+                triggerReset: function(){
+                    var cd = this.$.resetDialog;
+                    var cdc = this.$.resetDialogContent;
+                    var selectedRows = this.$.usertable.selectedItems;
+                    var names = [];
+                    var stringNames = "";
+
+                    for (var i = 0; i < selectedRows.length; i++){
+                        names.push(selectedRows[i].name);
+                        stringNames += selectedRows[i].name+"<br>";
+                    }
+
+                    cdc.innerHTML = "Sie sind im Begriff, " + selectedRows.length + " Nutzer zur&uuml;ckzusetzen!<br>(Dies wird die Passw&ouml;rter der Nutzer wieder auf ihren Ausgangszustand setzen und die Accounts deaktivieren!)<br><br><span style='font-weight: bold; border-bottom: 1px dotted #212121;'>Ausgew&auml;hlte Nutzer:</span><br><br>" + stringNames + "<br><br><span style='color:red'>Achtung: Nachdem Sie diese &Auml;nderungen best&auml;tigt haben,<br>k&ouml;nnen Sie die gel&ouml;schten Daten nicht wiederherstellen!</span>";
+                    cd.center();
+                    cd.open();
+                },
+                finalReset: function(){
+                    this.$.resetDialog.close();
+                    this.$.resetDialogContent.innerHTML = "";
+                    var ajax = this.$.dataRequest;
+                    var selectedRows = this.$.usertable.selectedItems;
+                    var names = [];
+
+                    for (var i = 0; i < selectedRows.length; i++){
+                        names.push(selectedRows[i].name);
+                    }
+
+                    this.$.usertable.deselectAll();
+
+                    ajax.body = "request=reset&names="+JSON.stringify(names);
+                    ajax.generateRequest();
+
                 }
             });
 

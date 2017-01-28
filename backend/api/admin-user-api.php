@@ -137,6 +137,55 @@
                     }
 
                     break;
+                case "reset":
+                    // Routine for resetting (multiple) user's account(s)
+                    if(isset($_POST['names'])) {
+                        $names = json_decode($_POST['names']);
+                        if(!empty($names)) {
+
+                            if(in_array($_SESSION['name'], $names)){
+                                echo json_encode(array("success" => false, "message" => "Sie können sich nicht selber bearbeiten!"));
+                            } else {
+
+                                require_once('../accountsystem/userManagement.class.php');
+                                require_once('../db/conf/dbconf.php');
+
+                                $um = new userManagement($pdo);
+                                $results = array();
+
+                                foreach($names as $name) {
+                                    array_push($results, $um->resetAccount($name));
+                                }
+
+                                $check = true;
+                                $combinedMessages = "";
+
+                                foreach($results as $res){
+                                    if($res['error'] == true){
+                                        $check = false;
+                                        $combinedMessages = $res['message']."<br>";
+                                    }
+                                }
+
+                                if($check === true) {
+                                    $data = $um->getAllUsers();
+                                    if(!$data['error']) {
+                                        echo json_encode(array("success" => true, "data" => $data['response']));
+                                    } else {
+                                        echo json_encode(array("success" => false, "message" => $data['message']));
+                                    }
+                                } else {
+                                    echo json_encode(array("success" => false, "message" => "Es sind Fehler aufgetreten:<br>".$combinedMessages));
+                                }
+                            }
+
+                        } else {
+                            echo json_encode(array("success" => false, "message" => "Sie können sich nicht selbst bearbeiten!"));
+                        }
+                    } else {
+                        echo json_encode(array("success" => false, "message" => "Es wurden keine zu bearbeitenden Namen übermittelt!"));
+                    }
+                    break;
                 default:
                     echo json_encode(array("success" => false, "message" => "Die Anfrage konnte nicht gefunden werden!"));
             }
