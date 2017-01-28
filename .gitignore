@@ -1,6 +1,7 @@
 .idea
 /localutilities/splank.xml
 /localutilities/splanr.xml
+/localutilities/showsession.php
 /build/
 
 # for template see: /backend/db/conf/dbconf_template.php
