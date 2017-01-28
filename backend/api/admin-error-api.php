@@ -59,7 +59,7 @@
                             echo json_encode(array("success" => false, "message" => "Es wurden nicht alle benötigten Daten angegeben!"));
                         }
                     } else {
-                        json_encode(array("success" => false, "message" => "Sie müssen als Administrator eingeloggt sein, um diese Aktion ausführen zu können!"));
+                        json_encode(array("success" => false, "message" => "Sie müssen als Administrator eingeloggt sein, um diese Aktion ausführen zu können!", "sessionError" => true));
                     }
                     break;
                 default:

@@ -253,18 +253,16 @@
                 case 0:
                     // Trigger Data Reload on Tab Change if error on initial load
                     e = this.$$('admin-nutzerverwaltung');
-                    if(e.users)
-                        if(!e.users.success)
-                            e.reloadData = true;
+                    if(e)
+                        e.reloadData = true;
                     break;
                 case 1:
                     break;
                 case 2:
                     // Trigger Data Reload on Tab Change if error on initial load
                     e = this.$$('admin-error-reports');
-                    if(e.data)
-                        if(!e.data.success)
-                            e.reloadData = true;
+                    if(e)
+                        e.reloadData = true;
                     break;
             }
         },
@@ -300,7 +298,8 @@
 
         },
         _onLogoutRequest: function() {
-            console.clear();
+            //console.clear();
+
             this.fire('push', [this.nodeName, "logout triggered"]);
             this.$$('#nutzerverwaltung-origin').reset = true;
             this.$$('#errorreport-origin').reset = true;

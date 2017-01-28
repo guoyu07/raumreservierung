@@ -230,10 +230,9 @@ Page for managing Error-Reports
         ready: function() {
           this.fire('pageLoaded');
           this.fire('pageLoad', this.nodeName);
-
-          this.users = Object({});
-
-          this._refreshErrorData();
+          // Will get triggered from outside <3
+          // this.users = Object({});
+          // this._refreshErrorData();
         },
         _onRequest: function() {
 

@@ -169,9 +169,9 @@
 
                     this.fire('pageLoaded');
                     this.fire('pageLoad', this.nodeName);
-
-                    var ajax = this.$.dataRequest;
-                    ajax.generateRequest();
+                    // Will get triggered from outside <3
+                    // var ajax = this.$.dataRequest;
+                    // ajax.generateRequest();
 
                 },
                 newRequest: function () {
