@@ -246,7 +246,6 @@
                     window.location.reload();
                     break;
                 case "confirm-email":
-                    this.$.pages.select(1);
                     this.loadEmailPage();
                     break;
                 case "logout":
@@ -254,10 +253,6 @@
                     break;
                 case "imprint":
                     this._loadImprint();
-                    break;
-                case "":
-                    this.$.pages.select(0);
-                    this._loadPages();
                     break;
                 default:
                     this._loadPages();
@@ -341,52 +336,54 @@
         _onEmailLoaded: function () {
             this.emailPageLoaded = true;
             this.$.loadIndicator.close();
+            this.$.pages.select(1);
         },
         _onComponentLoaded: function (e) {
             console.log("[" + e.detail + "] component loaded and ready");
         },
         _redirect: function () {
-            this.$.loadIndicator.open();
+            if(this.hash == "") {
+                this.$.loadIndicator.open();
 
-            if (this.response.data.type != "" && Number(this.response.data.type) >= 0 && Number(this.response.data.status) >= 0) {
-                switch (Number(this.response.data.status)) {
-                    case 1:
-                        // Decativated
-                        this.fire('goToPage', "deactivated-account");
-                        break;
-                    case 2:
-                        // Temporary
-                        //TODO: Dialog & Auto logout
-                        this.showTemporaryDialog();
-                        break;
-                    case 3:
-                        // Activated
-                        var type;
-                        switch (Number(this.response.data.type)) {
-                            case 1:
-                                type = "admin";
-                                break;
-                            case 2:
-                                type = "management";
-                                break;
-                            case 3:
-                                type = "teacher";
-                                break;
-                            default:
-                                type = "teacher";
-                                break;
-                        }
+                if (this.response.data.type != "" && Number(this.response.data.type) >= 0 && Number(this.response.data.status) >= 0) {
+                    switch (Number(this.response.data.status)) {
+                        case 1:
+                            // Decativated
+                            this.fire('goToPage', "deactivated-account");
+                            break;
+                        case 2:
+                            // Temporary
+                            this.showTemporaryDialog();
+                            break;
+                        case 3:
+                            // Activated
+                            var type;
+                            switch (Number(this.response.data.type)) {
+                                case 1:
+                                    type = "admin";
+                                    break;
+                                case 2:
+                                    type = "management";
+                                    break;
+                                case 3:
+                                    type = "teacher";
+                                    break;
+                                default:
+                                    type = "teacher";
+                                    break;
+                            }
 
-                        this.type = type;
-                        this.fire('goToPage', type);
+                            this.type = type;
+                            this.fire('goToPage', type);
+                    }
+
+                } else {
+                    this.$.loadIndicator.close();
+                    this.$.errorContent.innerHTML = '<p style="color:red;">Der Typ Ihres Accounts konnte nicht ermittelt werden!</p>';
+                    this.$.errorDialog.center();
+                    this.$.errorDialog.open();
+                    this._loadPages();
                 }
-
-            } else {
-                this.$.loadIndicator.close();
-                this.$.errorContent.innerHTML = '<p style="color:red;">Der Typ Ihres Accounts konnte nicht ermittelt werden!</p>';
-                this.$.errorDialog.center();
-                this.$.errorDialog.open();
-                this._loadPages();
             }
         },
         loadUserPage: function () {
