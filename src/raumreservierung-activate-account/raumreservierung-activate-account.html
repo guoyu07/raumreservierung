@@ -237,6 +237,12 @@
       _onReload: function() {
           if(this.reload == true){
               this.stage = 0;
+              if(this.$$('#activate-input-email'))
+                  this.$$('#activate-input-email').value = "";
+              if(this.$$('#activate-input-pw1'))
+                  this.$$('#activate-input-pw1').value = "";
+              if(this.$$('#activate-input-p2'))
+                  this.$$('#activate-input-p2').value = "";
               this.$.dataRequest.body = "request=getUserData";
               this.$.dataRequest.generateRequest();
               this.reload = false;
