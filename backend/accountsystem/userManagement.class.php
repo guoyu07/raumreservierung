@@ -62,40 +62,53 @@
         }
 
         public function activateUser($name, $pw, $email) {
-            //The Variable Contents have to be checked before calling the function!
-            $newStatus = 2;     //Temporary; waiting for E-Mail - Confirmation
+            // The Variable Contents have to be checked before calling the function!
+            // First of all, checking if the email is not already in the database!
 
-            $newPass = $this->hash_password($pw);
-            $npw = $newPass['password'];
-            $salt = $newPass['salt'];
-            $iterations = $newPass['iterations'];
+            if(!$this->isEmailInDB($email)) {
+                $newStatus = 2;     //Temporary; waiting for E-Mail - Confirmation
 
-            $sql1 = "UPDATE accounts SET status=:newstatus, last_status_change=NOW(), activationcode=:activationcode WHERE name=:accname";
-            $r1 = $this->pdo->prepare($sql1);
+                $newPass = $this->hash_password($pw);
+                $npw = $newPass['password'];
+                $salt = $newPass['salt'];
+                $iterations = $newPass['iterations'];
 
-            $activationcode = bin2hex(openssl_random_pseudo_bytes(32));
+                $sql1 = "UPDATE accounts SET status=:newstatus, last_status_change=NOW(), activationcode=:activationcode WHERE name=:accname";
+                $r1 = $this->pdo->prepare($sql1);
 
-            $sql2 = "UPDATE accounts_users SET email=:email, password=:pw, salt=:salt, iterations=:iterations WHERE name=:accname";
-            $r2 = $this->pdo->prepare($sql2);
+                $activationcode = bin2hex(openssl_random_pseudo_bytes(32));
 
-            try {
-                $this->pdo->beginTransaction();
-                $r1->execute(array(":newstatus" => $newStatus, ":accname" => $name, ":activationcode" => $activationcode));
-                $r2->execute(array(":email" => $email, ":pw" => $npw, ":salt" => $salt, ":iterations" => $iterations, ":accname" => $name));
+                $sql2 = "UPDATE accounts_users SET email=:email, password=:pw, salt=:salt, iterations=:iterations WHERE name=:accname";
+                $r2 = $this->pdo->prepare($sql2);
 
-                $mail = $this->sendConfirmationMail($activationcode, $name, $email);
+                try {
+                    $this->pdo->beginTransaction();
+                    $r1->execute(array(":newstatus" => $newStatus, ":accname" => $name, ":activationcode" => $activationcode));
+                    $r2->execute(array(":email" => $email, ":pw" => $npw, ":salt" => $salt, ":iterations" => $iterations, ":accname" => $name));
 
-                if($mail === true){
-                    $this->pdo->commit();
-                    return array("error" => false);
-                } else {
+                    $mail = $this->sendConfirmationMail($activationcode, $name, $email);
+
+                    if($mail === true){
+                        $this->pdo->commit();
+                        return array("error" => false);
+                    } else {
+                        $this->pdo->rollBack();
+                        return array("error" => true, "message" => "Fehler: Die Bestätigungs-Mail konnte aufgrund eines Fehlers nicht gesendet werden!");
+                    }
+                } catch (PDOException $e) {
                     $this->pdo->rollBack();
-                    return array("error" => true, "message" => "Fehler: Die Bestätigungs-Mail konnte aufgrund eines Fehlers nicht gesendet werden!");
+                    return array("error" => true, "message" => "Es ist ein Fehler aufgetreten: ".$e->getMessage());
                 }
-            } catch (PDOException $e) {
-                $this->pdo->rollBack();
-                return array("error" => true, "message" => "Es ist ein Fehler aufgetreten: ".$e->getMessage());
+            } else {
+                return array("error" => true, "message" => "Diese E-Mail ist bereits mit einem anderen Konto verknüpft. Bitte kontaktieren Sie unverzüglich einen Administrator!");
             }
+        }
+
+        private function isEmailInDB($email) {
+            $sql = "SELECT email FROM accounts_users WHERE email=:email";
+            $r = $this->pdo->prepare($sql);
+            $r->execute(array(":email" => $email));
+            return !empty($r->fetchAll());
         }
 
         private function sendConfirmationMail($activationcode, $name, $email)
