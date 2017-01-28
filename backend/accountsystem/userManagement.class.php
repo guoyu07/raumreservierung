@@ -103,7 +103,7 @@
 
             $fullname = $this->getFullName($name);
             $prename = (is_array($fullname)) ? $fullname['prename'] : $name;
-            $surname = (is_array($fullname)) ? $fullname['rename'] : "";
+            $surname = (is_array($fullname)) ? $fullname['surname'] : "";
 
             $to         = $email;
             $subject    = "Gykl Raumreservierung - Anmeldung";
