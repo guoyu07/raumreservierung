@@ -44,18 +44,46 @@
                     if(!empty($res)){
                         $res = $res[0];
                     }
-
                     if(isset($res['name'])){
                         $hash = hash_pbkdf2("sha512", $this->pw, $res['salt'], $res['iterations'], 255);
 
                         if(hash_equals($res['password'], $hash)){
-                            $_SESSION['loggedin'] = true;
-                            $_SESSION['name'] = $res['name'];
-                            $_SESSION['acctype'] = $res['type'];
-                            $_SESSION['accstatus'] = $res['status'];
-                            $_SESSION['last_status_change'] = $res['last_status_change'];
-                            $_SESSION['email'] = $res['email'];
-                            return array("login" => true);
+
+                            if($res['last_status_change'] != null && $res['status'] == 2) {
+                                if((strtotime($res['last_status_change']) + (3600*12)) < time()) {
+                                    // Not Log In , deactivate account
+                                    require_once('userManagement.class.php');
+                                    $um = new userManagement($this->pdo);
+                                    $rae = $um->resetAccount($res['name']);
+
+                                    $_SESSION['loggedin'] = false;
+
+                                    if($rae['error'] == false) {
+                                        return array("login" => false, "message" => "Ihre Aktivierungsfrist von 12 Stunden ist abgelaufen! Ihr Konto wurde wieder zur&uuml;ckgesetzt!");
+                                    } else {
+                                        return array("login" => false, "error" => true, "message" => "Ihre Aktivierungsfrist von 12 Stunden ist abgelaufen, doch beim Deaktivieren Ihres Accounts ist ein Fehler aufgetreten:<br><br>".$rae['message']);
+                                    }
+                                } else {
+                                    $_SESSION['loggedin'] = true;
+                                    $_SESSION['name'] = $res['name'];
+                                    $_SESSION['acctype'] = $res['type'];
+                                    $_SESSION['accstatus'] = $res['status'];
+                                    $_SESSION['last_status_change'] = $res['last_status_change'];
+                                    $_SESSION['email'] = $res['email'];
+
+                                    return array("login" => true);
+                                }
+                            } else {
+                                $_SESSION['loggedin'] = true;
+                                $_SESSION['name'] = $res['name'];
+                                $_SESSION['acctype'] = $res['type'];
+                                $_SESSION['accstatus'] = $res['status'];
+                                $_SESSION['last_status_change'] = $res['last_status_change'];
+                                $_SESSION['email'] = $res['email'];
+
+                                return array("login" => true);
+                            }
+
                         } else {
                             return array("login" => false, "message" => "Fehler: Bitte &uuml;berpr&uuml;fen Sie Ihr Passwort!");
                         }

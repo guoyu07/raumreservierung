@@ -151,7 +151,7 @@ HTML;
 
         public function confirmUser($name, $code){
 
-            $sql1 = "SELECT status, email_confirmed, activationcode, email FROM accounts, accounts_users
+            $sql1 = "SELECT status, email_confirmed, activationcode, email, last_status_change FROM accounts, accounts_users
                      WHERE accounts_users.name = accounts.name AND accounts.name = :accname";
             $r1 = $this->pdo->prepare($sql1);
 
@@ -166,25 +166,31 @@ HTML;
                     $res = $res[0];
 
                     if($res['status'] == 2 && $res['email_confirmed'] == 0 && $res['email'] != null && $res['activationcode'] != null){
-                        if($res['activationcode'] == $code){
-                            //Confirm User
-
-                            $sql2 = "UPDATE accounts SET status=:accstatus, last_status_change=NOW(), email_confirmed=1, activationcode=NULL
-                                     WHERE name=:accname";
-                            $r2 = $this->pdo->prepare($sql2);
-
-                            try {
-                                $this->pdo->beginTransaction();
-                                $r2->execute(array(":accstatus" => 3, ":accname" => $name));
-                                $this->pdo->commit();
-                                return (array("error" => false, "message" => "Ihr Account wurde erfolgreich aktiviert!"));
-                            } catch (Exception $e) {
-                                $this->pdo->rollBack();
-                                return (array("error" => true, "message" => "Fehler: ".$e->getMessage()));
-                            }
-
+                        if((strtotime($_SESSION['last_status_change']) + (3600*12)) < time()) {
+                            // 12h are over
+                            $this->resetAccount($name);
+                            return array("error" => true, "message" => "Die Aktivierungsfrist von 12 Stunden ist abgelaufen! Ihr Konto wurde wieder deaktiviert!");
                         } else {
-                            return array("error" => true, "message" => "Fehler: Der Best&auml;tigungscode ist nicht korrekt!");
+                            if(hash_equals($res['activationcode'], $code)){
+                                //Confirm User
+
+                                $sql2 = "UPDATE accounts SET status=:accstatus, last_status_change=NOW(), email_confirmed=1, activationcode=NULL
+                                     WHERE name=:accname";
+                                $r2 = $this->pdo->prepare($sql2);
+
+                                try {
+                                    $this->pdo->beginTransaction();
+                                    $r2->execute(array(":accstatus" => 3, ":accname" => $name));
+                                    $this->pdo->commit();
+                                    return (array("error" => false, "message" => "Ihr Account wurde erfolgreich aktiviert!"));
+                                } catch (Exception $e) {
+                                    $this->pdo->rollBack();
+                                    return (array("error" => true, "message" => "Fehler: ".$e->getMessage()));
+                                }
+
+                            } else {
+                                return array("error" => true, "message" => "Fehler: Der Best&auml;tigungscode ist nicht korrekt!");
+                            }
                         }
                     } elseif($res['status'] == 3) {
                         return array("error" => true, "message" => "Der Account ($name) wurde bereits aktiviert!");
@@ -331,6 +337,87 @@ HTML;
             } catch( PDOException $e ) {
                 return array("error" => true, "message" => "Es ist ein Fehler beim Ändern des Passwortes aufgetreten: ".$e->getMessage());
             }
+        }
+
+        public function resetAccount($name) {
+            $sql1 = "UPDATE accounts SET status=1, last_status_change=NULL, email_confirmed=0, activationcode=NULL 
+                     WHERE accounts.name = :accname";
+            $sql2 = "UPDATE accounts_users SET password=:pw, salt=:salt, iterations=:iterations, email=NULL
+                     WHERE accounts_users.name = :accname";
+            $r1 = $this->pdo->prepare($sql1);
+            $r2 = $this->pdo->prepare($sql2);
+
+            $usql = "SELECT name, lehrer_accname, lehrer_vorname, lehrer_nachname FROM accounts_users, plan_lehrer
+                     WHERE plan_lehrer.lehrer_accname = accounts_users.name AND accounts_users.name = :accname";
+            $u = $this->pdo->prepare($usql);
+
+            try {
+
+                $this->pdo->beginTransaction();
+                $u->execute(array(":accname" => $name));
+                $this->pdo->commit();
+                $user = $u->fetchAll();
+                if(!empty($user)) {
+                    $user = $user[0];
+
+                    // Reset Account by Teacher name
+                    $pwhash = $this->hash_password("gykl@".strtolower($user['lehrer_vorname']));
+                    $pw = $pwhash['password'];
+                    $salt = $pwhash['salt'];
+                    $iterations = $pwhash['iterations'];
+
+                    try {
+                        $this->pdo->beginTransaction();
+                        $r1->execute(array(":accname" => $name));
+                        $r2->execute(array(":accname" => $name, ":pw" => $pw, ":salt" => $salt, ":iterations" => $iterations));
+                        $this->pdo->commit();
+                        return array("error" => false);
+                    } catch (PDOException $e){
+                        $this->pdo->rollBack();
+                        return array("error" => true, "message" => $e->getMessage());
+                    }
+
+                } else {
+                    // Reset Account with standard PW
+                    $pwhash = $this->hash_password("gykl@2016");
+                    $pw = $pwhash['password'];
+                    $salt = $pwhash['salt'];
+                    $iterations = $pwhash['iterations'];
+
+                    try {
+                        $this->pdo->beginTransaction();
+                        $r1->execute(array(":accname" => $name));
+                        $r2->execute(array(":accname" => $name, ":pw" => $pw, ":salt" => $salt, ":iterations" => $iterations));
+                        $this->pdo->commit();
+                        return array("error" => false);
+                    } catch (PDOException $e) {
+                        $this->pdo->rollBack();
+                        return array("error" => true, "message" => $e->getMessage());
+                    }
+
+                }
+
+
+            } catch (PDOException $e) {
+                $this->pdo->rollBack();
+                return array("error" => true, "message" => $e->getMessage());
+            }
+        }
+
+        public function getFullName($name) {
+
+            $sql = "SELECT name, lehrer_accname, lehrer_vorname, lehrer_nachname FROM accounts_users, plan_lehrer
+                     WHERE plan_lehrer.lehrer_accname = accounts_users.name AND accounts_users.name = :accname";
+            $r = $this->pdo->prepare($sql);
+            $r->execute(array(":accname" => $name));
+            $res = $r->fetchAll();
+            if(!empty($res)) {
+                $u = $res[0];
+                return $u['lehrer_vorname'];
+            } else {
+                return $name;
+            }
+
         }
 
     }
