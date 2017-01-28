@@ -52,6 +52,9 @@
 
                 if($_SESSION['accstatus'] != 2) {
                     $name = $_SESSION['name'];
+                    require_once('../accountsystem/userManagement.class.php');
+                    $um = new userManagement($pdo);
+                    $fullname = $um->getFullName($name);
                     $type = "";
                     switch($_SESSION['acctype']){
                         case 1:
@@ -67,7 +70,7 @@
                     $status = $_SESSION['accstatus'];
                     $loggedin = $_SESSION['loggedin'];
 
-                    echo json_encode(array("success" => true, "name" => $name, "type" => $type, "status" => $status, "loggedin" => strval($loggedin), "request" => "getUserData"));
+                    echo json_encode(array("success" => true, "name" => $name, "fullname" => $fullname, "type" => $type, "status" => $status, "loggedin" => strval($loggedin), "request" => "getUserData"));
                 } else {
                     json_encode(array("success" => false, "invalid" => true));
                 }

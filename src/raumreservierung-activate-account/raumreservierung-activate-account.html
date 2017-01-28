@@ -102,7 +102,7 @@
         <iron-pages selected="{{stage}}">
 
           <div class="contentWrapper">
-            <paper-card heading="Hallo, [[response.name]]!">
+            <paper-card heading="Hallo, [[response.fullname]]!">
               <p>
                 Sie haben sich erfolgreich bei der Raumreservierung eingeloggt!<br>
                 Um die Raumreservierung nutzen zu k&ouml;nnen, m&uuml;ssen Sie Ihr Passwort &auml;ndern, sowie
@@ -236,6 +236,7 @@
       },
       _onReload: function() {
           if(this.reload == true){
+              this.stage = 0;
               this.$.dataRequest.body = "request=getUserData";
               this.$.dataRequest.generateRequest();
               this.reload = false;
