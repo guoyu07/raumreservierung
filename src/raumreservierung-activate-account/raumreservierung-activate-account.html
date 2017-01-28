@@ -199,7 +199,7 @@
       ready: function() {
         this.fire('pageLoad', this.nodeName);
         this.$.dataRequest.body = "request=getUserData";
-        this.$.dataRequest.generateRequest();
+        // this.$.dataRequest.generateRequest(); old one, will be called via reload=true in raumreservierung-main
       },
       _onRequest: function() {
           this.$.loadIndicator.open();
@@ -208,24 +208,19 @@
           this.$.loadIndicator.close();
           this.response = this.$.dataRequest.lastResponse;
           if(!this.response.success) {
-              if(this.response.request == "getUserData") {
-                  if(this.response.invalid) {
-                      this.fire('activate-account-session-error');
-                  } else {
-                      if(this.response.message)
-                          this.$.errorContent.innerHTML = this.request.message;
-                      else
-                          this.$.errorContent.innerHTML = "Es konnte keine Fehlermeldung empfangen werden!";
 
-                      this.$.errorDialog.open();
-                  }
-              } else if(this.response.request == "activateAccount") {
-                  this.$.errorContent.innerHTML = this.response.message;
-                  this.$.errorDialog.center();
+              if(this.response.invalid) {
+                  this.fire('activate-account-session-error');
+              } else {
+                  if(this.response.message)
+                      this.$.errorContent.innerHTML = this.request.message;
+                  else
+                      this.$.errorContent.innerHTML = "Es konnte keine Fehlermeldung empfangen werden!";
+
                   this.$.errorDialog.open();
               }
           } else {
-              if(this.response.request == "activateAccount"){
+              if(this.response.request == "activateAccount") {
                   // Account Activated :3
                   // Final stage :)
                   this.stage = 2;
@@ -247,7 +242,7 @@
           }
       },
       togglePrivacy: function() {
-          this.$.privacy.toggle();
+          this.$.privacy.open();
       },
       nextStage: function() {
           this.stage++;
