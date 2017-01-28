@@ -188,8 +188,10 @@ HTML;
                         }
                     } elseif($res['status'] == 3) {
                         return array("error" => true, "message" => "Der Account ($name) wurde bereits aktiviert!");
-                    } else {
+                    } elseif($res['status'] == 1) {
                         return array("error" => true, "message" => "Der Account ($name) ist momentan deaktiviert!");
+                    } else {
+                        return array("Es sind nicht alle benötigten Daten in die Datenbank eingetragen! Bitte melden Sie diesen Fehler unbedingt einem Administrator!");
                     }
 
                 } else { return array("error" => true, "message" => "Fehler: Der Nutzername wurde nicht in der Datenbank gefunden!"); }
