@@ -100,12 +100,17 @@
 
         private function sendConfirmationMail($activationcode, $name, $email)
         {
+
+            $fullname = $this->getFullName($name);
+            $prename = (is_array($fullname)) ? $name['prename'] : $name;
+            $surname = (is_array($fullname)) ? $name['rename'] : "";
+
             $to         = $email;
             $subject    = "Gykl Raumreservierung - Anmeldung";
 
             $headers    = "MIME-Version: 1.0" . "\r\n";
             $headers   .= "Content-type: text/html; charset=iso-8859-1" . "\r\n";
-            $headers   .= "To: $name <$email>" . "\r\n";
+            $headers   .= "To: $prename $surname <$email>" . "\r\n";
             $headers   .= "From: activation@lima.zone" . "\r\n";
             $headers   .= "Reply-To: activation@lima.zone" . "\r\n";
             $headers   .= "X-Mailer: PHP/" . phpversion() . "\r\n";
@@ -114,9 +119,8 @@
             $url = "https://gykl-rr.lima.zone";
 
             $message    = <<<HTML
-<!DOCTYPE html><html><head><title>Account - Aktivierung</title><meta charset=utf-8><meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes"><style>html,body{font-family:Roboto,Noto,sans-serif;color:#212121;margin:0 auto;min-width:319px}#header{margin:0 auto;position:absolute;top:0;left:0;width:100%;height:58px;background-color:#8BC34A;color:#212121;box-shadow:0 4px 15px #9E9E9E}#headText{font-size:22px;margin-top:15px;margin-left:18px}#content{width:90%;max-width:600px;height:auto;margin:96px auto 58px auto;text-align:left}#footer{margin:0 auto;width:100%;height:48px;background-color:#212121;color:white;text-align:center}#footText{font-size:13px;padding-top:8px}#pseudoButton{background-color:#2196F3;height:48px;width:auto;text-align:center;font-size:22px;color:white;-webkit-transition:background-color 0.2s;-moz-transition:background-color 0.2s;-ms-transition:background-color 0.2s;-o-transition:background-color 0.2s;transition:background-color 0.2s;border-radius:5px;margin:0 auto}#pseudoButton:hover{background-color:#64B5F6;cursor:pointer}a{color:#33691E;text-decoration:none;-webkit-transition:color 0.2s;-moz-transition:color 0.2s;-ms-transition:color 0.2s;-o-transition:color 0.2s;transition:color 0.2s}a:hover{color:#558B2F}#buttonLink{color:white;text-decoration:none}hr{width:70%;border:none;border-bottom:1px solid #E0E0E0;margin:20px auto}#disclaimer{font-size:14px;color:#616161}</style></head><body><div id="header"><p id="headText">Raumreservierung</p></div><div id="content"><h1 style="text-align: center;">Hallo, $name!</h1><p> <br> <b>Sie haben es fast geschafft!</b><br><br> Um Ihre E-Mail '$email' zu best&auml;tigen, &ouml;ffnen Sie bitte den untenstehenden Link.<br> Anschlie&szlig;end werden Sie sich mit Ihrem Konto bei der Raumreservierung einloggen k&ouml;nnen. <br><br></p> <a href="$url?name=$name&code=$activationcode#confirm-email" title="$url#confirm-email" id="buttonLink" target="_blank"><div id="pseudoButton"><p style="padding-top: 10px;">$name aktivieren!</p></div> </a><hr><p id="disclaimer"> <b>Information</b><br> Diese E-Mail wurde im Rahmen der Account-Aktivierung f&uuml;r die Raumreservierung des <a href="https://gymnasium-klotzsche.de" title="www.gymnasium-klotzsche.de" target="_blank">Gymnasiums Dresden-Klotzsche</a> versandt.<br> Wenn Sie diese E-Mail nicht angefordert haben, dann ignorieren Sie sie einfach.<br><br> Sollten Sie weitere Fragen oder Probleme haben, k&ouml;nnen Sie sich direkt an das <a href="https://gymnasium-klotzsche.de" title="www.gymnasium-klotzsche.de" target="_blank">Gymnasium Dresden-Klotzsche</a> oder die <a href="$url#imprint" title="$url#imprint" target="_blank">Raumreservierung</a> wenden. <br><br> Wir entschuldigen uns f&uuml;r jedwede Art von Unannehmlichkeiten.<br> Ihr Team der Raumreservierung des Gymnasiums Dresden Klotzsche :-)</p></div><div id="footer"><p id="footText"> Raumreservierung &copy; 2017 by<br>Moritz Menzel, Benjamin Kirchhoff, Maximilian Seiler</p></div></body></html>
+<!DOCTYPE html><html style="font-family: Roboto, Noto, sans-serif;color: #212121;margin: 0 auto;min-width: 319px;"><head> <title>Account - Aktivierung</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes"> <style>html, body{font-family: Roboto, Noto, sans-serif; color: #212121; margin: 0 auto; min-width: 319px;}#header{margin: 0 auto; position: absolute; top: 0; left: 0; width: 100%; height: 58px; background-color: #8BC34A; color: #212121; box-shadow: 0 4px 15px #9E9E9E;}#headText{font-size: 22px; margin-top: 15px; margin-left: 18px;}#content{width: 90%; max-width: 600px; height: auto; margin: 96px auto 58px auto; text-align: left;}#footer{margin: 0 auto; width: 100%; height: 48px; background-color: #212121; color: white; text-align: center;}#footText{font-size: 13px; padding-top: 8px;}#pseudoButton{background-color: #2196F3; height: 48px; width: auto; text-align: center; font-size: 22px; color: white; -webkit-transition: background-color 0.2s; -moz-transition: background-color 0.2s; -ms-transition: background-color 0.2s; -o-transition: background-color 0.2s; transition: background-color 0.2s; border-radius: 5px; margin: 0 auto;}#pseudoButton:hover{background-color: #64B5F6; cursor: pointer;}a{color: #33691E; text-decoration: none; -webkit-transition: color 0.2s; -moz-transition: color 0.2s; -ms-transition: color 0.2s; -o-transition: color 0.2s; transition: color 0.2s;}a:hover{color: #558B2F;}#buttonLink{color: white; text-decoration: none;}hr{width: 70%; border: none; border-bottom: 1px solid #E0E0E0; margin: 20px auto;}#disclaimer{font-size: 14px; color: #616161;}/** Fix for apple clients */ @media only screen and (min-device-width: 601px){#content{width: 600px !important;}}</style></head><body style="font-family: Roboto, Noto, sans-serif;color: #212121;margin: 0 auto;min-width: 319px;"><div id="header" style="margin: 0 auto;position: absolute;top: 0;left: 0;width: 100%;height: 58px;background-color: #8BC34A;color: #212121;box-shadow: 0 4px 15px #9E9E9E;"> <p id="headText" style="font-size: 22px;margin-top: 15px;margin-left: 18px;">Raumreservierung</p></div><!--[if (get mso 9)|(IE)]><div id="content" style="width: 600px;height: auto; margin: 96px auto 58px auto;text-align: left;"><![endif]--><div id="content" style="width: 90%;max-width: 600px;height: auto;margin: 96px auto 58px auto;text-align: left;"> <h1 style="text-align: center;">Hallo, $prename $surname!</h1> <p> <br><b>Sie haben es fast geschafft!</b><br><br>Um Ihre E-Mail '$email' zu best&auml;tigen, &ouml;ffnen Sie bitte den untenstehenden Link.<br>Anschlie&szlig;end werden Sie sich mit Ihrem Konto bei der Raumreservierung einloggen k&ouml;nnen. <br><br></p><a href="$url?name=$name&code=$activationcode#confirm-email" title="$url#confirm-email" id="buttonLink" target="_blank" style="color: white;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;"> <div id="pseudoButton" style="background-color: #2196F3;height: 48px;width: auto;text-align: center;font-size: 22px;color: white;-webkit-transition: background-color 0.2s;-moz-transition: background-color 0.2s;-ms-transition: background-color 0.2s;-o-transition: background-color 0.2s;transition: background-color 0.2s;border-radius: 5px;margin: 0 auto;"> <p style="padding-top: 10px;">$name aktivieren!</p></div></a> <hr style="width: 70%;border: none;border-bottom: 1px solid #E0E0E0;margin: 20px auto;"> <p id="disclaimer" style="font-size: 14px;color: #616161;"> <b>Information</b><br>Diese E-Mail wurde im Rahmen der Account-Aktivierung f&uuml;r die Raumreservierung des <a href="https://gymnasium-klotzsche.de" title="www.gymnasium-klotzsche.de" target="_blank" style="color: #33691E;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;">Gymnasiums Dresden-Klotzsche</a> versandt.<br>Wenn Sie diese E-Mail nicht angefordert haben, dann ignorieren Sie sie einfach.<br><br>Sollten Sie weitere Fragen oder Probleme haben, k&ouml;nnen Sie sich direkt an das <a href="https://gymnasium-klotzsche.de" title="www.gymnasium-klotzsche.de" target="_blank" style="color: #33691E;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;">Gymnasium Dresden-Klotzsche</a> oder die <a href="$url#imprint" title="$url#imprint" target="_blank" style="color: #33691E;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;">Raumreservierung</a> wenden. <br><br>Wir entschuldigen uns f&uuml;r jedwede Art von Unannehmlichkeiten.<br>Ihr Team der Raumreservierung des Gymnasiums Dresden Klotzsche :-) </p></div><div id="footer" style="margin: 0 auto;width: 100%;height: 48px;background-color: #212121;color: white;text-align: center;"> <p id="footText" style="font-size: 13px;padding-top: 8px;"> Raumreservierung &copy; 2017 by<br>Moritz Menzel, Benjamin Kirchhoff, Maximilian Seiler </p></div></body></html>
 HTML;
-
             mail($to, $subject, $message, $headers);
             return true;    //TODO: Change to 'return mail()' again but Webserver Times @ LimaCity are too disgusting
         }
@@ -404,9 +408,9 @@ HTML;
             }
         }
 
-        public function getFullName($name) {
+        public function getPrename($name) {
 
-            $sql = "SELECT name, lehrer_accname, lehrer_vorname, lehrer_nachname FROM accounts_users, plan_lehrer
+            $sql = "SELECT name, lehrer_accname, lehrer_vorname FROM accounts_users, plan_lehrer
                      WHERE plan_lehrer.lehrer_accname = accounts_users.name AND accounts_users.name = :accname";
             $r = $this->pdo->prepare($sql);
             $r->execute(array(":accname" => $name));
@@ -418,6 +422,20 @@ HTML;
                 return $name;
             }
 
+        }
+
+        public function getFullName($name) {
+            $sql = "SELECT name, lehrer_accname, lehrer_vorname, lehrer_nachname FROM accounts_users, plan_lehrer
+                     WHERE plan_lehrer.lehrer_accname = accounts_users.name AND accounts_users.name = :accname";
+            $r = $this->pdo->prepare($sql);
+            $r->execute(array(":accname" => $name));
+            $res = $r->fetchAll();
+            if(!empty($res)) {
+                $u = $res[0];
+                return array("prename" => $u['lehrer_vorname'], "surname" => $u['lehrer_nachname']);
+            } else {
+                return $name;
+            }
         }
 
     }

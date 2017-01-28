@@ -54,7 +54,7 @@
                     $name = $_SESSION['name'];
                     require_once('../accountsystem/userManagement.class.php');
                     $um = new userManagement($pdo);
-                    $fullname = $um->getFullName($name);
+                    $fullname = $um->getPrename($name);
                     $type = "";
                     switch($_SESSION['acctype']){
                         case 1:
