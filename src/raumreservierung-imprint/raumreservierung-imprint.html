@@ -1,0 +1,212 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-drawer-panel/paper-drawer-panel.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+
+<dom-module id="raumreservierung-imprint">
+    <template>
+        <style>
+            :host {
+                display: block;
+                --primary-color: var(--paper-light-blue-500);
+                --accent-color: var(--paper-deep-orange-500);
+                color: #212121;
+            }
+            a {
+                text-decoration: none;
+                color: #212121;
+            }
+            p > a{
+                color: var(--paper-indigo-500);
+                -webkit-transition: color 0.2s;
+                -moz-transition: color 0.2s;
+                -ms-transition: color 0.2s;
+                -o-transition: color 0.2s;
+                transition: color 0.2s;
+            }
+            p > a:hover{
+                color: var(--paper-blue-500);
+            }
+            paper-icon-item:hover {
+                cursor: pointer;
+            }
+            .navHeader {
+                color: #212121;
+                font-size: 22px;
+                margin: 0 auto;
+                text-align: center;
+                padding: 5px 0;
+                width: auto;
+                text-decoration: none;
+            }
+            hr {
+                width: 90%;
+                border: none;
+                border-bottom: 1px solid #E0E0E0;
+            }
+            #cardWrapper{
+                @apply(--layout-vertical);
+            }
+            paper-card{
+                width: 90%;
+                min-width: 250px;
+                @apply(--layout-self-center);
+                margin: 10px 0;
+            }
+            paper-card p {
+                text-align: justify;
+            }
+        </style>
+
+        <div id="privacyContainer"></div>
+
+        <paper-drawer-panel disable-edge-swipe disable-swipe>
+            <div main>
+                <paper-header-panel mode="standard">
+                    <paper-toolbar>
+                        <paper-icon-button paper-drawer-toggle icon="menu"></paper-icon-button>
+                        <div class="title">Impressum</div>
+                    </paper-toolbar>
+                    <div class="fit" id="cardWrapper">
+                        <paper-card heading="Impressum">
+                            <div class="card-content">
+                                <h3>Angaben gem&auml;&szlig; &sect; 5 TMG:</h3>
+                                <p>
+                                    Moritz Menzel<br>
+                                    (Angabe des Wohnortes nicht notwendig, da kein gewerblicher Betrieb gef&uuml;hrt wird)
+                                </p>
+                                <hr>
+                                <h3>Kontakt:</h3>
+                                <p>
+                                    E-Mail: <a href="mailto:bossmode2337@googlemail.com">bossmode2337&commat;googlemail.com</a><br>
+                                </p>
+                            </div>
+                        </paper-card>
+                        <paper-card heading="Haftungsausschluss">
+                            <div class="card-content">
+                                <h3>Haftung f&uuml;r Inhalte</h3>
+                                <p>
+                                    Als Diensteanbieter sind wir gem&auml;&szlig; &sect; 7 Abs.1 TMG f&uuml;r eigene Inhalte auf diesen Seiten
+                                    nach den allgemeinen Gesetzen verantwortlich. Nach &sect;&sect; 8 bis 10 TMG sind wir als
+                                    Diensteanbieter jedoch nicht verpflichtet, &uuml;bermittelte oder gespeicherte fremde
+                                    Informationen zu &uuml;berwachen oder nach Umst&auml;nden zu forschen, die auf eine rechtswidrige
+                                    T&auml;tigkeit hinweisen.<br><br>
+                                    Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den
+                                    allgemeinen Gesetzen bleiben hiervon unber&uuml;hrt. Eine diesbez&uuml;gliche Haftung ist jedoch
+                                    erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung m&ouml;glich. Bei
+                                    Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend
+                                    entfernen.
+                                </p>
+                                <hr>
+                                <h3>Haftung f&uuml;r Links</h3>
+                                <p>
+                                    Unser Angebot enth&auml;lt Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen
+                                    Einfluss haben. Deshalb k&ouml;nnen wir f&uuml;r diese fremden Inhalte auch keine Gew&auml;hr &uuml;bernehmen.
+                                    F&uuml;r die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber
+                                    der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung
+                                    auf m&ouml;gliche Rechtsverst&ouml;&szlig;e &uuml;berpr&uuml;ft. Rechtswidrige Inhalte waren zum Zeitpunkt der
+                                    Verlinkung nicht erkennbar.<br><br>
+                                    Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete
+                                    Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von
+                                    Rechtsverletzungen werden wir derartige Links umgehend entfernen.
+                                </p>
+                                <hr>
+                                <h3>Urheberrecht</h3>
+                                <p>
+                                    Die Seiten und Inhalte auf diesen Seiten unterliegen dem deutschen Urheberrecht.<br>
+                                    Wir haben uns dazu entschlossen, das gesamte Projekt "Raumreservierung Gymnasium
+                                    Dresden-Klotzsche" unter der <a href="http://www.gnu.de/documents/gpl-3.0.de.html">GNU GPL v3.0</a> - Lizens zu ver&ouml;ffentlichen.<br>
+                                    <br>
+                                    Sie d&uuml;rfen alle von uns - Moritz Menzel, Benjamin Kirchhoff, Maximilian Seiler -
+                                    erstellten Dateien und Inhalte dieser Seite:
+                                </p>
+                                <ul>
+                                    <li>uneingeschr&auml;nkt erzeugen (vervielf&auml;ltigen)</li>
+                                    <li>ausf&uuml;hren</li>
+                                    <li>nach eigenen Belieben ver&auml;ndern und Ihre (abge&auml;nderte Version) anderen zur Verf&uuml;gung stellen,</li>
+                                </ul>
+                                <p>
+                                    Wenn Sie im Rahmen der genannten Punkte folgende Richtlinien einhalten:<br>
+                                    Bei Verwendung unseres Codes in beliebiger Hinsicht...
+                                </p>
+                                <ul>
+                                    <li>...<b>muss</b> ein Copyrightvermerk an jedem Vervielf&auml;ltigungsst&uuml;ck deutlich angebracht werden (&copy; 2017 - Moritz Menzel, Benjamin Kirchhoff, Maximilian Seiler)</li>
+                                    <li>...<b>muss</b> der Quellcode des Projektes in dem unser Code oder Teile davon verwendet wird/werden unter einer open-source - Lizens stehen und &ouml;ffentlich zug&auml;nglich sein</li>
+                                    <li>...<b>muss</b> das Projekt in dem unser Code oder Teile davon verwendet wird/werden unter derselben Lizens verbreitet werden</li>
+                                </ul>
+                                <hr>
+                                <p style="color: #616161;">
+                                    Die "Raumreservierung" ist ein Sch&uuml;lerprojekt im Rahmen des Oberstufenunterrichts des
+                                    <a href="https://gymnasium-klotzsche.de">Gymnasiums Dresden-Klotzsche</a>.<br>
+                                    <br>
+                                    Den Quellcode dieses Projektes finden Sie auf Github:<br>
+                                    <a href="https://github.com/moritzmenzel/raumreservierung">Raumreservierung auf Github</a>
+                                </p>
+                            </div>
+                        </paper-card>
+                    </div>
+                </paper-header-panel>
+            </div>
+            <div drawer style="overflow: auto;">
+                <paper-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
+                    <paper-icon-button icon="arrow-back" paper-drawer-toggle style="color: #212121;"></paper-icon-button>
+                    <div class="title navHeader">Navigation</div>
+                </paper-toolbar>
+                <div style="padding-bottom: 110px;"> <!-- Wrapping the Menu with bottompadding 110px for the copyright box -->
+                    <paper-menu>
+                        <a href="#index" target="_self">
+                            <paper-icon-item>
+                                <iron-icon icon="home" item-icon></iron-icon>
+                                Startseite
+                            </paper-icon-item>
+                        </a>
+                        <paper-icon-item on-click="openPrivacy">
+                            <iron-icon icon="lock" item-icon></iron-icon>
+                            Datenschutz
+                        </paper-icon-item>
+                    </paper-menu>
+                </div>
+                <div style="position: absolute; bottom: 0; width: 100%; border-top: 1px solid #E0E0E0; background-color: #F5F5F5; height: 110px;">
+                    <p style="text-align: center; font-size: 12px;"><b>Raumreservierung 2017</b><br>Moritz Menzel,<br>Benjamin Kirchhoff,<br>Maximilian Seiler<br><br>Published under GNU GPL v3.0</p>
+                </div>
+            </div>
+        </paper-drawer-panel>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'raumreservierung-imprint',
+
+            properties: {
+
+            },
+
+            listeners: {
+
+            },
+
+            ready: function() {
+                this.fire('pageLoad', this.nodeName);
+                // Relies on #imprint and changing this won't affect auto-page-switch on manual reload
+                location.hash = "imprint";
+            },
+            openPrivacy: function() {
+                this.importHref('src/raumreservierung-privacy/raumreservierung-privacy.html', this._onPrivacyLoad, this._onPrivacyLoadError, true);
+            },
+            _onPrivacyLoad: function() {
+                this.$.privacyContainer.innerHTML = "<raumreservierung-privacy opened></raumreservierung-privacy>";
+            },
+            _onPrivacyLoadError: function() {
+                this.$.privacyContainer.innerHTML = '<paper-dialog opened><h2>Es ist ein Fehler aufgetreten!</h2><p style="color: red;">Die Seite "Datenschutz" konnte nicht geladen werden!</p><div class="buttons"><paper-button dialog-confirm style="color: red;">schlie&szlig;en</paper-button></div></paper-dialog>';
+            }
+        })
+    </script>
+</dom-module>

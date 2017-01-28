@@ -103,6 +103,8 @@
       <div id="userpage"></div>
       <!-- Account - Aktivierung -->
       <raumreservierung-activate-account></raumreservierung-activate-account>
+      <!-- Impressum -->
+      <raumreservierung-imprint></raumreservierung-imprint>
 
     </iron-pages>
 
@@ -136,6 +138,10 @@
                 value: false
             },
             activationPageLoaded: {
+                type: Boolean,
+                value: false
+            },
+            imprintPageLoaded: {
                 type: Boolean,
                 value: false
             },
@@ -187,6 +193,9 @@
                     break;
                 case 3:
                     color = "#689F38";
+                    break;
+                case 4:
+                    color = "#03A9F4";
                     break;
                 default:
                     color = "#689F38";
@@ -243,8 +252,16 @@
                 case "logout":
                     this._triggerLogout();
                     break;
+                case "imprint":
+                    this._loadImprint();
+                    break;
+                case "":
+                    this.$.pages.select(0);
+                    this._loadPages();
+                    break;
                 default:
                     this._loadPages();
+                    break;
             }
         },
         _pushToLog: function (e) {
@@ -294,6 +311,13 @@
                     } else {
                         this.$$('raumreservierung-activate-account').reload = true;
                         this.$.pages.select(3);
+                    }
+                    break;
+                case 4:
+                    if (!this.imprintPageLoaded) {
+                        this._loadImprint();
+                    } else {
+                        this.$.pages.select(4);
                     }
                     break;
                 default:
@@ -487,6 +511,21 @@
 
             this._triggerLogout();
 
+        },
+        _loadImprint: function() {
+            this.$.loadIndicator.open();
+            this.importHref('src/raumreservierung-imprint/raumreservierung-imprint.html', this._onImprintLoad, this._onImprintLoadError, true);
+        },
+        _onImprintLoad: function() {
+            this.$.loadIndicator.close();
+            this.imprintPageLoaded = true;
+            this.$.pages.select(4);
+        },
+        _onImprintLoadError: function() {
+            this.$.loadIndicator.close();
+            this.$.errorContent.innerHTML = '<p style="color: red;">Es ist ein Fehler beim Laden des Impressums aufgetreten!</p>';
+            this.$.errorDialog.center(), this.$.errorDialog.open();
+            this.$.pages.select(0);
         }
     });
   </script>

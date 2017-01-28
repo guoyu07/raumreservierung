@@ -64,18 +64,21 @@
                     width: 400px;
                 }
             }
+            .spinnerWrapper {
+                text-align: center;
+            }
         </style>
 
         <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
             <h2>L&auml;dt, bitte warten...</h2>
-            <paper-spinner active></paper-spinner>
+            <div class="spinnerWrapper"><paper-spinner active></paper-spinner></div>
         </paper-dialog>
 
         <paper-dialog id="errorDialog" with-backdrop>
             <div id="errorContent">
 
             </div>
-            <p style="text-align: center"><i>Bitte melden Sie diesen Fehler einem Administrator!</i></p>
+            <p style="text-align: center"><i>Melden Sie diesen Fehler bitte ggf. einem Administrator!</i></p>
             <div class="buttons">
                 <paper-button dialog-confirm autofocus style="color: #F44336;">OK</paper-button>
             </div>
@@ -98,36 +101,42 @@
             </paper-dialog-scrollable>
         </paper-dialog>
 
+        <div id="privacy"><!-- Lazy Loaded <privacy></privacy> --></div>
+
         <paper-drawer-panel disable-edge-swipe disable-swipe>
 
-            <div drawer>
-                <paper-material elevation="1" style="height: 100%;">
-                    <paper-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
-                        <paper-icon-button icon="arrow-back" paper-drawer-toggle style="color: #212121;"></paper-icon-button>
-                        <div class="title navHeader">Navigation</div>
-                    </paper-toolbar>
-                    <paper-menu>
-                        <a href="#index" target="_self">
-                            <paper-icon-item>
-                                <iron-icon icon="home" item-icon></iron-icon>
-                                Startseite
-                            </paper-icon-item>
-                        </a>
-                        <paper-icon-item id="reportErrorItem" on-click="_openReportForm">
-                            <iron-icon icon="report" item-icon></iron-icon>
-                            Einen Fehler melden
+            <div drawer style="overflow: auto;">
+                <paper-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
+                    <paper-icon-button icon="arrow-back" paper-drawer-toggle style="color: #212121;"></paper-icon-button>
+                    <div class="title navHeader">Navigation</div>
+                </paper-toolbar>
+                <div style="padding-bottom: 110px;"> <!-- Wrapping the Menu with bottompadding 110px for the copyright box -->
+                <paper-menu>
+                    <a href="#index" target="_self">
+                        <paper-icon-item>
+                            <iron-icon icon="home" item-icon></iron-icon>
+                            Startseite
                         </paper-icon-item>
-                        <a href="https://www.gymnasium-klotzsche.de/cont/cms/front_content.php?idcat=121" target="_self">
-                            <paper-icon-item>
-                                <iron-icon icon="gavel" item-icon></iron-icon>
-                                Impressum
-                            </paper-icon-item>
-                        </a>
-                    </paper-menu>
-                    <div style="position: absolute; bottom: 0; width: 100%; border-top: 1px solid #E0E0E0; background-color: #F5F5F5; height: auto;">
-                        <p style="text-align: center; font-size: 12px;"><b>Raumreservierung 2017</b><br>Moritz Menzel,<br>Benjamin Kirchhoff,<br>Maximilian Seiler<br><br>Published under GNU GPL v3.0</p>
-                    </div>
-                </paper-material>
+                    </a>
+                    <paper-icon-item id="reportErrorItem" on-click="_openReportForm">
+                        <iron-icon icon="report" item-icon></iron-icon>
+                        Einen Fehler melden
+                    </paper-icon-item>
+                    <paper-icon-item on-click="openPrivacy">
+                        <iron-icon icon="lock" item-icon></iron-icon>
+                        Datenschutz
+                    </paper-icon-item>
+                    <a onclick="location.hash='imprint'">
+                        <paper-icon-item>
+                            <iron-icon icon="gavel" item-icon></iron-icon>
+                            Impressum
+                        </paper-icon-item>
+                    </a>
+                </paper-menu>
+                </div>
+                <div style="position: absolute; bottom: 0; width: 100%; border-top: 1px solid #E0E0E0; background-color: #F5F5F5; height: 110px;">
+                    <p style="text-align: center; font-size: 12px;"><b>Raumreservierung 2017</b><br>Moritz Menzel,<br>Benjamin Kirchhoff,<br>Maximilian Seiler<br><br>Published under GNU GPL v3.0</p>
+                </div>
             </div>
 
             <paper-header-panel mode="standard" main>
@@ -210,6 +219,20 @@
             },
             closeErrorReport: function() {
                 this.$.errorFormDialog.close();
+            },
+            openPrivacy: function() {
+                this.$.loadIndicator.open();
+                this.importHref('src/raumreservierung-privacy/raumreservierung-privacy.html', this._onPrivacyLoad, this._onPrivacyLoadError, true);
+            },
+            _onPrivacyLoad: function() {
+                this.$.loadIndicator.close();
+                this.$.privacy.innerHTML = '<raumreservierung-privacy opened></raumreservierung-privacy>';
+                // Opened attribute is set, means it auto-opens once loaded :)
+            },
+            _onPrivacyLoadError: function() {
+                this.$.loadIndicator.close();
+                this.$.errorContent.innerHTML = '<p style="color: red;">Die Datenschutzbestimmungen konnten nicht geladen werden. Bitte versuchen Sie es erneut!</p>';
+                this.$.errorDialog.center(), this.$.errorDialog.open();
             }
         });
     </script>
