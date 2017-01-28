@@ -90,7 +90,7 @@
                     return array("error" => false);
                 } else {
                     $this->pdo->rollBack();
-                    return array("error" => true, "message" => "Fehler: Die Best&auml;tigungs-Mail konnte aufgrund eines Fehlers nicht gesendet werden!");
+                    return array("error" => true, "message" => "Fehler: Die Bestätigungs-Mail konnte aufgrund eines Fehlers nicht gesendet werden!");
                 }
             } catch (PDOException $e) {
                 $this->pdo->rollBack();
@@ -198,7 +198,7 @@ HTML;
                                     }
 
                                 } else {
-                                    return array("error" => true, "message" => "Fehler: Der Best&auml;tigungscode ist nicht korrekt!");
+                                    return array("error" => true, "message" => "Fehler: Der Bestätigungscode ist nicht korrekt!");
                                 }
                             }
                         } else {
@@ -220,7 +220,7 @@ HTML;
                                 }
 
                             } else {
-                                return array("error" => true, "message" => "Fehler: Der Best&auml;tigungscode ist nicht korrekt!");
+                                return array("error" => true, "message" => "Fehler: Der Bestätigungscode ist nicht korrekt!");
                             }
                         }
                     } elseif($res['status'] == 3) {
@@ -276,7 +276,7 @@ HTML;
                 }
             } catch (PDOException $e) {
                 $this->pdo->rollBack();
-                return array("error" => true, "message" => "Fehler beim &Auml;ndern der Nutzerdaten: ".$e->getMessage());
+                return array("error" => true, "message" => "Fehler beim Ändern der Nutzerdaten: ".$e->getMessage());
             }
 
         }
