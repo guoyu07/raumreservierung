@@ -10,10 +10,11 @@
     "src/raumreservierung-landingpage/raumreservierung-landingpage.html",
     "src/raumreservierung-login/raumreservierung-login.html",
     "src/reporting-form/reporting-form.html",
-
     "src/raumreservierung-privacy/raumreservierung-privacy.html",
     "src/raumreservierung-activate-account/raumreservierung-activate-account.html",
-    "src/raumreservierung-imprint/raumreservierung-imprint.html"
+    "src/raumreservierung-imprint/raumreservierung-imprint.html",
+
+    "src/raumreservierung-reset-password/raumreservierung-reset-password.html"
   ],
   "sources": [
     "img/*",
