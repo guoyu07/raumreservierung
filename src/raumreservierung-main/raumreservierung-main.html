@@ -468,6 +468,9 @@
             this.$.errorDialog.open();
             this.$.pages.select(0);
             this.loadMainPage();
+
+            // Temporary solution while userPages not implemented yet
+            this._triggerLogout();
         },
         _triggerLogout: function () {
             this.$.logoutRequest.body = "r=logout";
