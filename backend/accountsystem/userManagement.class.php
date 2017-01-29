@@ -104,10 +104,17 @@
             }
         }
 
-        private function isEmailInDB($email) {
+        public function isEmailInDB($email) {
             $sql = "SELECT email FROM accounts_users WHERE email=:email";
             $r = $this->pdo->prepare($sql);
             $r->execute(array(":email" => $email));
+            return !empty($r->fetchAll());
+        }
+
+        public function isUserInDB($name) {
+            $sql = "SELECT accounts.name FROM accounts WHERE accounts.name=:accname";
+            $r = $this->pdo->prepare($sql);
+            $r->execute(array(":accname" => $name));
             return !empty($r->fetchAll());
         }
 
@@ -196,7 +203,7 @@ HTML;
                                 if(hash_equals($res['activationcode'], $code)){
                                     //Confirm User
 
-                                    $sql2 = "UPDATE accounts SET status=:accstatus, last_status_change=NOW(), email_confirmed=1, activationcode=NULL
+                                    $sql2 = "UPDATE accounts SET status=:accstatus, last_status_change=NOW(), email_confirmed=1, activationcode=NULL, email_in_flight=0, last_email=NULL
                                      WHERE name=:accname";
                                     $r2 = $this->pdo->prepare($sql2);
 
@@ -379,6 +386,7 @@ HTML;
                 $this->pdo->commit();
                 return array("error" => false);
             } catch( PDOException $e ) {
+                $this->pdo->rollBack();
                 return array("error" => true, "message" => "Es ist ein Fehler beim Ändern des Passwortes aufgetreten: ".$e->getMessage());
             }
         }
@@ -476,6 +484,145 @@ HTML;
             } else {
                 return $name;
             }
+        }
+
+        public function sendPasswordResetMail($name, $email) {
+
+            if($this->isEmailInDB($email)) {
+
+                if($this->isUserInDB($name)) {
+
+                    if(!$this->emailInFlight($name)) {
+
+                        $fullname = $this->getFullName($name);
+                        $prename = (is_array($fullname)) ? $fullname['prename'] : $name;
+                        $surname = (is_array($fullname)) ? $fullname['surname'] : "";
+
+                        $code = bin2hex(openssl_random_pseudo_bytes(32));
+
+                        $to         = $email;
+                        $subject    = "Gykl Raumreservierung - Zurücksetzung Ihres Passwortes";
+
+                        $headers    = "MIME-Version: 1.0" . "\r\n";
+                        $headers   .= "Content-type: text/html; charset=UTF-8" . "\r\n";
+                        $headers   .= "To: $prename $surname <$email>" . "\r\n";
+                        $headers   .= "From: activation@lima.zone" . "\r\n";
+                        $headers   .= "Reply-To: activation@lima.zone" . "\r\n";
+                        $headers   .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+
+                        // Definition of Website Host
+                        $url = "https://gykl-rr.lima.zone";
+
+                        $message    = <<<HTML
+<!DOCTYPE html><html style="font-family: Roboto, Noto, sans-serif;color: #212121;margin: 0 auto;min-width: 319px;"><head> <title>Passwort - Wiederherstellung</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes"> <style>html, body{font-family: Roboto, Noto, sans-serif; color: #212121; margin: 0 auto; min-width: 319px;}#content{width: 90%; max-width: 600px; height: auto; margin: 0 auto 58px auto; text-align: left;}#footer{margin: 0 auto; width: 100%; height: 48px; background-color: #212121; color: white; text-align: center;}#footText{font-size: 13px; padding-top: 8px;}#pseudoButton{background-color: #2196F3; height: 48px; width: auto; text-align: center; font-size: 22px; color: white; -webkit-transition: background-color 0.2s; -moz-transition: background-color 0.2s; -ms-transition: background-color 0.2s; -o-transition: background-color 0.2s; transition: background-color 0.2s; border-radius: 5px; margin: 0 auto;}#pseudoButton:hover{background-color: #64B5F6; cursor: pointer;}a{color: #33691E; text-decoration: none; -webkit-transition: color 0.2s; -moz-transition: color 0.2s; -ms-transition: color 0.2s; -o-transition: color 0.2s; transition: color 0.2s;}a:hover{color: #558B2F;}#buttonLink{color: white; text-decoration: none;}hr{width: 70%; border: none; border-bottom: 1px solid #E0E0E0; margin: 20px auto;}#disclaimer{font-size: 14px; color: #616161;}/** Fix for apple clients */ @media only screen and (min-device-width: 601px){#content{width: 600px !important;}}</style></head><body style="font-family: Roboto, Noto, sans-serif;color: #212121;margin: 0 auto;min-width: 319px;"><!--[if (get mso 9)|(IE)]><div id="content" style="width: 600px;height: auto; margin: 96px auto 58px auto;text-align: left;"><![endif]--><div id="content" style="width: 90%;max-width: 600px;height: auto;margin: 0 auto 58px auto;text-align: left;"> <h1 style="text-align: center;">Hallo, $prename $surname!</h1> <p style="font-size: 16px;"> <br>Wir haben eine Anfrage zur Wiederherstellung Ihres Passwortes erhalten. Um sicherzustellen, dass diese Anfrage von Ihnen stammt, m&uuml;ssen Sie die &Auml;nderung best&auml;tigen. Klicken Sie dazu auf den untenstehenden Link. </p><hr style="width: 70%;border: none;border-bottom: 1px solid #E0E0E0;margin: 20px auto;"> <a href="$url?name=$name&code=$code#reset-password" title="$url" id="buttonLink" target="_blank" style="color: white;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;"> <div id="pseudoButton" style="background-color: #EF5350;height: 48px;width: auto;text-align: center;font-size: 22px;color: white;-webkit-transition: background-color 0.2s;-moz-transition: background-color 0.2s;-ms-transition: background-color 0.2s;-o-transition: background-color 0.2s;transition: background-color 0.2s;border-radius: 5px;margin: 0 auto;"> <p style="padding-top: 10px;">Passwort zur&uuml;cksetzen!</p></div></a> <hr style="width: 70%;border: none;border-bottom: 1px solid #E0E0E0;margin: 20px auto;"> <p style="font-size: 14px;"> <i> Sollten Sie diese E-Mail nicht angefordert haben, versucht m&ouml;glicherweise ein Dritter, Ihr Passwort zu &auml;ndern.<br>Wenn Sie sich noch an Ihr eigenes Accountpasswort erinnern, klicken Sie bitte <b>nicht</b> auf den Link und l&ouml;schen diese E-Mail am besten einfach wieder! </i> </p><hr style="width: 70%;border: none;border-bottom: 1px solid #E0E0E0;margin: 20px auto;"> <p id="disclaimer" style="font-size: 13px;color: #616161;"> <b>Information</b><br>Diese E-Mail wurde im Rahmen der Passwortwiederherstellung der Raumreservierung des <a href="https://gymnasium-klotzsche.de" title="www.gymnasium-klotzsche.de" target="_blank" style="color: #33691E;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;">Gymnasiums Dresden-Klotzsche</a> versandt.<br>Wenn Sie diese E-Mail nicht angefordert haben, dann ignorieren Sie sie einfach.<br><br>Sollten Sie weitere Fragen oder Probleme haben, k&ouml;nnen Sie sich direkt an das <a href="https://gymnasium-klotzsche.de" title="www.gymnasium-klotzsche.de" target="_blank" style="color: #33691E;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;">Gymnasium Dresden-Klotzsche</a> oder die <a href="$url#imprint" title="$url#imprint" target="_blank" style="color: #33691E;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;">Raumreservierung</a> wenden. <br><br>Wir entschuldigen uns f&uuml;r jedwede Art von Unannehmlichkeiten.<br>Ihr Team der Raumreservierung des Gymnasiums Dresden Klotzsche :-) </p></div><div id="footer" style="margin: 0 auto;width: 100%;height: 48px;background-color: #212121;color: white;text-align: center;"> <p id="footText" style="font-size: 12px;padding-top: 9px;"> Raumreservierung &copy; 2017 by<br>Moritz Menzel, Benjamin Kirchhoff, Maximilian Seiler </p></div></body></html>
+HTML;
+
+                        $sql = "UPDATE accounts SET email_in_flight=1, last_email=NOW(), activationcode=:activatoncode WHERE accounts.name=:accname";
+                        $r = $this->pdo->prepare($sql);
+
+                        try {
+                            $this->pdo->beginTransaction();
+                            $r->execute(array(":accname" => $name, ":activationcode" => $code));
+                            $this->pdo->commit();
+                            mail($to, $subject, $message, $headers);
+                            return array("message" => "Es wurde eine Best&auml;tigungsmail an Ihre E-Mail - Adresse gesendet!");
+                        } catch (PDOException $e) {
+                            $this->pdo->rollBack();
+                            return array("message" => $e->getMessage());
+                        }
+
+                    } else {
+                        return array("message" => "Wir haben bereits eine Wiederherstellungsmail an Ihre E-Mail - Adresse gesendet!");
+                    }
+
+                } else {
+                    return array("message" => "Die eingegebenen Daten sind ungültig!");
+                }
+
+            } else {
+                return array("message" => "Die eingegebenen Daten sind ungültig!");
+            }
+
+        }
+
+        public function resetPassword($name, $pw) {
+            // Final reset called when activation code is correct
+            $sql = "UPDATE accounts SET activationcode=NULL, email_in_flight=0 WHERE name=:accname";
+            $r = $this->pdo->prepare($sql);
+            try {
+                $this->pdo->beginTransaction();
+                $r->execute(array(":accname" => $name));
+                $this->pdo->commit();
+                $status = $this->changePassword($name, $pw);
+                if($status['error'] == true) {
+                    return array("error" => true, "message" => $status['message']);
+                } else {
+                    return array("error" => false);
+                }
+            } catch (PDOException $e) {
+                $this->pdo->rollBack();
+                return array("error" => true, "message" => "Es ist ein Fehler bei der Datenbankverbindung aufgetreten: ".$e->getMessage());
+            }
+        }
+
+        public function validateQuery($name, $code) {
+            $sql = "SELECT name, activationcode FROM accounts WHERE name=:accname";
+            $r = $this->pdo->prepare($sql);
+            $r->execute(array(":accname" => $name));
+            $res = $r->fetchAll();
+            if(!empty($res)) {
+                $data = $res[0];
+                if($data['activationcode'] != null) {
+                    if(hash_equals($data['activationcode'], $code)) {
+                        return array("error" => false);
+                    } else {
+                        return array("error" => true, "message" => "Die übergebenen Werte sind ungültig!");
+                    }
+                } else {
+                    return array("error" => true, "message" => "Sie haben keine Passwortwiederherstellung angefordert oder Ihr Account wurde währenddessen von einem Administrator zurückgesetzt!");
+                }
+            } else {
+                return array("error" => true, "message" => "Die übergebenen Werte sind ungültig!");
+            }
+        }
+
+        private function emailInFlight($name) {
+            $sql = "SELECT email_in_flight, last_email FROM accounts WHERE accounts.name = :accname";
+            $r = $this->pdo->prepare($sql);
+            $r->execute(array(":accname" => $name));
+            $res = $r->fetchAll();
+            $erg = $res[0];
+
+            if(((strtotime($erg['last_email']) + (3600*24)) < time())) {
+
+                $sql = "UPDATE accounts SET email_in_flight=0, last_email=NULL WHERE name=:accname";
+                $r2 = $this->pdo->prepare($sql);
+                $r2->execute(array(":accname" => $name));
+
+                return false;
+
+            } else {
+                if($erg['email_in_flight'] == 0) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        }
+
+        function generatePassword($length, $keyspace='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ') {
+            $keyspace = str_split($keyspace);
+            $max = count($keyspace) - 1;
+
+            $str = '';
+            for($i = 0; $i < $length; $i++) {
+                $c = ord(openssl_random_pseudo_bytes(1));
+                while ($c > $max) {
+                    $c = ord(openssl_random_pseudo_bytes(1));
+                }
+                $str .= $keyspace[$c];
+            }
+            return $str;
         }
 
     }

@@ -4,6 +4,8 @@
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 
 <dom-module id="raumreservierung-login">
 
@@ -31,7 +33,7 @@
                 --paper-input-container-color: #757575;
                 --paper-input-container-focus-color: #607D8B;
             }
-            paper-button{
+            #loginButton{
                 margin: 20px auto;
                 --paper-button:{
                     @apply(--layout-self-center);
@@ -43,9 +45,29 @@
             .spinnerWrapper {
                 text-align: center;
             }
+            a {
+                color: var(--paper-blue-700);
+                -webkit-transition: color 0.2s;
+                -moz-transition: color 0.2s;
+                -ms-transition: color 0.2s;
+                -o-transition: color 0.2s;
+                transition: color 0.2s;
+                text-decoration: none;
+            }
+            a:hover {
+                color: var(--paper-blue-500);
+            }
         </style>
 
         <iron-ajax id="loginRequest"
+                   url="../../backend/api/login-ajax.php"
+                   method="POST"
+                   body=""
+                   timeout="5000"
+                   content-type="application/x-www-form-urlencoded"
+                   handle-as="json"
+                   debounce-rotation="300"></iron-ajax>
+        <iron-ajax id="resetRequest"
                    url="../../backend/api/login-ajax.php"
                    method="POST"
                    body=""
@@ -57,6 +79,32 @@
         <paper-dialog id="loginRedirectDialog" with-backdrop no-cancel-on-outside-click no-cancel-on-esc-key>
             <h2>Inhalte werden geladen...</h2>
             <div class="spinnerWrapper"><paper-spinner active></paper-spinner></div>
+        </paper-dialog>
+
+        <paper-dialog id="resetPasswordDialog" with-backdrop no-cancel-on-outside-click no-cancel-on-esc-key>
+            <h2>Passwort zur&uuml;cksetzen</h2>
+            <paper-dialog-scrollable id="resetPasswordContent">
+                Falls Sie Ihr Passwort vergessen haben, k&ouml;nnen Sie es hier zur&uuml;cksetzen.<br>
+                Geben Sie dazu bitte Ihren Accountnamen und Ihre damit verkn&uuml;pfte E-Mail - Adresse ein.<br>
+                Wir werden Ihnen eine E-Mail mit Ihren neuen Zugangsdaten senden!<br>
+                <paper-input type="text" id="resetPwName" label="Accountname" char-counter minlength="4" maxlength="64" allowed-pattern="[a-zA-Z0-9ÄäÖöÜüß\-]" required auto-validate></paper-input>
+                <paper-input type="email" id="resetPwEmail" label="E-Mail - Adresse" char-counter minlength="5" maxlength="96" allowed-pattern="[a-zA-Z0-9ÄäÖöÜüß@\-_.$%]" required auto-validate></paper-input>
+            </paper-dialog-scrollable>
+            <div class="buttons">
+                <paper-button style="color: #0D47A1;" dialog-dismiss>Schlie&szlig;en</paper-button>
+                <paper-button style="color: #0D47A1;" id="confirmReset">Passwort &auml;ndern</paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="errorDialog" with-backdrop>
+            <h2>Es ist ein Fehler aufgetreten:</h2>
+            <paper-dialog-scrollable>
+                <p>Bei der Anfrage ist ein Fehler aufgetreten:</p>
+                <p style="color: red;" id="errorContent"></p>
+            </paper-dialog-scrollable>
+            <div class="buttons">
+                <paper-button style="color: red;" dialog-confirm autofocus>OK</paper-button>
+            </div>
         </paper-dialog>
 
         <div id="element">
@@ -72,6 +120,7 @@
             <div style="max-width: 300px" class="contentcenter center"><!-- Button-Wrapper for button to be centered -->
                 <paper-button raised id="loginButton">Anmelden</paper-button>
                 <br>
+                <a href="" on-click="resetPasswordRoutine">Haben Sie Ihr Passwort vergessen?</a>
                 <div class="spinnerWrapper"><paper-spinner id="spinner"></paper-spinner></div>
                 <div id="errorBox" style="color: red;"></div>
             </div>
@@ -87,7 +136,12 @@
                 'loginButton.tap': 'logIn',
                 'loginRequest.error': '_onError',
                 'loginRequest.request': '_onRequest',
-                'loginRequest.response': '_onResponse'
+                'loginRequest.response': '_onResponse',
+                'resetRequest.error':'_onResetError',
+                'resetRequest.request':'_onResetRequest',
+                'resetRequest.response':'_onResetResponse',
+                'confirmReset.tap': '_onReset',
+                'resetPasswordDialog.iron-overlay-closed':'_onDialogClose'
             },
 
             properties: {
@@ -192,6 +246,50 @@
                 this.fire('push', [this.nodeName, "Requested to load page for account-type ["+type+"]"]);
                 this.fire('goToPage', type);
                 this.$.loginRedirectDialog.close();
+            },
+            resetPasswordRoutine: function() {
+                this.$.resetPasswordDialog.open();
+            },
+            _onReset: function() {
+                var name = this.$$('#resetPwName');
+                var email = this.$$('#resetPwEmail');
+
+                if(name.validate() == true && email.validate() == true) {
+                    var nameVal = String(name.value).replace(/&|'|"/g, "");
+                    var emailVal = String(email.value).replace(/&|'|"/g, "");
+                    this.$.resetRequest.body = "request=resetPassword&name="+nameVal+"&email="+emailVal;
+                    this.$.resetRequest.generateRequest();
+                }
+            },
+            _onResetRequest: function() {
+                this.$.confirmReset.style.display = "none";
+                this.$.confirmReset.disabled = true;
+                this.$.resetPasswordContent.innerHTML = '<div style="text-align: center;"><paper-spinner active></paper-spinner></div>';
+                this.$.resetPasswordDialog.center();
+            },
+            _onResetResponse: function() {
+                var res = this.$.resetRequest.lastResponse;
+                if(res) {
+                    this.$.resetPasswordContent.innerText = res.message;
+                    this.$.resetPasswordDialog.center();
+                } else {
+                    this.$.resetPasswordDialog.close();
+                    this.$.errorContent.textContent = "Es konnten keine Daten vom Server empfangen werden!";
+                    this.$.errorDialog.center(), this.$.errorDialog.open();
+                }
+            },
+            _onResetError: function(e) {
+                this.$.confirmReset.style.display = "block";
+                this.$.confirmReset.disabled = false;
+                this.$.errorContent.textContent = e.detail.type+", "+e.detail.error;
+                this.$.errorDialog.center(), this.$.errorDialog.open();
+                this.$.resetPasswordContent.innerHTML = 'Falls Sie Ihr Passwort vergessen haben, k&ouml;nnen Sie es hier zur&uuml;cksetzen.<br>Geben Sie dazu bitte Ihren Accountnamen und Ihre damit verkn&uuml;pfte E-Mail - Adresse ein.<br>Wir werden Ihnen eine E-Mail mit Ihren neuen Zugangsdaten senden!<br> <paper-input type="text" id="resetPwName" label="Accountname" char-counter minlength="4" maxlength="64" allowed-pattern="[a-zA-Z0-9ÄäÖöÜüß'+"\-"+']" required auto-validate></paper-input> <paper-input type="email" id="resetPwEmail" label="E-Mail - Adresse" char-counter minlength="5" maxlength="96" allowed-pattern="[a-zA-Z0-9ÄäÖöÜüß@'+"\-"+'_.$%]" required auto-validate></paper-input>';
+            },
+            _onDialogClose: function() {
+                this.$.resetPasswordContent.innerHTML = 'Falls Sie Ihr Passwort vergessen haben, k&ouml;nnen Sie es hier zur&uuml;cksetzen.<br>Geben Sie dazu bitte Ihren Accountnamen und Ihre damit verkn&uuml;pfte E-Mail - Adresse ein.<br>Wir werden Ihnen eine E-Mail mit Ihren neuen Zugangsdaten senden!<br> <paper-input type="text" id="resetPwName" label="Accountname" char-counter minlength="4" maxlength="64" allowed-pattern="[a-zA-Z0-9ÄäÖöÜüß'+"\-"+']" required auto-validate></paper-input> <paper-input type="email" id="resetPwEmail" label="E-Mail - Adresse" char-counter minlength="5" maxlength="96" allowed-pattern="[a-zA-Z0-9ÄäÖöÜüß@'+"\-"+'_.$%]" required auto-validate></paper-input>';
+                this.$.confirmReset.style.display = "block";
+                this.$.confirmReset.disabled = false;
+                this.$.resetPasswordDialog.center();
             }
         });
     </script>

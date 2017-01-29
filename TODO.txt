@@ -1,5 +1,1 @@
--> Account Activation & User Page for Teacher (UserManager not needed yet and maybe not even in future)
--> Don't forget the E-Mail - Design
-------------------------------------
-Design-related basic stuff done :)
-Raumreservierung kann kommen ihr Nudeln <3
+--> Add Page --> Change Password (so each user can change his/her password by himself if he/she wants to)

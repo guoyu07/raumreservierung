@@ -105,6 +105,8 @@
       <raumreservierung-activate-account></raumreservierung-activate-account>
       <!-- Impressum -->
       <raumreservierung-imprint></raumreservierung-imprint>
+      <!-- Password reset page -->
+      <raumreservierung-reset-password></raumreservierung-reset-password>
 
     </iron-pages>
 
@@ -254,6 +256,9 @@
                 case "imprint":
                     this._loadImprint();
                     break;
+                case "reset-password":
+                    this._loadResetPage();
+                    break;
                 default:
                     this._loadPages();
                     break;
@@ -314,6 +319,10 @@
                     } else {
                         this.$.pages.select(4);
                     }
+                    break;
+                case 5:
+                    // Password reset page
+                    this._loadResetPage();
                     break;
                 default:
                     this.hash = "";
@@ -523,6 +532,19 @@
             this.$.errorContent.innerHTML = '<p style="color: red;">Es ist ein Fehler beim Laden des Impressums aufgetreten!</p>';
             this.$.errorDialog.center(), this.$.errorDialog.open();
             this.$.pages.select(0);
+        },
+        _loadResetPage: function() {
+            this.$.loadIndicator.open();
+            this.importHref('src/raumreservierung-reset-password/raumreservierung-reset-password.html', this._onResetPageLoad, this._onResetPageLoadError, true);
+        },
+        _onResetPageLoad: function() {
+            this.$.loadIndicator.close();
+            this.$.pages.select(5);
+        },
+        _onResetPageLoadError: function() {
+            this.$.loadIndicator.close();
+            this.$.errorContent.innerHTML = '<p style="color: red;">Die Passwort-Wiederherstellungsseite konnte nicht geladen!</p>';
+            this.$.errorDialog.center(), this.$.errorDialog.open();
         }
     });
   </script>

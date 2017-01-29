@@ -35,8 +35,22 @@
 
     } elseif(isset($_POST['request'])){
 
-        if($_POST['request'] == "logout") {
-            $sess->logout();
+        switch($_POST['request']){
+            case "logout":
+                $sess->logout();
+                break;
+            case "resetPassword":
+                if(isset($_POST['name']) && isset($_POST['email'])) {
+
+                    require_once('../accountsystem/userManagement.class.php');
+                    $um = new userManagement($pdo);
+
+                    echo json_encode(array("message" => $um->sendPasswordResetMail($_POST['name'], $_POST['email'])['message']));
+
+                } else {
+                    echo json_encode(array("success" => false, "message" => "Es wurden nicht alle benötigten Daten angegeben!"));
+                }
+                break;
         }
 
     } else {
