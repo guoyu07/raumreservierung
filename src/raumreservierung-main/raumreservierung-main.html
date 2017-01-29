@@ -376,8 +376,8 @@
                             this.fire('goToPage', "deactivated-account");
                             break;
                         case 2:
-                            // Temporary
-                            this.showTemporaryDialog();
+                            // Show account page
+                            this._loadAccountPage();
                             break;
                         case 3:
                             // Activated
@@ -439,7 +439,7 @@
                         }
                         break;
                     case "temporary-account":
-                        this.showTemporaryDialog();
+                        this._loadAccountPage();
                         break;
                     default:
                         this._onTypeMismatch();
@@ -512,26 +512,6 @@
         },
         _onSessionError: function () {
             this.selected = 0;
-        },
-        showTemporaryDialog: function() {
-            if(this.$$('#tempDialog')){
-                this.$$('#tempDialog').open();
-            } else {
-                var dialog = document.createElement('paper-dialog');
-                dialog.withBackdrop = true;
-                dialog.noCancelOnEscKey = true;
-                dialog.noCancelOnOutsideClick = true;
-                dialog.id = "tempDialog";
-                dialog.innerHTML = '<h3>Hallo!</h3><p>Wir m&ouml;chten Sie darauf hinweisen, ' +
-                    'dass sie, um die Raumreservierung nutzen zu k&ouml;nnen, Ihre E-Mail - Adresse best&auml;tigen m&uuml;ssen!<br><br>' +
-                    '- Wir haben Ihnen bereits eine E-Mail zugesandt, bitte &uuml;berpr&uuml;fen Sie Ihr E-Mail Postfach!<br><br>' +
-                    'Vielen Dank f&uuml;r Ihr Verst&auml;ndnis,<br>Ihr Team der Raumreservierung :-)</p>' +
-                    '<div class="buttons"><paper-button dialog-confirm style="color: #3F51B5;">Schlie&szlig;en</paper-button></div>';
-                Polymer.dom(this.$.dynamicBox).appendChild(dialog).open();
-            }
-
-            this._triggerLogout();
-
         },
         _loadImprint: function() {
             if(!this.imprintPageLoaded){
