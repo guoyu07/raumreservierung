@@ -73,27 +73,32 @@
                     break;
 
                 case "changePassword":
-                    if(isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == true && isset($_SESSION['name'])) {
+                    if(isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == true && isset($_SESSION['name']) && isset($_SESSION['accstatus'])) {
 
-                        if(isset($_POST['oldpw']) && isset($_POST['oldpw'])) {
+                        if($_SESSION['accstatus'] == 3) {
+                            // Allow password changin only if account is activated :)
+                            if(isset($_POST['oldpw']) && isset($_POST['oldpw'])) {
 
-                            $name = $_SESSION['name'];
-                            $old = preg_replace("/::AMP::/", "&", $_POST['oldpw']);
-                            $new = preg_replace("/::AMP::/", "&", $_POST['newpw']);
+                                $name = $_SESSION['name'];
+                                $old = preg_replace("/::AMP::/", "&", $_POST['oldpw']);
+                                $new = preg_replace("/::AMP::/", "&", $_POST['newpw']);
 
-                            require_once ('../accountsystem/userManagement.class.php');
+                                require_once ('../accountsystem/userManagement.class.php');
 
-                            $um = new userManagement($pdo);
-                            $status = $um->selfChangePassword($name, $old, $new);
+                                $um = new userManagement($pdo);
+                                $status = $um->selfChangePassword($name, $old, $new);
 
-                            if($status['error'] == true) {
-                                echo json_encode(array("success" => false, "message" => $status['message']));
+                                if($status['error'] == true) {
+                                    echo json_encode(array("success" => false, "message" => $status['message']));
+                                } else {
+                                    echo json_encode(array("success" => true));
+                                }
+
                             } else {
-                                echo json_encode(array("success" => true));
+                                echo json_encode(array("success" => false, "message" => "Es wurden nicht alle benötigten Daten angegeben!"));
                             }
-
                         } else {
-                            echo json_encode(array("success" => false, "message" => "Es wurden nicht alle benötigten Daten angegeben!"));
+                            echo json_encode(array("success" => false, "message" => "Sie können Ihr Passwort erst ändern, wenn Sie Ihren Account aktiviert haben."));
                         }
 
                     } else {
