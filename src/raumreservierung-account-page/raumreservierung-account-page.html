@@ -1,0 +1,447 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-drawer-panel/paper-drawer-panel.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+
+<dom-module id="raumreservierung-account-page">
+    <template>
+        <style include="app-grid-style">
+            :host{
+                /** Material Color Definitions */
+                display: block;
+                --dark-primary-color: #FFA000;
+                --primary-color: #FFC107;
+                --light-primary-color: #FFECB3;
+                --accent-color: #536DFE;
+                color: #212121;
+                --primary-text-color: #212121;
+                --secondary-text-color: #757575;
+                --divider-color: #BDBDBD;
+                --app-grid-gutter: 10px;
+                --app-grid-columns: auto;
+                --app-grid-expandible-item-columns: auto;
+            }
+            ul {
+                padding: 0;
+                list-style: none;
+            }
+            .title {
+                color: var(--primary-text-color);
+            }
+            paper-icon-button {
+                color: var(--primary-text-color);
+            }
+            .navHeader {
+                color: #212121;
+                font-size: 22px;
+                margin: 0 auto;
+                text-align: center;
+                padding: 5px 0;
+                width: auto;
+                text-decoration: none;
+            }
+            a {
+                text-decoration: none;
+                color: #212121;
+            }
+            paper-icon-item:hover {
+                cursor: pointer;
+            }
+            .spinnerWrapper {
+                text-align: center;
+            }
+            @media (max-width: 500px){
+                #errorFormDialog {
+                    width: 80%;
+                }
+            }
+            @media (min-width: 499px){
+                #errorFormDialog{
+                    width: 400px;
+                }
+            }
+            .card-actions {
+                float: right;
+            }
+            paper-button {
+                color: var(--accent-color);
+            }
+            #content-wrapper {
+                @apply(--layout-vertical);
+            }
+            .normalCard {
+                @apply(--layout-self-center);
+                margin-top: 20px;
+            }
+            .userCard {
+                @apply(--layout-flex-auto);
+                @apply(--layout-vertical);
+                word-wrap: break-word;
+            }
+            tr > td:first-of-type {
+                padding-right: 10px;
+            }
+        </style>
+
+        <iron-ajax id="dataRequest"
+                   url="../../backend/api/account-page.php"
+                   content-type="application/x-www-form-urlencoded"
+                   method="POST"
+                   timeout="5000"
+                   handle-as="json"
+                   debounce-duration="300"
+                   last-response="{{response}}"></iron-ajax>
+        <iron-ajax id="passwordRequest"
+                   url="../../backend/api/account-page.php"
+                   content-type="application/x-www-form-urlencoded"
+                   method="POST"
+                   timeout="5000"
+                   handle-as="json"
+                   debounce-duration="300"></iron-ajax>
+
+        <paper-dialog id="errorDialog" with-backdrop>
+            <h2>Es ist ein Fehler aufgetreten:</h2>
+            <div id="errorContent">
+
+            </div>
+            <p style="text-align: center"><i>Melden Sie diesen Fehler bitte ggf. einem Administrator!</i></p>
+            <div class="buttons">
+                <paper-button dialog-confirm autofocus style="color: #F44336;">OK</paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="errorFormDialog" with-backdrop>
+            <div>
+                <paper-icon-button icon="close" style="color: #616161;
+                           position: absolute; z-index: 999;
+                           right: 5px; top: 5px;"
+                                   on-click="closeErrorReport"
+                                   title="Schlie&szlig;en"></paper-icon-button>
+            </div>
+            <paper-dialog-scrollable>
+                <div id="errorFormWrapper">
+                    <br>
+                    <h2>Lade das Error-Formular...</h2>
+                    <div class="spinnerWrapper" style="min-width: 100px;"><br><paper-spinner active></paper-spinner></div>
+                </div>
+            </paper-dialog-scrollable>
+        </paper-dialog>
+
+        <div id="privacy"><!-- Lazy Loaded <privacy></privacy> --></div>
+
+        <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
+            <h2>Laden, bitte warten...</h2>
+            <div class="spinnerWrapper"><paper-spinner active></paper-spinner></div>
+        </paper-dialog>
+
+        <paper-drawer-panel disable-edge-swipe disable-swipe>
+            <div drawer style="overflow: auto;">
+                <paper-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
+                    <paper-icon-button icon="arrow-back" paper-drawer-toggle style="color: #212121;"></paper-icon-button>
+                    <div class="title navHeader">Navigation</div>
+                </paper-toolbar>
+                <div style="padding-bottom: 110px;"> <!-- Wrapping the Menu with bottompadding 110px for the copyright box -->
+                    <paper-menu>
+                        <a href="#index" target="_self">
+                            <paper-icon-item>
+                                <iron-icon icon="home" item-icon></iron-icon>
+                                Startseite
+                            </paper-icon-item>
+                        </a>
+                        <a href="#logout" target="_self">
+                            <paper-icon-item>
+                                <iron-icon icon="power-settings-new" item-icon></iron-icon>
+                                Ausloggen
+                            </paper-icon-item>
+                        </a>
+                        <paper-icon-item id="reportErrorItem" on-click="_openReportForm">
+                            <iron-icon icon="report" item-icon></iron-icon>
+                            Einen Fehler melden
+                        </paper-icon-item>
+                        <paper-icon-item on-click="openPrivacy">
+                            <iron-icon icon="lock" item-icon></iron-icon>
+                            Datenschutz
+                        </paper-icon-item>
+                        <a onclick="location.hash='imprint'">
+                            <paper-icon-item>
+                                <iron-icon icon="gavel" item-icon></iron-icon>
+                                Impressum
+                            </paper-icon-item>
+                        </a>
+                    </paper-menu>
+                </div>
+                <div style="position: absolute; bottom: 0; width: 100%; border-top: 1px solid #E0E0E0; background-color: #F5F5F5; height: 110px;">
+                    <p style="text-align: center; font-size: 12px;"><b>Raumreservierung 2017</b><br>Moritz Menzel,<br>Benjamin Kirchhoff,<br>Maximilian Seiler<br><br>Published under GNU GPL v3.0</p>
+                </div>
+            </div>
+            <div main>
+                <paper-header-panel mode="standard">
+                    <paper-toolbar>
+                        <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+                        <div class="title" style="padding-bottom: 1px;">[[fullname]]</div>
+                    </paper-toolbar>
+
+                    <div id="content-wrapper">
+                        <template is="dom-if" if="{{response.success}}">
+                            <template is="dom-if" if="{{response.loggedin}}">
+                                <ul class="app-grid">
+                                    <li>
+                                        <paper-card heading="Pers&ouml;nliche Daten" class="userCard">
+                                            <div class="card-content">
+                                                <table>
+                                                    <tr>
+                                                        <td>Vorname:</td>
+                                                        <td>[[response.prename]]</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Nachname:</td>
+                                                        <td>[[response.surname]]</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>K&uuml;rzel</td>
+                                                        <td>[[response.lehrer_kurz]]</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>E-Mail:</td>
+                                                        <td style="word-break: break-all;">[[response.email]]</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </paper-card>
+                                    </li>
+                                    <li>
+                                        <paper-card class="userCard" heading="Accountdaten">
+                                            <div class="card-content">
+                                                <table>
+                                                    <tr>
+                                                        <td>Accountname:</td>
+                                                        <td>[[response.name]]</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Account-Typ:</td>
+                                                        <td>[[response.type]]</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Account-Status:</td>
+                                                        <td>[[response.status]]</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </paper-card>
+                                    </li>
+                                    <li>
+                                        <paper-card heading="Passwort &Auml;ndern" class="userCard" style="min-width: 300px;">
+                                            <div class="card-content">
+                                                <p>
+                                                    Hier k&ouml;nnen Sie Ihr pers&ouml;nliches Passwort &auml;ndern.
+                                                    (Wir werden Ihnen eine Informationsmail an Ihre E-Mail - Adresse senden)
+                                                </p>
+                                                <div style="margin: 0 auto; text-align: center">
+                                                    <paper-button on-click="togglePWForm" id="pwFormToggle">Formular &ouml;ffnen</paper-button>
+                                                </div>
+                                                <iron-collapse id="changePWForm">
+                                                    <paper-input type="password" id="oldPW" minlength="6" maxlength="64" auto-validate required label="Altes Passwort eingeben"></paper-input>
+                                                    <paper-input type="password" id="newPW1" minlength="6" maxlength="64" auto-validate required label="Neues Passwort eingeben"></paper-input>
+                                                    <paper-input type="password" id="newPW2" minlength="6" on-keyup="validateInput" maxlength="64" auto-validate required label="Neues Passwort wiederholen"></paper-input>
+                                                    <br>
+                                                    <div id="changePWStatus"></div>
+                                                    <paper-button on-click="changePW" style="float: right;">Passwort &auml;ndern</paper-button>
+                                                </iron-collapse>
+                                            </div>
+                                        </paper-card>
+                                    </li>
+                                </ul>
+                            </template>
+                            <template is="dom-if" if="{{!response.loggedin}}">
+                                <paper-card heading="Nicht eingeloggt!" class="normalCard">
+                                    <div class="card-content">
+                                        <p>
+                                            Hallo!<br>
+                                            Es scheint, als w&auml;ren Sie momentan nicht eingeloggt. Um auf Ihr Nutzerprofil zugreifen zu k&ouml;nnen, m&uuml;ssen Sie eingeloggt sein!<br>
+                                            <br>
+                                            <i>
+                                                Wenn Sie den Knopf unten dr&uuml;cken, werden Sie auf die Startseite
+                                                geleitet, auf der Sie sich anmelden k&ouml;nnen.
+                                            </i>
+                                        </p>
+                                    </div>
+                                    <div class="card-actions">
+                                        <paper-button onclick="location.hash='index'">Zur Startseite</paper-button>
+                                    </div>
+                                </paper-card>
+                            </template>
+                        </template>
+                        <template is="dom-if" if="{{!response.success}}">
+                            <paper-card heading="Fehler!" class="normalCard">
+                                <div class="card-content">
+                                    <p>
+                                        Leider ist ein Fehler bei der Abfrage Ihrer Nutzerdaten aufgetreten.<br>
+                                        Bitte versuchen Sie es erneut oder &uuml;berpr&uuml;fen Sie ggf. Ihre Internetverbindung!
+                                    </p>
+                                    <p style="color: red;">[[response.message]]</p>
+                                </div>
+                                <div class="card-actions">
+                                    <paper-button on-click="reloadData">Erneut versuchen</paper-button>
+                                </div>
+                            </paper-card>
+                        </template>
+                    </div>
+
+                </paper-header-panel>
+            </div>
+        </paper-drawer-panel>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'raumreservierung-account-page',
+
+            properties: {
+                response: Object,
+                fullname: String,
+                reload: {
+                    type: Boolean,
+                    value: false,
+                    observer: '_onReload'
+                }
+            },
+
+            listeners: {
+                'dataRequest.request':'_onRequest',
+                'dataRequest.response':'_onResponse',
+                'dataRequest.error':'_onError',
+                'passwordRequest.request':'_onRequest',
+                'passwordRequest.response':'_onPWResponse',
+                'passwordRequest.error':'_onError'
+            },
+
+            ready: function() {
+                this.fire('pageLoad', this.nodeName);
+                location.hash = 'account';
+                this.$.dataRequest.body = "request=getUserData";
+                this.$.dataRequest.generateRequest();
+            },
+            _onRequest: function() {
+                this.$.loadIndicator.open();
+            },
+            _onResponse: function() {
+                this.$.loadIndicator.close();
+                this.response = this.$.dataRequest.lastResponse;
+                if(!this.response) {
+                    this.$.errorContent.innerHTML = '<p style="color: red;">Es konnten keine Daten vom Server empfangen werden!</p>';
+                    this.$.errorDialog.center(), this.$.errorDialog.open();
+                } else {
+                    this.fullname = (this.response.loggedin) ? this.response.fullname : "Nutzerprofil";
+                }
+            },
+            _onError: function(e) {
+                this.$.loadIndicator.close();
+                this.$.errorContent.innerHTML = '<p style="color: red;">'+e.type+' -- '+e.detail.error+'</p>';
+                this.$.errorDialog.center(), this.$.errorDialog.open();
+            },
+            openPrivacy: function() {
+                this.$.loadIndicator.open();
+                this.importHref('src/raumreservierung-privacy/raumreservierung-privacy.html', this._onPrivacyLoad, this._onPrivacyLoadError, true);
+            },
+            _onPrivacyLoad: function() {
+                this.$.loadIndicator.close();
+                this.$.privacy.innerHTML = '<raumreservierung-privacy opened></raumreservierung-privacy>';
+                // Opened attribute is set, means it auto-opens once loaded :)
+            },
+            _onPrivacyLoadError: function() {
+                this.$.loadIndicator.close();
+                this.$.errorContent.innerHTML = '<p style="color: red;">Die Datenschutzbestimmungen konnten nicht geladen werden. Bitte versuchen Sie es erneut!</p>';
+                this.$.errorDialog.center(), this.$.errorDialog.open();
+            },
+            _openReportForm: function() {
+                this.$.errorFormDialog.open();
+                this.importHref('src/reporting-form/reporting-form.html', this._onErrorPageLoad, this._onErrorPageLoadError, true);
+            },
+            _onErrorPageLoad: function() {
+                this.$.errorFormWrapper.innerHTML = '<reporting-form loggedin="[[response.loggedin]]" name="[[response.name]]"></reporting-form>';
+                this.async(function(){
+                    // Because the element needs (even if short) time to render itself
+                    this.$.errorFormDialog.center();
+                }, 50);
+                this.fire('pageLoad', this.$$('reporting-form').nodeName);
+            },
+            _onErrorPageLoadError: function() {
+                this.$.errorFormDialog.close();
+                this.$.errorContent.innerHTML = '<p style="color: red;">Das Error-Formular konnte nicht geladen werden!</p>';
+                this.$.errorDialog.center();
+                this.$.errorDialog.open();
+            },
+            closeErrorReport: function() {
+                this.$.errorFormDialog.close();
+            },
+            reloadData: function() {
+                this.$.dataRequest.body = "request=getUserData";
+                this.$.dataRequest.generateRequest();
+            },
+            togglePWForm: function() {
+                var form = this.$$('#changePWForm');
+                form.toggle();
+                this.$$('#pwFormToggle').textContent = (form.opened) ? "Formular schließen" : "Formular öffnen";
+            },
+            changePW: function() {
+                var old = this.$$('#oldPW');
+                var new1 = this.$$('#newPW1');
+                var new2 = this.$$('#newPW2');
+
+                if(old.validate() && new1.validate() && new2.validate() && new1.value == new2.value) {
+                    var oldPW = old.value.replace(/&/, '::AMP::');
+                    var newPW = new1.value.replace(/&/, '::AMP::');
+                    // Ajax Request new PW
+                    this.$.passwordRequest.body = "request=changePassword&oldpw="+oldPW+"&newpw="+newPW;
+                    this.$.passwordRequest.generateRequest();
+                } else {
+                    old.value = "";
+                    new1.value = "";
+                    new2.value = "";
+                }
+            },
+            validateInput: function() {
+                var new1 = this.$$('#newPW1');
+                var new2 = this.$$('#newPW2');
+                new2.invalid = !(new1.value == new2.value);
+            },
+            _onReload: function() {
+                if(this.reload == true) {
+                    this.$.dataRequest.body = "request=getUserData";
+                    this.$.dataRequest.generateRequest();
+                    this.reload = false;
+                }
+            },
+            _onPWResponse: function() {
+                this.$.loadIndicator.close();
+                this.$$('#oldPW').value = "";
+                this.$$('#newPW1').value = "";
+                this.$$('#newPW2').value = "";
+                var box = this.$$('#changePWStatus');
+                var res = this.$.passwordRequest.lastResponse;
+                if(res){
+                    if(res.success){
+                        box.innerHTML = '<p style="color: green;">Ihr Passwort wurde erfolgreich ge&auml;ndert!</p>';
+                    } else {
+                        box.innerHTML = '<p style="color: red;">'+res.message+'</p>';
+                    }
+                } else {
+                    box.innerHTML = '<p style="color: red;">Es ist ein Fehler bei der Serveranfrage aufgetreten!</p>';
+                }
+            }
+        })
+    </script>
+</dom-module>

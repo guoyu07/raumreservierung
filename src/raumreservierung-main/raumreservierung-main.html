@@ -107,6 +107,8 @@
       <raumreservierung-imprint></raumreservierung-imprint>
       <!-- Password reset page -->
       <raumreservierung-reset-password></raumreservierung-reset-password>
+      <!-- Account Page -->
+      <raumreservierung-account-page></raumreservierung-account-page>
 
     </iron-pages>
 
@@ -144,6 +146,10 @@
                 value: false
             },
             imprintPageLoaded: {
+                type: Boolean,
+                value: false
+            },
+            accountPageLoaded: {
                 type: Boolean,
                 value: false
             },
@@ -202,6 +208,9 @@
                 case 5:
                     color = "#F44336";
                     break;
+                case 6:
+                    color = "#FFC107";
+                    break;
                 default:
                     color = "#689F38";
             }
@@ -215,7 +224,7 @@
             this.$.loadIndicator.close();
             this.response = this.$.userDataRequest.lastResponse;
             this.loggedin = (this.response.data) ? this.response.data.loggedin : false;
-            if (this.loggedin === true)
+            if (this.loggedin === true && this.hash == "")
                 this._redirect();
             else
                 this._loadPages();
@@ -261,6 +270,9 @@
                     break;
                 case "reset-password":
                     this._loadResetPage();
+                    break;
+                case "account":
+                    this._loadAccountPage();
                     break;
                 default:
                     this._loadPages();
@@ -317,15 +329,15 @@
                     }
                     break;
                 case 4:
-                    if (!this.imprintPageLoaded) {
-                        this._loadImprint();
-                    } else {
-                        this.$.pages.select(4);
-                    }
+                    this._loadImprint();
                     break;
                 case 5:
                     // Password reset page
                     this._loadResetPage();
+                    break;
+                case 6:
+                    // Account Page
+                    this._loadAccountPage();
                     break;
                 default:
                     this.hash = "";
@@ -522,12 +534,25 @@
 
         },
         _loadImprint: function() {
-            this.$.loadIndicator.open();
-            this.importHref('src/raumreservierung-imprint/raumreservierung-imprint.html', this._onImprintLoad, this._onImprintLoadError, true);
+            if(!this.imprintPageLoaded){
+                if(!this.landingPageLoaded){
+                    window.addEventListener('pageLoad', function(e){
+                        if(e.detail == "raumreservierung-landingpage".toUpperCase()) {
+                            this.$.loadIndicator.open();
+                            this.importHref('src/raumreservierung-imprint/raumreservierung-imprint.html', this._onImprintLoad, this._onImprintLoadError, true);
+                        }
+                    }.bind(this));
+                } else {
+                    this.$.loadIndicator.open();
+                    this.importHref('src/raumreservierung-imprint/raumreservierung-imprint.html', this._onImprintLoad, this._onImprintLoadError, true);
+                }
+            } else {
+                this.$.pages.select(4)
+            }
         },
         _onImprintLoad: function() {
-            this.$.loadIndicator.close();
             this.imprintPageLoaded = true;
+            this.$.loadIndicator.close();
             this.$.pages.select(4);
         },
         _onImprintLoadError: function() {
@@ -547,6 +572,34 @@
         _onResetPageLoadError: function() {
             this.$.loadIndicator.close();
             this.$.errorContent.innerHTML = '<p style="color: red;">Die Passwort-Wiederherstellungsseite konnte nicht geladen!</p>';
+            this.$.errorDialog.center(), this.$.errorDialog.open();
+        },
+        _loadAccountPage: function() {
+            if(!this.accountPageLoaded) {
+                if(!this.landingPageLoaded) {
+                    window.addEventListener('pageLoad', function(e){
+                        if(e.detail == "raumreservierung-landingpage".toUpperCase()) {
+                            this.$.loadIndicator.open();
+                            this.importHref('src/raumreservierung-account-page/raumreservierung-account-page.html', this._onAccPageLoad, this._onAccPageLoadError, true);
+                        }
+                    }.bind(this));
+                } else {
+                    this.$.loadIndicator.open();
+                    this.importHref('src/raumreservierung-account-page/raumreservierung-account-page.html', this._onAccPageLoad, this._onAccPageLoadError, true);
+                }
+            } else {
+                this.$$('raumreservierung-account-page').reload = true;
+                this.$.pages.select(6);
+            }
+        },
+        _onAccPageLoad: function() {
+            this.$.loadIndicator.close();
+            this.$.pages.select(6);
+            this.accountPageLoaded = true;
+        },
+        _onAccPageLoadError: function() {
+            this.$.loadIndicator.close();
+            this.$.errorContent.innerHTML = '<p style="color: red;">Die Account-Seite konnte nicht geladen werden!</p>';
             this.$.errorDialog.center(), this.$.errorDialog.open();
         }
     });

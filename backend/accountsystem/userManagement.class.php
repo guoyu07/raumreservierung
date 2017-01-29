@@ -13,6 +13,9 @@
         public function __construct($pdo)
         {
 
+            // Definition of Link-URLs in E-Mails
+            $this->url = "https://gykl-rr.lima.zone";
+
             if(is_a($pdo, 'PDO')){
                 $this->pdo = $pdo;
             } else {
@@ -136,7 +139,7 @@
             $headers   .= "X-Mailer: PHP/" . phpversion() . "\r\n";
 
             // Definition of Website Host
-            $url = "https://gykl-rr.lima.zone";
+            $url = $this->url;
 
             $message    = <<<HTML
 <!DOCTYPE html><html style="font-family: Roboto, Noto, sans-serif;color: #212121;margin: 0 auto;min-width: 319px;"><head> <title>Account - Aktivierung</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes"> <style>html, body{font-family: Roboto, Noto, sans-serif; color: #212121; margin: 0 auto; min-width: 319px;}#content{width: 90%; max-width: 600px; height: auto; margin: 0 auto 58px auto; text-align: left;}#footer{margin: 0 auto; width: 100%; height: 48px; background-color: #212121; color: white; text-align: center;}#footText{font-size: 13px; padding-top: 8px;}#pseudoButton{background-color: #2196F3; height: 48px; width: auto; text-align: center; font-size: 22px; color: white; -webkit-transition: background-color 0.2s; -moz-transition: background-color 0.2s; -ms-transition: background-color 0.2s; -o-transition: background-color 0.2s; transition: background-color 0.2s; border-radius: 5px; margin: 0 auto;}#pseudoButton:hover{background-color: #64B5F6; cursor: pointer;}a{color: #33691E; text-decoration: none; -webkit-transition: color 0.2s; -moz-transition: color 0.2s; -ms-transition: color 0.2s; -o-transition: color 0.2s; transition: color 0.2s;}a:hover{color: #558B2F;}#buttonLink{color: white; text-decoration: none;}hr{width: 70%; border: none; border-bottom: 1px solid #E0E0E0; margin: 20px auto;}#disclaimer{font-size: 14px; color: #616161;}/** Fix for apple clients */ @media only screen and (min-device-width: 601px){#content{width: 600px !important;}}</style></head><body style="font-family: Roboto, Noto, sans-serif;color: #212121;margin: 0 auto;min-width: 319px;"><!--[if (get mso 9)|(IE)]><div id="content" style="width: 600px;height: auto; margin: 96px auto 58px auto;text-align: left;"><![endif]--><div id="content" style="width: 90%;max-width: 600px;height: auto;margin: 0 auto 58px auto;text-align: left;"> <h1 style="text-align: center;">Hallo, $prename $surname!</h1> <p style="font-size: 16px;"> <br><b>Sie haben es fast geschafft!</b><br><br>Um Ihre E-Mail '$email' zu best&auml;tigen, &ouml;ffnen Sie bitte den untenstehenden Link.<br>Anschlie&szlig;end werden Sie sich mit Ihrem Konto bei der Raumreservierung einloggen k&ouml;nnen. <br><br></p><a href="$url?name=$name&code=$activationcode#confirm-email" title="$url#confirm-email" id="buttonLink" target="_blank" style="color: white;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;"> <div id="pseudoButton" style="background-color: #2196F3;height: 48px;width: auto;text-align: center;font-size: 22px;color: white;-webkit-transition: background-color 0.2s;-moz-transition: background-color 0.2s;-ms-transition: background-color 0.2s;-o-transition: background-color 0.2s;transition: background-color 0.2s;border-radius: 5px;margin: 0 auto;"> <p style="padding-top: 10px;">$name aktivieren!</p></div></a> <hr style="width: 70%;border: none;border-bottom: 1px solid #E0E0E0;margin: 20px auto;"> <p id="disclaimer" style="font-size: 13px;color: #616161;"> <b>Information</b><br>Diese E-Mail wurde im Rahmen der Account-Aktivierung f&uuml;r die Raumreservierung des <a href="https://gymnasium-klotzsche.de" title="www.gymnasium-klotzsche.de" target="_blank" style="color: #33691E;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;">Gymnasiums Dresden-Klotzsche</a> versandt.<br>Wenn Sie diese E-Mail nicht angefordert haben, dann ignorieren Sie sie einfach.<br><br>Sollten Sie weitere Fragen oder Probleme haben, k&ouml;nnen Sie sich direkt an das <a href="https://gymnasium-klotzsche.de" title="www.gymnasium-klotzsche.de" target="_blank" style="color: #33691E;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;">Gymnasium Dresden-Klotzsche</a> oder die <a href="$url#imprint" title="$url#imprint" target="_blank" style="color: #33691E;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;">Raumreservierung</a> wenden. <br><br>Wir entschuldigen uns f&uuml;r jedwede Art von Unannehmlichkeiten.<br>Ihr Team der Raumreservierung des Gymnasiums Dresden Klotzsche :-) </p></div><div id="footer" style="margin: 0 auto;width: 100%;height: 48px;background-color: #212121;color: white;text-align: center;"> <p id="footText" style="font-size: 12px;padding-top: 9px;"> Raumreservierung &copy; 2017 by<br>Moritz Menzel, Benjamin Kirchhoff, Maximilian Seiler</p></div></body></html>
@@ -473,14 +476,14 @@ HTML;
         }
 
         public function getFullName($name) {
-            $sql = "SELECT name, lehrer_accname, lehrer_vorname, lehrer_nachname FROM accounts_users, plan_lehrer
+            $sql = "SELECT name, lehrer_accname, lehrer_vorname, lehrer_nachname, lehrer_kurz FROM accounts_users, plan_lehrer
                      WHERE plan_lehrer.lehrer_accname = accounts_users.name AND accounts_users.name = :accname";
             $r = $this->pdo->prepare($sql);
             $r->execute(array(":accname" => $name));
             $res = $r->fetchAll();
             if(!empty($res)) {
                 $u = $res[0];
-                return array("prename" => $u['lehrer_vorname'], "surname" => $u['lehrer_nachname']);
+                return array("prename" => $u['lehrer_vorname'], "surname" => $u['lehrer_nachname'], "lehrer_kurz" => $u['lehrer_kurz']);
             } else {
                 return $name;
             }
@@ -511,7 +514,7 @@ HTML;
                         $headers   .= "X-Mailer: PHP/" . phpversion() . "\r\n";
 
                         // Definition of Website Host
-                        $url = "https://gykl-rr.lima.zone";
+                        $url = $this->url;
 
                         $message    = <<<HTML
 <!DOCTYPE html><html style="font-family: Roboto, Noto, sans-serif;color: #212121;margin: 0 auto;min-width: 319px;"><head> <title>Passwort - Wiederherstellung</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes"> <style>html, body{font-family: Roboto, Noto, sans-serif; color: #212121; margin: 0 auto; min-width: 319px;}#content{width: 90%; max-width: 600px; height: auto; margin: 0 auto 58px auto; text-align: left;}#footer{margin: 0 auto; width: 100%; height: 48px; background-color: #212121; color: white; text-align: center;}#footText{font-size: 13px; padding-top: 8px;}#pseudoButton{background-color: #2196F3; height: 48px; width: auto; text-align: center; font-size: 22px; color: white; -webkit-transition: background-color 0.2s; -moz-transition: background-color 0.2s; -ms-transition: background-color 0.2s; -o-transition: background-color 0.2s; transition: background-color 0.2s; border-radius: 5px; margin: 0 auto;}#pseudoButton:hover{background-color: #64B5F6; cursor: pointer;}a{color: #33691E; text-decoration: none; -webkit-transition: color 0.2s; -moz-transition: color 0.2s; -ms-transition: color 0.2s; -o-transition: color 0.2s; transition: color 0.2s;}a:hover{color: #558B2F;}#buttonLink{color: white; text-decoration: none;}hr{width: 70%; border: none; border-bottom: 1px solid #E0E0E0; margin: 20px auto;}#disclaimer{font-size: 14px; color: #616161;}/** Fix for apple clients */ @media only screen and (min-device-width: 601px){#content{width: 600px !important;}}</style></head><body style="font-family: Roboto, Noto, sans-serif;color: #212121;margin: 0 auto;min-width: 319px;"><!--[if (get mso 9)|(IE)]><div id="content" style="width: 600px;height: auto; margin: 96px auto 58px auto;text-align: left;"><![endif]--><div id="content" style="width: 90%;max-width: 600px;height: auto;margin: 0 auto 58px auto;text-align: left;"> <h1 style="text-align: center;">Hallo, $prename $surname!</h1> <p style="font-size: 16px;"> <br>Wir haben eine Anfrage zur Wiederherstellung Ihres Passwortes erhalten. Um sicherzustellen, dass diese Anfrage von Ihnen stammt, m&uuml;ssen Sie die &Auml;nderung best&auml;tigen. Klicken Sie dazu auf den untenstehenden Link. </p><hr style="width: 70%;border: none;border-bottom: 1px solid #E0E0E0;margin: 20px auto;"> <a href="$url?name=$name&code=$code#reset-password" title="$url" id="buttonLink" target="_blank" style="color: white;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;"> <div id="pseudoButton" style="background-color: #EF5350;height: 48px;width: auto;text-align: center;font-size: 22px;color: white;-webkit-transition: background-color 0.2s;-moz-transition: background-color 0.2s;-ms-transition: background-color 0.2s;-o-transition: background-color 0.2s;transition: background-color 0.2s;border-radius: 5px;margin: 0 auto;"> <p style="padding-top: 10px;">Passwort zur&uuml;cksetzen!</p></div></a> <hr style="width: 70%;border: none;border-bottom: 1px solid #E0E0E0;margin: 20px auto;"> <p style="font-size: 14px;"> <i> Sollten Sie diese E-Mail nicht angefordert haben, versucht m&ouml;glicherweise ein Dritter, Ihr Passwort zu &auml;ndern.<br>Wenn Sie sich noch an Ihr eigenes Accountpasswort erinnern, klicken Sie bitte <b>nicht</b> auf den Link und l&ouml;schen diese E-Mail am besten einfach wieder! </i> </p><hr style="width: 70%;border: none;border-bottom: 1px solid #E0E0E0;margin: 20px auto;"> <p id="disclaimer" style="font-size: 13px;color: #616161;"> <b>Information</b><br>Diese E-Mail wurde im Rahmen der Passwortwiederherstellung der Raumreservierung des <a href="https://gymnasium-klotzsche.de" title="www.gymnasium-klotzsche.de" target="_blank" style="color: #33691E;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;">Gymnasiums Dresden-Klotzsche</a> versandt.<br>Wenn Sie diese E-Mail nicht angefordert haben, dann ignorieren Sie sie einfach.<br><br>Sollten Sie weitere Fragen oder Probleme haben, k&ouml;nnen Sie sich direkt an das <a href="https://gymnasium-klotzsche.de" title="www.gymnasium-klotzsche.de" target="_blank" style="color: #33691E;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;">Gymnasium Dresden-Klotzsche</a> oder die <a href="$url#imprint" title="$url#imprint" target="_blank" style="color: #33691E;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;">Raumreservierung</a> wenden. <br><br>Wir entschuldigen uns f&uuml;r jedwede Art von Unannehmlichkeiten.<br>Ihr Team der Raumreservierung des Gymnasiums Dresden Klotzsche :-) </p></div><div id="footer" style="margin: 0 auto;width: 100%;height: 48px;background-color: #212121;color: white;text-align: center;"> <p id="footText" style="font-size: 12px;padding-top: 9px;"> Raumreservierung &copy; 2017 by<br>Moritz Menzel, Benjamin Kirchhoff, Maximilian Seiler </p></div></body></html>
@@ -623,6 +626,57 @@ HTML;
                 $str .= $keyspace[$c];
             }
             return $str;
+        }
+
+        private function sendPasswordChangeMail($name, $email) {
+            $fullname = $this->getFullName($name);
+            $prename = (is_array($fullname)) ? $fullname['prename'] : $name;
+            $surname = (is_array($fullname)) ? $fullname['surname'] : "";
+
+            $timestamp = time();
+            $date = date('d.m.Y', $timestamp);
+            $time = date('H:i', $timestamp);
+
+            $to         = $email;
+            $subject    = "Gykl Raumreservierung - Änderung Ihres Passwortes";
+
+            $headers    = "MIME-Version: 1.0" . "\r\n";
+            $headers   .= "Content-type: text/html; charset=iso-8859-1" . "\r\n";
+            $headers   .= "To: $prename $surname <$email>" . "\r\n";
+            $headers   .= "From: activation@lima.zone" . "\r\n";
+            $headers   .= "Reply-To: activation@lima.zone" . "\r\n";
+            $headers   .= "X-Mailer: PHP/" . phpversion() . "\r\n";
+
+            // Definition of Website Host
+            $url = $this->url;
+
+            $message    = <<<HTML
+<!DOCTYPE html><html style="font-family: Roboto, Noto, sans-serif;color: #212121;margin: 0 auto;min-width: 319px;"><head> <title>Passwort - Wiederherstellung</title> <meta charset="utf-8"> <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes"> <style>html, body{font-family: Roboto, Noto, sans-serif; color: #212121; margin: 0 auto; min-width: 319px;}#content{width: 90%; max-width: 600px; height: auto; margin: 0 auto 58px auto; text-align: left;}#footer{margin: 0 auto; width: 100%; height: 48px; background-color: #212121; color: white; text-align: center;}#footText{font-size: 13px; padding-top: 8px;}#pseudoButton{background-color: #2196F3; height: 48px; width: auto; text-align: center; font-size: 22px; color: white; -webkit-transition: background-color 0.2s; -moz-transition: background-color 0.2s; -ms-transition: background-color 0.2s; -o-transition: background-color 0.2s; transition: background-color 0.2s; border-radius: 5px; margin: 0 auto;}#pseudoButton:hover{background-color: #64B5F6; cursor: pointer;}a{color: #33691E; text-decoration: none; -webkit-transition: color 0.2s; -moz-transition: color 0.2s; -ms-transition: color 0.2s; -o-transition: color 0.2s; transition: color 0.2s;}a:hover{color: #558B2F;}#buttonLink{color: white; text-decoration: none;}hr{width: 70%; border: none; border-bottom: 1px solid #E0E0E0; margin: 20px auto;}#disclaimer{font-size: 14px; color: #616161;}/** Fix for apple clients */ @media only screen and (min-device-width: 601px){#content{width: 600px !important;}}</style></head><body style="font-family: Roboto, Noto, sans-serif;color: #212121;margin: 0 auto;min-width: 319px;"><!--[if (get mso 9)|(IE)]><div id="content" style="width: 600px;height: auto; margin: 96px auto 58px auto;text-align: left;"><![endif]--><div id="content" style="width: 90%;max-width: 600px;height: auto;margin: 0 auto 58px auto;text-align: left;"> <h1 style="text-align: center;">Hallo, $prename $surname!</h1> <p style="font-size: 16px;"> <br>Am $date um $time Uhr wurde Ihr Accountpasswort f&uuml;r die Raumreservierung ge&auml;ndert. Wenn Sie Ihr Passwort selbst ge&auml;ndert haben, k&ouml;nnen Sie diese E-Mail ignorieren / l&ouml;schen. </p><hr style="width: 70%;border: none;border-bottom: 1px solid #E0E0E0;margin: 20px auto;"> <p style="font-size: 14px;"> Sollten Sie Ihr Passwort <b>nicht</b> selbst ge&auml;ndert haben, hat m&ouml;glicherweise ein Dritter Zugriff auf Ihren Account erlangt und das zugeh&ouml;rige Passwort ge&auml;ndert.<br><br><span style="color: #D50000;"> <b> Melden Sie diesen Vorfall unverz&uuml;glich einem Administrator der Raumreservierung, unbefugte Personen k&ouml;nnen mit einem gestohlenen Account gro&szlig;en Schaden anrichten! </b> </span> </p><hr style="width: 70%;border: none;border-bottom: 1px solid #E0E0E0;margin: 20px auto;"> <p id="disclaimer" style="font-size: 13px;color: #616161;"> <b>Information</b><br>Diese E-Mail wurde im Rahmen der Accountverwaltung der Raumreservierung des <a href="https://gymnasium-klotzsche.de" title="www.gymnasium-klotzsche.de" target="_blank" style="color: #33691E;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;">Gymnasiums Dresden-Klotzsche</a> versandt.<br>Wenn Sie diese E-Mail nicht angefordert haben, dann ignorieren Sie sie einfach.<br><br>Sollten Sie weitere Fragen oder Probleme haben, k&ouml;nnen Sie sich direkt an das <a href="https://gymnasium-klotzsche.de" title="www.gymnasium-klotzsche.de" target="_blank" style="color: #33691E;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;">Gymnasium Dresden-Klotzsche</a> oder die <a href="$url#imprint" title="$url#imprint" target="_blank" style="color: #33691E;text-decoration: none;-webkit-transition: color 0.2s;-moz-transition: color 0.2s;-ms-transition: color 0.2s;-o-transition: color 0.2s;transition: color 0.2s;">Raumreservierung</a> wenden. <br><br>Wir entschuldigen uns f&uuml;r jedwede Art von Unannehmlichkeiten.<br>Ihr Team der Raumreservierung des Gymnasiums Dresden Klotzsche :-) </p></div><div id="footer" style="margin: 0 auto;width: 100%;height: 48px;background-color: #212121;color: white;text-align: center;"> <p id="footText" style="font-size: 12px;padding-top: 9px;"> Raumreservierung &copy; 2017 by<br>Moritz Menzel, Benjamin Kirchhoff, Maximilian Seiler </p></div></body></html>
+HTML;
+            return mail($to, $subject, $message, $headers);
+        }
+
+        public function selfChangePassword($name, $old, $new) {
+
+            $sql = "SELECT password, salt, iterations, email FROM accounts_users WHERE name=:accname";
+            $r = $this->pdo->prepare($sql);
+            $r->execute(array(":accname" => $name));
+            $res = $r->fetchAll();
+            if(!empty($res)) {
+                $data = $res[0];
+                $userPW = hash_pbkdf2('sha512', $old, $data['salt'], $data['iterations'], 255);
+                if(hash_equals($data['password'], $userPW)) {
+                    // Old PW correct, change PW
+                    $this->sendPasswordChangeMail($name, $data['email']);
+                    return $this->changePassword($name, $new);
+                } else {
+                    // Old PW incorrect
+                    return array("error" => true, "message" => "Das eingegebene (alte) Passwort ist falsch, bitte überprüfen Sie Ihre Eingaben!");
+                }
+            } else {
+                return array("error" => true, "message" => "Es ist ein Fehler beim Auslesen der Nutzerdaten aufgetreten!");
+            }
+
         }
 
     }
