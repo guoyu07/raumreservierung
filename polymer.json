@@ -21,6 +21,7 @@
     "img/*",
     "src/raumreservierung-admin/img/*",
     "backend/**/**/*",
+    "backend/cronjobs/.htaccess",
     ".htaccess",
     ".htpasswd",
     "manifest.json",
