@@ -11,7 +11,7 @@
 
     $um = new userManagement($pdo);
 
-    $user = "mmenzel";
-    $pw = "gykl@2016";
+    $user = "notInDatabase";
+    $pw = "RANDOM";
     echo "reset pw for user `$user`:<br>";
-    print_r($um->changePassword($user, $pw));
+    var_dump($um->changePassword($user, $pw));
