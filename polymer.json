@@ -22,6 +22,7 @@
     "src/raumreservierung-admin/img/*",
     "backend/**/**/*",
     ".htaccess",
+    ".htpasswd",
     "manifest.json",
     "LICENSE"
   ],
