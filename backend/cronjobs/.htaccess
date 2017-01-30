@@ -1,0 +1,4 @@
+AuthType Basic
+AuthName "Only Cronbots allowed :)"
+AuthUserfile /home/webpages/lima-city/moritz-php/raumreservierung/.htpasswd
+Require valid-user
