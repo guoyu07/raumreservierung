@@ -354,9 +354,12 @@ HTML;
 
             try{
                 $this->pdo->beginTransaction();
-                $r->execute(array(":pw" => $pw, ":salt" => $salt, ":iterations" => $iterations, ":name" => $name));
-                $this->pdo->commit();
-                return array("error" => false);
+                $stat = $r->execute(array(":pw" => $pw, ":salt" => $salt, ":iterations" => $iterations, ":name" => $name));
+                if($stat)
+                    $this->pdo->commit();
+                else
+                    $this->pdo->rollBack();
+                return array("error" => $stat, "message" => $stat ? "Der Nutzer konnte nicht gefunden werden!" : "");
             } catch( PDOException $e ) {
                 $this->pdo->rollBack();
                 return array("error" => true, "message" => "Es ist ein Fehler beim Ändern des Passwortes aufgetreten: ".$e->getMessage());
@@ -464,7 +467,9 @@ HTML;
 
                 if($this->isUserInDB($name)) {
 
-                    if($this->lastEmailValidDate($name)) {
+                    if($this->isUserActivated($name)) {
+
+                        if($this->lastEmailValidDate($name)) {
 
                             $fullname = $this->getFullName($name);
                             $prename = (is_array($fullname)) ? $fullname['prename'] : $name;
@@ -507,8 +512,12 @@ HTML;
                                 return array("message" => $e->getMessage());
                             }
 
+                        } else {
+                            return array("message" => "Sie haben erst vor Kurzem Ihr Passwort zurückgesetzt. Sie können nur maximal alle 24h eine Wiederherstellung beantragen!");
+                        }
+
                     } else {
-                        return array("message" => "Sie haben erst vor Kurzem Ihr Passwort zurückgesetzt. Sie können nur maximal alle 24h eine Wiederherstellung beantragen!");
+                        return array("message" => "Der Account muss aktiviert sein, damit sein Passwort zurückgesetzt werden kann!");
                     }
 
                 } else {
@@ -636,6 +645,18 @@ HTML;
                 return array("error" => true, "message" => "Es ist ein Fehler beim Auslesen der Nutzerdaten aufgetreten!");
             }
 
+        }
+
+        public function isUserActivated($name){
+            $sql = "SELECT status FROM accounts WHERE accounts.name=:accname";
+            $r = $this->pdo->prepare($sql);
+            $r->execute(array(":accname" => $name));
+            $res = $r->fetchAll();
+            if(!empty($res)) {
+                return ($res[0]['status'] == 3);
+            } else {
+                return false;
+            }
         }
 
     }
