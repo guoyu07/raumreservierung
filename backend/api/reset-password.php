@@ -30,15 +30,19 @@
                             $um = new userManagement($pdo);
                             if($um->isUserInDB($name)){
 
-                                $res = $um->validateQuery($name, $code);
-                                if(!empty($res)) {
-                                    if($res['error'] == true) {
-                                        echo json_encode(array("success" => false, "message" => $res['message']));
+                                if($um->isUserActivated($name)) {
+                                    $res = $um->validateQuery($name, $code);
+                                    if(!empty($res)) {
+                                        if($res['error'] == true) {
+                                            echo json_encode(array("success" => false, "message" => $res['message']));
+                                        } else {
+                                            echo json_encode(array("success" => true, "validateQuery" => true));
+                                        }
                                     } else {
-                                        echo json_encode(array("success" => true, "validateQuery" => true));
+                                        echo json_encode(array("success" => false, "message" => "Es ist ein Fehler beim Überprüfen der Daten aufgetreten!"));
                                     }
                                 } else {
-                                    echo json_encode(array("success" => false, "message" => "Es ist ein Fehler beim Überprüfen der Daten aufgetreten!"));
+                                    echo json_encode(array("success" => false, "message" => "Der Account muss aktiviert sein, damit sein Passwort zurückgesetzt werden kann!"));
                                 }
 
                             } else {
@@ -64,20 +68,26 @@
                                 $um = new userManagement($pdo);
                                 if($um->isUserInDB($name)){
 
-                                    $res = $um->validateQuery($name, $code);
+                                    if($um->isUserActivated($name)) {
 
-                                    if($res['error'] != true) {
+                                        $res = $um->validateQuery($name, $code);
 
-                                        // Change PW
-                                        $res = $um->resetPassword($name, $pw);
-                                        if($res['error'] == false) {
-                                            echo json_encode(array("success" => true, "changePassword" => true));
+                                        if($res['error'] != true) {
+
+                                            // Change PW
+                                            $res = $um->resetPassword($name, $pw);
+                                            if($res['error'] == false) {
+                                                echo json_encode(array("success" => true, "changePassword" => true));
+                                            } else {
+                                                echo json_encode(array("success" => false, "message" => $res['message']));
+                                            }
+
                                         } else {
                                             echo json_encode(array("success" => false, "message" => $res['message']));
                                         }
 
                                     } else {
-                                        echo json_encode(array("success" => false, "message" => $res['message']));
+                                        echo json_encode(array("success" => false, "message" => "Der zurückzusetzende Account muss aktiviert sein!"));
                                     }
 
                                 } else {
