@@ -70,6 +70,7 @@
                     if($user['last_email'] != NULL) {
                         // last_email usually shouldnt be set on this point anymore
                         array_push($passwordResetTimeOver, $user['name']);
+                        $log .= "-- found last_email timestamp without an activationcode provided for user ".$user['name']."\n";
                     }
                 }
             }
