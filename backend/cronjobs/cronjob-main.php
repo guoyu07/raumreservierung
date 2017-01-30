@@ -66,6 +66,11 @@
 
                     }
 
+                } else {
+                    if($user['last_email'] != NULL) {
+                        // last_email usually shouldnt be set on this point anymore
+                        array_push($passwordResetTimeOver, $user['name']);
+                    }
                 }
             }
 
