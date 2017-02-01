@@ -319,8 +319,13 @@ HTML;
             $res = $this->pdo->query($sql)->fetchAll();
 
             for($i=0;$i < count($res);$i++){
-                $res[$i]['text'] = preg_replace("/::NEWLINE::/", ' --- ', $res[$i]['text']);
                 $res[$i]['text'] = preg_replace("/::AMP::/", "&", $res[$i]['text']);
+
+                // Following two lines will prevent HTML injections but allow custom regex'ed newlines to be parsed as
+                // Normal line breaks; otherwise it will be very hard to read ;)
+                $res[$i]['text'] = htmlentities($res[$i]['text'], ENT_QUOTES);
+                $res[$i]['text'] = preg_replace("/::NEWLINE::/", '<br>', $res[$i]['text']);
+
                 $res[$i]['created'] = date("d.m.Y - H:i", strtotime($res[$i]['created']));
             }
 
