@@ -108,6 +108,7 @@
 
                 default:
                     echo json_encode(array("success" => false, "message" => "Die geforderte Abfrage konnte nicht gefunden werden!"));
+                    break;
             }
         } else {
             echo json_encode(array("success" => false, "message" => "Es wurde keine auszuführende Abfrage angegeben!"));
