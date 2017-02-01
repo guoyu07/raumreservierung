@@ -14,8 +14,8 @@
     "src/raumreservierung-activate-account/raumreservierung-activate-account.html",
     "src/raumreservierung-imprint/raumreservierung-imprint.html",
     "src/raumreservierung-reset-password/raumreservierung-reset-password.html",
-
-    "src/raumreservierung-account-page/raumreservierung-account-page.html"
+    "src/raumreservierung-account-page/raumreservierung-account-page.html",
+    "src/raumreservierung-admin/src/admin-cronjobs/admin-cronjobs.html"
   ],
   "sources": [
     "img/*",
