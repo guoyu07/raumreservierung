@@ -331,8 +331,7 @@
             ready: function() {
                 this.fire('pageLoad', this.nodeName);
                 location.hash = 'account';
-                this.$.dataRequest.body = "request=getUserData";
-                this.$.dataRequest.generateRequest();
+                // Data Request will be called from outside :)
             },
             _onRequest: function() {
                 this.$.loadIndicator.open();
