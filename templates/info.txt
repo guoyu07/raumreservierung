@@ -1,0 +1,1 @@
+This folder will contain some copy-pasta - ready templates for pages / views and scripts
