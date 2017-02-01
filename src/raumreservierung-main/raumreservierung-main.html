@@ -257,7 +257,10 @@
             switch (this.hash) {
                 case "index":
                     this.hash = "";
-                    window.location.reload();
+                    /** TESTING **/
+                    this.$.pages.select(0);
+                    this.$.userDataRequest.body = "r=getSessionData";
+                    this.$.userDataRequest.generateRequest();
                     break;
                 case "confirm-email":
                     this.loadEmailPage();
