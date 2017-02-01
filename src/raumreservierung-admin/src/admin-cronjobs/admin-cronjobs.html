@@ -1,29 +1,267 @@
 <link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../../../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../../../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../../bower_components/juicy-html/juicy-html.html">
+<link rel="import" href="../../../../bower_components/iron-collapse/iron-collapse.html">
 
-<dom-module id="">
+<dom-module id="admin-cronjobs">
     <template>
-        <style>
+        <style include="app-grid-style">
             :host {
                 display: block;
+                width: 100%;
+                --primary-color: #3F51B5;
+                --accent-color: var(--paper-pink-500);
+                --primary-text-color: #212121;
+                --app-grid-columns: auto;
+                --app-grid-item-height: 100%;
+                --app-grid-expandible-item-columns: 1;
+                --app-grid-gutter: 10px;
+
+                margin: 0 auto;
+            }
+            #noErrorContainer {
+                background-image: url('../../img/error_icon.png');
+                background-repeat: no-repeat;
+                background-position: 50% 60%;
+                @apply(--layout-fit);
+                background-color: var(--google-grey-300);
+                min-height: 400px;
+            }
+            .noErrorHead {
+                text-align: center;
+                color: var(--paper-grey-800);
+                margin: 5px auto;
+            }
+            .noErrorText {
+                text-align: center;
+                color: var(--paper-grey-700);
+                font-size: 18px;
+                padding: 0 20px;
+            }
+            @media (min-width: 800px) {
+                #noErrorContainer {
+                    background-size: 300px;
+                }
+            }
+            @media (max-width: 799px) {
+                #noErrorContainer {
+                    background-size: 40%;
+                }
+            }
+            .card-header:hover {
+                cursor: pointer;
+            }
+            .card-header {
+                padding-bottom: 20px;
+            }
+            .date-header {
+                @apply(--paper-font-headline);
+            }
+            .secondline-header {
+                color: var(--paper-grey-600);
+                display: inline;
+            }
+            .card-header-action-icon {
+                display: inline;
+                @apply(--layout-flex-none);
+                float: right;
+            }
+            ul.app-grid {
+                list-style: none;
+                @apply(--layout-vertical);
+                padding: 0;
+                margin-left: 10px;
+            }
+            .flexcard {
+                @apply(--layout-vertical);
+                width: 100%;
+            }
+            #contentWrapper {
+                margin: 0 auto;
+            }
+            #reloadDataFab {
+                --paper-fab-background: var(--accent-color);
+                position: fixed;
+                right: 20px;
+                bottom: 20px;
+                z-index: 999;
+            }
+            .cardCenter {
+                @apply(--layout-vertical);
+            }
+            .contentCard {
+                @apply(--layout-self-center);
             }
         </style>
 
-        <!-- Content -->
+        <iron-ajax id="dataRequest"
+                   url="../../../../backend/api/admin-cronjobs.php"
+                   method="POST"
+                   body="request=getLogs"
+                   content-type="application/x-www-form-urlencoded"
+                   handle-as="json"
+                   debounce-duration="300"
+                   timeout="5000"
+                   last-response="{{data}}"></iron-ajax>
+
+        <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
+            <h2>Lade Logs...</h2>
+            <div style="text-align: center;"><paper-spinner active></paper-spinner></div>
+            <p>Bitte haben Sie einen Moment Geduld...</p>
+        </paper-dialog>
+
+        <paper-card id="errorbox" class="errorCard"></paper-card>
+
+        <paper-fab icon="refresh" id="reloadDataFab"></paper-fab>
+
+        <template is="dom-if" if="{{data.success}}">
+            <template is="dom-if" if="{{data.logs}}">
+                <div id="contentWrapper">
+                    <ul class="app-grid">
+                        <template is="dom-repeat" items="{{data.logs}}">
+                            <li>
+                                <paper-card class="flexcard">
+                                    <div class="card-content">
+                                        <div class="card-header" on-click="toggleCollapse" itemid="[[item.C_ID]]">
+                                            <div class="date-header">[[item.created]]</div>
+                                            <template is="dom-if" if="[[item.changes]]">
+                                                <div class="secondline-header">Es wurden Daten ge&auml;ndert</div>
+                                            </template>
+                                            <template is="dom-if" if="[[!item.changes]]">
+                                                <div class="secondline-header">Es wurden keine Daten ge&auml;ndert</div>
+                                            </template>
+                                            <iron-icon icon="expand-more" class="card-header-action-icon"></iron-icon>
+                                        </div>
+
+                                        <iron-collapse id="C-[[item.C_ID]]">
+                                            <template is="juicy-html" content$="{{item.cron_log}}"></template>
+                                        </iron-collapse>
+                                    </div>
+                                    <div class="card-actions">
+                                        <paper-button style="color: #3F51B5;float: left;" itemid="[[item.C_ID]]" class="log-card-delete-button" on-click="triggerDelete">L&ouml;schen</paper-button>
+                                    </div>
+                                </paper-card>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+            </template>
+            <template is="dom-if" if="{{!data.logs}}">
+                <div id="noErrorContainer">
+                    <br>
+                    <h1 class="noErrorHead">Awww!</h1>
+                    <p class="noErrorText">Es sind keine anzeigbaren Logs vorhanden :/</p>
+                </div>
+            </template>
+        </template>
+        <template is="dom-if" if="{{!data.success}}">
+            <div class="cardCenter">
+                <paper-card heading="Es ist ein Fehler aufgetreten!" class="contentCard" style="padding: 10px;">
+                    <p>
+                        Der Server hat einen Fehler gemeldet:<br>
+                        <span style="color: red;">[[data.message]]</span>
+                    </p>
+                </paper-card>
+            </div>
+        </template>
 
     </template>
     <script>
         Polymer({
-            is: '',
+            is: 'admin-cronjobs',
 
             properties: {
-
+                reload: function() {
+                    this.reloadData();
+                },
+                data: Object
             },
 
             listeners: {
-
+                'dataRequest.request':'_onRequest',
+                'dataRequest.response':'_onResponse',
+                'dataRequest.error':'_onAjaxError',
+                'reloadDataFab.tap':'reloadData'
             },
 
             ready: function() {
+                this.fire('pageLoad', this.nodeName);
+                // Data Load will be triggered by raumreservierung-admin shell
+            },
+            _onRequest: function() {
+
+                this.$.loadIndicator.center();
+                this.$.loadIndicator.open();
+                this.$.errorbox.innerHTML = "";
+
+            },
+            _onResponse: function() {
+
+                this.data = this.$.dataRequest.lastResponse;
+                this.$.loadIndicator.close();
+                this.$.errorbox.innerHTML = "";
+
+                if(!this.data.success && this.data.sessionError){
+                    // Fire Session Error to host page
+                    this.fire('admin-page-session-error');
+                } else if(this.data.success && this.data.next) {
+                    switch(this.data.next){
+                        case "reload":
+                            this.reloadData();
+                            break;
+                    }
+                }
+
+            },
+            _onAjaxError: function(e) {
+
+                this.$.loadIndicator.close();
+                this.$.errorbox.innerHTML = 'Es ist ein Skriptfehler aufgetreten:<br><p style="color: red;">'+e.detail+'</p>';
+
+            },
+            reloadData: function() {
+                this.$.dataRequest.body = "request=getLogs";
+                this.$.dataRequest.generateRequest();
+            },
+
+            toggleCollapse: function(e) {
+                for(var i=0; i < e.path.length; i++) {
+                    if(typeof e.path[i].className !== "undefined") {
+                        if(e.path[i].className.includes('card-header')) {
+                            var elem = e.path[i];
+                            var id = elem.itemid;
+                            elem.getElementsByClassName('card-header-action-icon')[0].icon = this.$$('#C-'+id).opened ? "expand-more" : "expand-less";
+                            this.$$('#C-'+id).toggle();
+                        }
+                    }
+                }
+            },
+
+            triggerDelete: function(e) {
+                for(var i=0; i<e.path.length; i++) {
+                    if(typeof e.path[i].className !== "undefined") {
+                        if(e.path[i].className.includes('log-card-delete-button')) {
+                            var elem = e.path[i];
+                            var id = elem.itemid;
+                            this._deleteLog(id);
+                        }
+                    }
+                }
+            },
+
+            _deleteLog: function(id) {
+                if(Number(id) >= 0) {
+                    this.$.dataRequest.body = "request=deleteLog&id="+id;
+                    this.$.dataRequest.generateRequest();
+                }
 
             }
         });

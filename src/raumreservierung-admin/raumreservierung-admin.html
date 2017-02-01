@@ -41,20 +41,20 @@
       paper-tabs {
         --paper-tabs-selection-bar-color: #FFFFFF;
       }
-      #page4 {
+      .welcome {
         @apply(--layout-vertical);
         @apply(--layout-fit);
         background-color: var(--google-grey-300);
         margin: 0 auto;
       }
-      #page4 h1{
+      .welcome h1{
         color: var(--paper-grey-800);
       }
-      #page4 p{
+      .welcome p{
         color: var(--paper-grey-700);
         padding: 0 10%;
       }
-      #page4 h1, #page4 p{
+      .welcome h1, .welcome p{
         text-align: center;
       }
       .paper-item-link {
@@ -159,6 +159,7 @@
                 <paper-tab>Nutzerverwaltung</paper-tab>
                 <paper-tab>Raumverwaltung</paper-tab>
                 <paper-tab>Fehlermeldungen</paper-tab>
+                <paper-tab>Cronjob-Logs</paper-tab>
               </paper-tabs>
             </div>
           </paper-toolbar>
@@ -176,8 +177,12 @@
               <admin-error-reports id="errorreport-origin"></admin-error-reports>
             </div>
 
+            <div id="page4" class="layout vertical center">
+              <admin-cronjobs></admin-cronjobs>
+            </div>
+
             <!-- Welcome Page -->
-            <div id="page4">
+            <div id="page5" class="welcome">
               <h1>Willkommen!</h1>
               <p>
                 Um Gebrauch von den Administratorwerkzeugen zu machen, klicken Sie einfach auf den Namen des Tools, das
@@ -203,12 +208,12 @@
       properties: {
           selectedTab: {
               type: Number,
-              value: 3,
+              value: 4,
               observer: '_onTabChanged'
           },
           selectedPage: {
               type: Number,
-              value: 3,
+              value: 4,
               observer: '_onPageChanged'
           }
       },
@@ -244,6 +249,9 @@
                     this.importHref('src/raumreservierung-admin/src/admin-error-reports/admin-error-reports.html', this._onLoadStart, this._onPageLoadError, true);
                     break;
                 case 3:
+                    this.importHref('src/raumreservierung-admin/src/admin-cronjobs/admin-cronjobs.html', this._onLoadStart, this._onPageLoadError, true);
+                    break;
+                case 4:
                     this._freeTabs();
                     break;
             }
@@ -265,12 +273,18 @@
                         e.reloadData = true;
                     break;
                 case 1:
+                    // Room reservation not implemented yet
                     break;
                 case 2:
                     // Trigger Data Reload on Tab Change if error on initial load
                     e = this.$$('admin-error-reports');
                     if(e)
                         e.reloadData = true;
+                    break;
+                case 3:
+                    e = this.$$('admin-cronjobs');
+                    if(e)
+                        e.reloadData();
                     break;
             }
         },
@@ -300,6 +314,10 @@
                     break;
                 case 2:
                     this.$.errorContent.innerHTML = errorText;
+                    break;
+                case 3:
+                    this.$.errorContent.innerHTML = errorText;
+                    break;
             }
 
             this.$.errorDialog.open();
