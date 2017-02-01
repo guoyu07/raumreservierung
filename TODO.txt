@@ -1,2 +1,4 @@
---> Add Page --> Change Password (so each user can change his/her password by himself if he/she wants to)
---> First implementation on Admin Page
+Admin tools are done and now in Bug-Testing-Phase
+---
+Next coming up: First implementations of the room-reservation backend including some specific
+information about the logged in teacher's lessons
