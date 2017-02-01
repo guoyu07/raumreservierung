@@ -16,6 +16,9 @@
 
     $log = "";
 
+    // Indicator if any changes were made to the database
+    $changes = false;
+
     $start = time();
     $startF = format($start);
     $log .= "$startF\nStarted Cronjob\n";
@@ -36,7 +39,7 @@
 
         if(!empty($res)) {
 
-            $log .= "---> Response not empty\nStarting validity check routine\n";
+            $log .= "--> Response not empty\nStarting validity check routine\n";
 
             $confirmationTimeOver = array();
             $passwordResetTimeOver = array();
@@ -50,7 +53,7 @@
                             if((strtotime($user['last_status_change'])) + (3600*12) < $start) {
                                 // Activation time has run out
                                 array_push($confirmationTimeOver, $user['name']);
-                                $log .= "-- account confirmation time for user ".$user['name']." has run out\n";
+                                $log .= "---> account confirmation time has run out for user ".$user['name']."\n";
                             }
                         }
 
@@ -60,7 +63,7 @@
                             if((strtotime($user['last_email']) + (3600 * 24)) < $start) {
                                 // Password Reset Time has run out (new password restore request available)
                                 array_push($passwordResetTimeOver, $user['name']);
-                                $log .= "-- passwort restoration timer has run out for user ".$user['name']."\n";
+                                $log .= "---> password restoration timer has run out for user ".$user['name']."\n";
                             }
                         }
 
@@ -70,16 +73,18 @@
                     if($user['last_email'] != NULL) {
                         // last_email usually shouldnt be set on this point anymore
                         array_push($passwordResetTimeOver, $user['name']);
-                        $log .= "-- found last_email timestamp without an activationcode provided for user ".$user['name']."\n";
+                        $log .= "---> found last_email timestamp without an activationcode provided for user ".$user['name']."\n";
                     }
                 }
             }
 
-            $log .= "\nReading finished, staring updating routine\n";
+            $log .= "\nReading finished, starting updating routine\n";
             if(!empty($confirmationTimeOver)) {
 
                 require_once ('../accountsystem/userManagement.class.php');
                 $um = new userManagement($pdo);
+
+                $changes = true;
 
                 $log .= "-> Updating last_status_change and status for invalid accounts\n";
 
@@ -95,6 +100,8 @@
             } else { $log .= "-> No Accounts with invalid confirmation timers detected\n"; }
 
             if(!empty($passwordResetTimeOver)) {
+
+                $changes = true;
 
                 $log .= "-> Updating last_email for valid accounts\n";
                 $sql = "UPDATE accounts SET last_email=NULL WHERE name=:accname";
@@ -135,13 +142,16 @@
             $log .= "-> Name arrays created\n";
 
             if(!empty($combined)) {
+
+                $changes = true;
+
                 foreach($combined as $user) {
 
                     try {
                         $pdo->beginTransaction();
                         $stat = $r->execute(array(":accname" => $user));
                         if($stat) {
-                            $log .= "--> resetted activationcode for user $user\n";
+                            $log .= "--> reset activationcode for user $user\n";
                         } else {
                             $log .= "--> error resetting activationcode for user $user\n";
                         }
@@ -169,6 +179,6 @@
 
     $log .= "\nScript finished after $duration";
 
-    $sql = "INSERT INTO cronjob (access_ip, cron_log) VALUES (:ip, :log)";
+    $sql = "INSERT INTO cronjob (access_ip, cron_log, changes) VALUES (:ip, :log, :changes)";
     $r = $pdo->prepare($sql);
-    $r->execute(array(":ip" => $ip, ":log" => $log));
+    $r->execute(array(":ip" => $ip, ":log" => $log, ":changes" => intval($changes)));
