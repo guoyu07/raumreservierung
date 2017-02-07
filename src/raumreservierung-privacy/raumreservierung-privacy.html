@@ -2,6 +2,7 @@
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 
 <dom-module id="raumreservierung-privacy">
     <template>
@@ -27,10 +28,19 @@
             a:focus, a:active{
                 color: #3F51B5;
             }
+            p {
+                text-align: justify;
+            }
+            paper-dialog {
+                @apply(--layout-vertical);
+            }
+            paper-dialog-scrollable {
+                @apply(--layout-self-center);
+            }
         </style>
-        <paper-dialog id="dialog" opened="{{opened}}" with-backdrop>
+        <paper-dialog id="dialog" opened="{{opened}}" with-backdrop style="width: 90%;">
             <h2>Datenschutzbestimmungen</h2>
-            <paper-dialog-scrollable style="width: 100%;">
+            <paper-dialog-scrollable>
                 <p>
                     Die Nutzung unserer Seite ist ohne eine Angabe von personenbezogenen Daten m&ouml;glich.
                     F&uuml;r die Nutzung einzelner Services unserer Seite k&ouml;nnen sich hierf&uuml;r abweichende Regelungen ergeben,
@@ -64,15 +74,15 @@
                 <p>
                     Aus technischen Gr&uuml;nden werden u.a. folgende Daten, die Ihr Internet-Browser an uns bzw. an unseren
                     Webspace-Provider &uuml;bermittelt, erfasst (sogenannte Serverlogfiles):
-                    <ul>
-                        <li>Browsertyp und -version</li>
-                        <li>verwendetes Betriebssystem</li>
-                        <li>Webseite, von der aus Sie uns besuchen (Referrer URL)</li>
-                        <li>Webseite, die Sie besuchen</li>
-                        <li>Datum und Uhrzeit Ihres Zugriffs</li>
-                        <li>Ihre Internet Protokoll (IP)-Adresse</li>
-                    </ul>
-                    Diese anonymen Daten werden getrennt von Ihren eventuell angegebenen personenbezogenen Daten
+                <ul>
+                    <li>Browsertyp und -version</li>
+                    <li>verwendetes Betriebssystem</li>
+                    <li>Webseite, von der aus Sie uns besuchen (Referrer URL)</li>
+                    <li>Webseite, die Sie besuchen</li>
+                    <li>Datum und Uhrzeit Ihres Zugriffs</li>
+                    <li>Ihre Internet Protokoll (IP)-Adresse</li>
+                </ul>
+                Diese anonymen Daten werden getrennt von Ihren eventuell angegebenen personenbezogenen Daten
                 gespeichert und lassen so keine R&uuml;ckschl&uuml;sse auf eine bestimmte Person zu. Sie werden zu statistischen
                 Zwecken ausgewertet, um unseren Internetauftritt und unsere Angebote optimieren zu k&ouml;nnen.
                 </p>
