@@ -3,7 +3,6 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
-<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
 <link rel="import" href="../../bower_components/paper-date-picker/paper-date-picker.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 
@@ -38,7 +37,7 @@
             }
         </style>
 
-        <paper-card id="inputCard" heading="Willkommen zur&uuml;ck!">
+        <paper-card id="inputCard">
             <div class="card-content">
                 <p>
                     Bitte w&auml;hlen Sie den Tag aus, f&uuml;r den Sie einen Raum reservieren m&ouml;chten.<br>
@@ -55,12 +54,8 @@
 
             </div>
             <div class="card-actions">
-                <paper-tooltip for="homeButton">Zum Ausloggen hier klicken</paper-tooltip>
-                <paper-fab id="homeButton" icon="power-settings-new" style="float: left;"></paper-fab>
-                <div style="float: right;">
-                    <paper-fab style="margin-right: 5px;" icon="arrow-back"></paper-fab>
-                    <paper-fab style="margin-left: 5px;" icon="arrow-forward"></paper-fab>
-                </div>
+                <paper-fab style="margin-right: 5px; float:left;" icon="arrow-back"></paper-fab>
+                <paper-fab style="margin-left: 5px; float:right;" icon="arrow-forward"></paper-fab>
             </div>
         </paper-card>
 
