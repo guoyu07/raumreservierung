@@ -47,8 +47,20 @@
                 maxDate: {
                     type: Date,
                     value: function () {
-                        console.log(new Date(new Date().setHours(23, 59, 59, 999) + 1000 * 3600 * 24 * 7));
-                        return new Date(new Date().setHours(23, 59, 59, 999) + 1000 * 3600 * 24 * 7);
+                        // Function to return the next Friday + one Week
+                        var today = new Date(), nextFriday, day;
+
+                        if(today.getDay() == 5) {   // If it's Friday already
+                            nextFriday = today.getDate();
+                        } else {
+                            day = today.getDay();
+                            nextFriday = today.getDate() - day + 5;
+                        }
+
+                        console.log(nextFriday);
+
+                        return new Date(new Date( today.getFullYear(), today.getMonth(), nextFriday ).setHours(23, 59, 59, 999) + 1000*3600*24*7);
+
                     }
                 },
                 selectedDate: {
