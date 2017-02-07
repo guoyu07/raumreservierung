@@ -71,6 +71,25 @@
                 margin: 0 auto;
                 @apply(--layout-vertical);
             }
+            .autoSize {
+                --paper-card: {
+                    @apply(--layout-vertical);
+                    @apply(--layout-self-center);
+                }
+            }
+            .right {
+                float: right;
+            }
+            paper-button.cardButton {
+                color: #3F51B5;
+            }
+            div.centerCardWrapper{
+                @apply(--layout-vertical);
+            }
+            paper-card.centerCard{
+                @apply(--layout-self-center);
+                @apply(--layout-vertical);
+            }
         </style>
 
         <iron-ajax id="dataRequest"
@@ -120,35 +139,8 @@
 
         <div id="privacy"><!-- Lazy Loaded <privacy></privacy> --></div>
 
-        <!-- CONDITIONALS
-        <template is="dom-if" if="{{response.success}}">
-
-        </template>
-        <template is="dom-if" if="{{!response.success}}">
-            <div class="outer">
-                <div class="middle">
-                    <div class="inner">
-                        <paper-card heading="Es ist ein Fehler aufgetreten!">
-                            <div class="card-content">
-                                <p>
-                                    Es ist ein schwerwiegender Fehler bei der Datenabfrage aufgetreten!
-                                    <br>
-                                    <template is="dom-if" if="[[!!response.message]]">
-                                        Der Server meldete folgenden Fehler:<br><br><span style="color: red;">[[response.message]]</span><br>
-                                    </template>
-                                    <br>
-                                    <i>Sollte dieses Problem h&auml;figer auftreten, melden Sie es bitte ggf. einem Administrator!</i>
-                                </p>
-                            </div>
-                        </paper-card>
-                    </div>
-                </div>
-            </div>
-        </template>
-        -->
-
         <!-- Page Wrapper -->
-        <paper-drawer-panel>
+        <paper-drawer-panel disable-swipe disable-edge-swipe>
             <div drawer style="overflow: auto;">
                 <paper-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
                     <paper-icon-button icon="arrow-back" paper-drawer-toggle style="color: #212121;"></paper-icon-button>
@@ -156,6 +148,12 @@
                 </paper-toolbar>
                 <div style="padding-bottom: 110px;"> <!-- Wrapping the Menu with bottompadding 110px for the copyright box -->
                     <paper-menu>
+                        <a href="#account" target="_self">
+                            <paper-icon-item>
+                                <iron-icon icon="account-circle" item-icon></iron-icon>
+                                Ihr Account
+                            </paper-icon-item>
+                        </a>
                         <a href="#logout" target="_self">
                             <paper-icon-item>
                                 <iron-icon icon="power-settings-new" item-icon></iron-icon>
@@ -184,10 +182,78 @@
             </div>
             <div main>
                 <paper-header-panel mode="standard">
-                    <paper-toolbar>
+                    <paper-toolbar id="mainToolbar">
                         <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
-                        <div class="title" style="padding-bottom: 1px;">[[fullname]]</div>
+                        <div class="title" style="padding-bottom: 1px;">[[response.fullname]] ([[response.lehrer_kurz]])</div>
+                        <div id="bottomBarContent" class="bottom fit">
+                            <!-- This content is only shown if the response is positive (if loggedin) -->
+                            <template is="dom-if" if="{{response.success}}">
+                                <paper-tabs scrollable no-slide fit-container selected="{{selected}}">
+                                    <paper-tab>Raumreservierung</paper-tab>
+                                    <paper-tab>Meine Reservierungen</paper-tab>
+                                    <paper-tab>Meldungen</paper-tab>
+                                </paper-tabs>
+                            </template>
+                        </div>
                     </paper-toolbar>
+
+                    <!-- CONDITIONAL / DYNAMIC PAGE -->
+
+                    <template is="dom-if" if="{{response.success}}">
+                        <iron-pages selected="{{selected}}">
+                            <h2>Raumreservierung</h2>
+                            <h2>Meine Reservierungen</h2>
+                            <h2>Meldungen</h2>
+                            <div class="centerCardWrapper">
+                                <!-- Welcome Page -->
+                                <paper-card heading="Willkommen!" class="centerCard" style="margin-top: 20px;">
+                                    <div class="card-content">
+                                        <p>
+                                            Willkommen zur&uuml;ck bei der Raumreservierung.<br>
+                                            Um einen Raum auf Ihren Namen zu reservieren, w&auml;hlen Sie oben bitte
+                                            "Raumreservierung" aus. Andernfalls k&ouml;nnen Sie unter "Meine Reservierungen"
+                                            Ihre bereits reservierten R&auml;ume einsehen und verwalten, oder unter
+                                            "Meldungen" - wenn vorhanden - Nachrichten einsehen, die Ihnen Ihre Kollegen
+                                            bez&uuml;glich einer Reservierung gesendet haben.<br>
+                                        </p>
+                                    </div>
+                                </paper-card>
+                            </div>
+                        </iron-pages>
+                    </template>
+                    <template is="dom-if" if="{{!response.success}}">
+                        <div class="outer">
+                            <div class="middle">
+                                <div class="inner">
+                                    <paper-card heading="Es ist ein Fehler aufgetreten!" class="autoSize">
+                                        <div class="card-content">
+                                            <p>
+                                                Es ist ein schwerwiegender Fehler bei der Datenabfrage aufgetreten!
+                                                <br>
+                                                Der Server meldete folgenden Fehler:
+                                                <br><br>
+                                                <span style="color: red;">
+                                                    [[response.message]]
+                                                </span>
+                                                <br>
+                                                <br>
+                                                <i>Sollte dieses Problem h&auml;figer auftreten, melden Sie es bitte ggf. einem Administrator!</i>
+                                            </p>
+                                        </div>
+                                        <div class="card-actions">
+                                            <div class="right">
+                                                <paper-button class="cardButton" onclick="location.hash='logout';">Ausloggen</paper-button>
+                                                <paper-button class="cardButton" on-click="reloadData">Daten neu laden</paper-button>
+                                            </div>
+                                        </div>
+                                    </paper-card>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- END CONDITIONAL PAGE -->
+
                 </paper-header-panel>
             </div>
         </paper-drawer-panel>
@@ -199,6 +265,11 @@
 
             properties: {
                 response: Object,
+                selected: {
+                    type: Number,
+                    value: 3,
+                    observer: '_onSelectedChange'
+                }
             },
 
             listeners: {
@@ -211,6 +282,26 @@
                 this.fire('pageLoad', this.nodeName);
                 this.$.dataRequest.body = "request=getUserData";
                 this.$.dataRequest.generateRequest();
+            },
+
+            /** Ajax Listener Functions */
+            _onRequest: function() { this.$.loadIndicator.open(); },
+            _onError: function() { this.$.loadIndicator.close(); },
+            _onResponse: function() {
+                this.$.loadIndicator.close();
+                this.response = this.$.dataRequest.lastResponse;
+
+                if(this.response) {
+                    if(this.response.success) {
+                        this.$.mainToolbar.className = "medium-tall";
+                    } else {
+                        if(this.response.sessionError) {
+                            this.fire('session-error');
+                        }
+
+                        this.$.mainToolbar.className = "medium";
+                    }
+                }
             },
 
             /** Standard Functions */
@@ -249,6 +340,22 @@
             closeErrorReport: function() {
                 this.$.errorFormDialog.close();
             },
+
+            /** Dom-Module Functions */
+
+            reloadData: function() {
+                this.$.dataRequest.body = "request=getUserData";
+                this.$.dataRequest.generateRequest();
+            },
+            _onSelectedChange: function() {
+                if(this.response) {
+                    if(this.response.success) {
+
+                        //this._loadPage(this.selected);
+
+                    }
+                }
+            }
         });
     </script>
 </dom-module>
