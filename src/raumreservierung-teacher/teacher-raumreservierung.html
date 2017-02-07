@@ -1,0 +1,85 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="teacher-datepicker.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+
+<dom-module id="teacher-raumreservierung">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+            p {
+                color: var(--primary-text-color);
+            }
+            .secondary {
+                color: var(--secondary-text-color);
+            }
+            paper-button {
+                color: var(--paper-blue-500);
+            }
+            #inputCard {
+                @apply(--layout-self-center);
+            }
+            paper-fab {
+                display: inline-flex;
+                margin-bottom: 10px;
+                margin-top: 5px;
+            }
+        </style>
+
+        <!-- Content comes here -->
+
+        <paper-card id="inputCard">
+            <div class="card-content">
+                <p>
+                    Bitte w&auml;hlen Sie den Tag aus, f&uuml;r den Sie einen Raum reservieren m&ouml;chten.<br>
+                    <span class="secondary">
+                        <i>
+                            (Aus organisatorischen Gr&uuml;nden ist dies nur f&uuml;r die n&auml;chsten 7 Tage m&ouml;glich)
+                        </i>
+                    </span>
+                </p>
+
+                <teacher-datepicker style="width: 100%;"></teacher-datepicker>
+
+            </div>
+            <div class="card-actions">
+                <paper-fab style="margin-right: 5px; float:left;" icon="arrow-back"></paper-fab>
+                <paper-fab style="margin-left: 5px; float:right;" icon="arrow-forward"></paper-fab>
+            </div>
+        </paper-card>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'teacher-raumreservierung',
+
+            properties: {
+                reload: {
+                    type: Boolean,
+                    value: false,
+                    observer: '_onReload'
+                }
+            },
+
+            listeners: {
+
+            },
+
+            ready: function () {
+                this.fire('pageLoad', this.nodeName);
+            },
+            _onReload: function() {
+                if(this.reload) {
+                    this.fire('push', [this.nodeName, "Data-Reload triggered"]);
+                    this.reload = false;
+                }
+            }
+        });
+    </script>
+</dom-module>

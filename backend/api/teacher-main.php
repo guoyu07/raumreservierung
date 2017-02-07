@@ -32,7 +32,7 @@
 
 
             // Final Data Return
-            echo json_encode(array("success" => true, "fullname" => $fullname, "lehrer_kurz" => $lehrer_kurz));
+            echo json_encode(array("success" => true, "fullname" => $fullname, "lehrer_kurz" => $lehrer_kurz, "name" => $_SESSION['name']));
 
         } else {
             echo json_encode(array("success" => false, "message" => "Sie müssen ein aktiviertes Lehrerkonto besitzen, um Zugriff auf diese Seite zu erhalten!", "sessionError" => true));

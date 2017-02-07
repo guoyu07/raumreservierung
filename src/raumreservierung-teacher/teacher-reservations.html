@@ -1,0 +1,35 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="teacher-reservations">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+        </style>
+
+        <!-- Content comes here -->
+
+        <h2>Reservations &commat; [[name]]</h2>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'teacher-reservations',
+
+            properties: {
+                name: String
+            },
+
+            listeners: {
+
+            },
+
+            ready: function () {
+                this.fire('pageLoad', this.nodeName);
+            }
+        });
+    </script>
+</dom-module>

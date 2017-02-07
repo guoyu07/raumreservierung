@@ -201,9 +201,9 @@
 
                     <template is="dom-if" if="{{response.success}}">
                         <iron-pages selected="{{selected}}">
-                            <h2>Raumreservierung</h2>
-                            <h2>Meine Reservierungen</h2>
-                            <h2>Meldungen</h2>
+                            <teacher-raumreservierung></teacher-raumreservierung>
+                            <teacher-reservations name="[[response.name]]"></teacher-reservations>
+                            <teacher-reports name="[[response.name]]"></teacher-reports>
                             <div class="centerCardWrapper">
                                 <!-- Welcome Page -->
                                 <paper-card heading="Willkommen!" class="centerCard" style="margin-top: 20px;">
@@ -350,12 +350,79 @@
             _onSelectedChange: function() {
                 if(this.response) {
                     if(this.response.success) {
+                        this.$.loadIndicator.open();
+                        this.lockTabs();
+                        switch(this.selected){
+                            case 0:
+                                // Import Raumreservierung
+                                this.importHref('src/raumreservierung-teacher/teacher-raumreservierung.html', this._onPageLoad, this._onPageLoadError, true);
+                                break;
+                            case 1:
+                                // Import My Reservations
+                                this.importHref('src/raumreservierung-teacher/teacher-reservations.html', this._onPageLoad, this._onPageLoadError, true);
+                                break;
+                            case 2:
+                                // Import Reports
+                                this.importHref('src/raumreservierung-teacher/teacher-reports.html', this._onPageLoad, this._onPageLoadError, true);
+                                break;
+                            default:
+                                this.freeTabs();
+                                this.$.loadIndicator.close();
+                                this.selected = 3;
+                                break;
+                        }
+                    }
+                }
+            },
+            _onPageLoad: function() {
+                this.freeTabs();
+                this.$.loadIndicator.close();
+                switch(this.selected){
+                    case 0:
+                        if(this.$$('teacher-raumreservierung'))
+                            this.$$('teacher-raumreservierung').reload = true;
+                        break;
+                    case 1:
+                        if(this.$$('teacher-reservations'))
+                            this.$$('teacher-reservations').reload = true;
+                        break;
+                    case 2:
+                        if(this.$$('teacher-reports'))
+                            this.$$('teacher-reports').reload = true;
+                }
+            },
+            _onPageLoadError: function() {
+                this.freeTabs();
+                this.$.loadIndicator.close();
+                var pageName = "";
+                switch(this.selected){
+                    case 0: pageName = "Raumreservierung"; break;
+                    case 1: pageName = "Meine Reservierungen"; break;
+                    case 2: pageName = "Meldungen"; break;
+                }
+                this.$.errorContent.innerHTML = '<p style="color: red;">Die Seite "'+pageName+'" konnte aufgrund eines Fehlers nicht geladen werden!</p>';
+                this.$.errorDialog.center(), this.$.errorDialog.open();
 
-                        //this._loadPage(this.selected);
+                this.selected = 3;
+            },
 
+            lockTabs: function() {
+                // Disable all paper-tabs
+                if(this.$$('paper-tabs')) {
+                    for (var i = 0; i < this.$$('paper-tabs').items.length; i++) {
+                        this.$$('paper-tabs').items[i].disabled = true;
+                    }
+                }
+            },
+            freeTabs: function() {
+                // Re-Enable all paper-tabs
+                if(this.$$('paper-tabs')) {
+                    for (var i = 0; i < this.$$('paper-tabs').items.length; i++) {
+                        this.$$('paper-tabs').items[i].disabled = false;
                     }
                 }
             }
+
         });
     </script>
 </dom-module>
