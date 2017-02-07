@@ -1,0 +1,122 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/paper-tooltip/paper-tooltip.html">
+<link rel="import" href="../../bower_components/paper-date-picker/paper-date-picker.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<dom-module id="teacher-datepicker">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+            p {
+                color: var(--primary-text-color);
+            }
+            .secondary {
+                color: var(--secondary-text-color);
+            }
+            paper-button {
+                color: var(--paper-blue-500);
+            }
+            #inputCard {
+                @apply(--layout-self-center);
+            }
+            paper-fab {
+                display: inline-flex;
+                margin-bottom: 10px;
+                margin-top: 5px;
+            }
+            paper-date-picker{
+                @apply(--layout-self-center);
+            }
+            #pdpw {
+                @apply(--layout-vertical);
+            }
+        </style>
+
+        <paper-card id="inputCard" heading="Willkommen zur&uuml;ck!">
+            <div class="card-content">
+                <p>
+                    Bitte w&auml;hlen Sie den Tag aus, f&uuml;r den Sie einen Raum reservieren m&ouml;chten.<br>
+                    <span class="secondary">
+                        <i>
+                            (Aus organisatorischen Gr&uuml;nden ist dies nur f&uuml;r die n&auml;chsten 7 Tage m&ouml;glich)
+                        </i>
+                    </span>
+                </p>
+
+                <div id="pdpw">
+                    <paper-date-picker id="datepicker" date="{{selectedDate}}" min-date="{{minDate}}" max-date="{{maxDate}}"></paper-date-picker>
+                </div>
+
+            </div>
+            <div class="card-actions">
+                <paper-tooltip for="homeButton">Zum Ausloggen hier klicken</paper-tooltip>
+                <paper-fab id="homeButton" icon="power-settings-new" style="float: left;"></paper-fab>
+                <div style="float: right;">
+                    <paper-fab style="margin-right: 5px;" icon="arrow-back"></paper-fab>
+                    <paper-fab style="margin-left: 5px;" icon="arrow-forward"></paper-fab>
+                </div>
+            </div>
+        </paper-card>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'teacher-datepicker',
+
+            properties: {
+                today: {
+                    type: Date,
+                    value: function () {
+                        return new Date().setHours(0, 0, 0, 0);
+                    }
+                },
+                minDate: {
+                    type: Date,
+                    value: function () {
+                        var d = new Date();
+                        return new Date(
+                            d.getFullYear(), d.getMonth()
+                        );
+                    }
+                },
+                maxDate: {
+                    type: Date,
+                    value: function () {
+                        console.log(new Date(new Date().setHours(23, 59, 59, 999) + 1000 * 3600 * 24 * 7));
+                        return new Date(new Date().setHours(23, 59, 59, 999) + 1000 * 3600 * 24 * 7);
+                    }
+                },
+                selectedDate: {
+                    type: Date,
+                    observer: '_validateDate'
+                }
+            },
+
+            listeners: {},
+
+            ready: function () {
+                this.fire('pageLoad', this.nodeName);
+            },
+
+            _validateDate: function () {
+                /**
+                 * Function to validate the selected Date,
+                 * Because paper-datatable is currently broken when using min-date & max-date and they both
+                 * are in the same month - see comment to the specific GitHub-Issue:
+                 *
+                 * https://github.com/bendavis78/paper-date-picker/issues/170#issuecomment-277317879
+                 **/
+                if (this.selectedDate < this.today || this.selectedDate > this.maxDate) {
+                    this.$.datepicker.date = new Date(this.today);
+                }
+            }
+        });
+    </script>
+</dom-module>

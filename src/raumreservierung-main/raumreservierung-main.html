@@ -476,6 +476,7 @@
             this._triggerLogout();
         },
         _triggerLogout: function () {
+            this.userPageLoaded = false;
             this.$.logoutRequest.body = "r=logout";
             this.$.logoutRequest.generateRequest();
         },

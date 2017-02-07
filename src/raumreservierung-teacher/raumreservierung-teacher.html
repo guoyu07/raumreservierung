@@ -1,0 +1,254 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-drawer-panel/paper-drawer-panel.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+
+<dom-module id="raumreservierung-teacher">
+    <template>
+        <style>
+            :host {
+                display: block;
+                @apply(--layout-fit);
+                --primary-text-color: #212121;
+                --secondary-text-color: #616161;
+                --dark-primary-color: #303F9F;
+                --primary-color: #3F51B5;
+                --light-primary-color: #C5CAE9;
+                --accent-color: #FF4081;
+            }
+            p {
+                color: var(--primary-text-color);
+            }
+            .navHeader {
+                color: #212121;
+                font-size: 22px;
+                margin: 0 auto;
+                text-align: center;
+                padding: 5px 0;
+                width: auto;
+                text-decoration: none;
+            }
+            a {
+                text-decoration: none;
+                color: #212121;
+            }
+            @media (max-width: 500px){
+                #errorFormDialog {
+                    width: 80%;
+                }
+            }
+            @media (min-width: 499px){
+                #errorFormDialog{
+                    width: 400px;
+                }
+            }
+            paper-icon-item:hover {
+                cursor: pointer;
+            }
+            .secondary {
+                color: var(--secondary-text-color);
+            }
+            .outer {
+                display: table;
+                position: absolute;
+                height: 100%;
+                width: 100%;
+            }
+            .middle {
+                display: table-cell;
+                vertical-align: middle;
+            }
+            .inner {
+                margin: 0 auto;
+                @apply(--layout-vertical);
+            }
+        </style>
+
+        <iron-ajax id="dataRequest"
+                   url="../../backend/api/teacher-main.php"
+                   method="POST"
+                   content-type="application/x-www-form-urlencoded"
+                   handle-as="json"
+                   debounce-duration="300"
+                   timeout="5000"
+                   last-response="{{response}}"></iron-ajax>
+
+        <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
+            <h2>Laden...</h2>
+            <div style="text-align: center;"><paper-spinner active></paper-spinner></div>
+            <p>
+                <i>Bitte haben Sie einen Moment Geduld...</i>
+            </p>
+        </paper-dialog>
+
+        <paper-dialog id="errorDialog" with-backdrop>
+            <h2>Es ist ein Fehler aufgetreten:</h2>
+            <div id="errorContent">
+
+            </div>
+            <p style="text-align: center"><i>Melden Sie diesen Fehler bitte ggf. einem Administrator!</i></p>
+            <div class="buttons">
+                <paper-button dialog-confirm autofocus style="color: #F44336;">OK</paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="errorFormDialog" with-backdrop>
+            <div>
+                <paper-icon-button icon="close" style="color: #616161;
+                           position: absolute; z-index: 999;
+                           right: 5px; top: 5px;"
+                                   on-click="closeErrorReport"
+                                   title="Schlie&szlig;en"></paper-icon-button>
+            </div>
+            <paper-dialog-scrollable>
+                <div id="errorFormWrapper">
+                    <br>
+                    <h2>Lade das Error-Formular...</h2>
+                    <div class="spinnerWrapper" style="min-width: 100px;"><br><paper-spinner active></paper-spinner></div>
+                </div>
+            </paper-dialog-scrollable>
+        </paper-dialog>
+
+        <div id="privacy"><!-- Lazy Loaded <privacy></privacy> --></div>
+
+        <!-- CONDITIONALS
+        <template is="dom-if" if="{{response.success}}">
+
+        </template>
+        <template is="dom-if" if="{{!response.success}}">
+            <div class="outer">
+                <div class="middle">
+                    <div class="inner">
+                        <paper-card heading="Es ist ein Fehler aufgetreten!">
+                            <div class="card-content">
+                                <p>
+                                    Es ist ein schwerwiegender Fehler bei der Datenabfrage aufgetreten!
+                                    <br>
+                                    <template is="dom-if" if="[[!!response.message]]">
+                                        Der Server meldete folgenden Fehler:<br><br><span style="color: red;">[[response.message]]</span><br>
+                                    </template>
+                                    <br>
+                                    <i>Sollte dieses Problem h&auml;figer auftreten, melden Sie es bitte ggf. einem Administrator!</i>
+                                </p>
+                            </div>
+                        </paper-card>
+                    </div>
+                </div>
+            </div>
+        </template>
+        -->
+
+        <!-- Page Wrapper -->
+        <paper-drawer-panel>
+            <div drawer style="overflow: auto;">
+                <paper-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
+                    <paper-icon-button icon="arrow-back" paper-drawer-toggle style="color: #212121;"></paper-icon-button>
+                    <div class="title navHeader">Navigation</div>
+                </paper-toolbar>
+                <div style="padding-bottom: 110px;"> <!-- Wrapping the Menu with bottompadding 110px for the copyright box -->
+                    <paper-menu>
+                        <a href="#logout" target="_self">
+                            <paper-icon-item>
+                                <iron-icon icon="power-settings-new" item-icon></iron-icon>
+                                Ausloggen
+                            </paper-icon-item>
+                        </a>
+                        <paper-icon-item id="reportErrorItem" on-click="_openReportForm">
+                            <iron-icon icon="report" item-icon></iron-icon>
+                            Einen Fehler melden
+                        </paper-icon-item>
+                        <paper-icon-item on-click="openPrivacy">
+                            <iron-icon icon="lock" item-icon></iron-icon>
+                            Datenschutz
+                        </paper-icon-item>
+                        <a onclick="location.hash='imprint'">
+                            <paper-icon-item>
+                                <iron-icon icon="gavel" item-icon></iron-icon>
+                                Impressum
+                            </paper-icon-item>
+                        </a>
+                    </paper-menu>
+                </div>
+                <div style="position: absolute; bottom: 0; width: 100%; border-top: 1px solid #E0E0E0; background-color: #F5F5F5; height: 110px;">
+                    <p style="text-align: center; font-size: 12px;"><b>Raumreservierung 2017</b><br>Moritz Menzel,<br>Benjamin Kirchhoff,<br>Maximilian Seiler<br><br>Published under GNU GPL v3.0</p>
+                </div>
+            </div>
+            <div main>
+                <paper-header-panel mode="standard">
+                    <paper-toolbar>
+                        <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
+                        <div class="title" style="padding-bottom: 1px;">[[fullname]]</div>
+                    </paper-toolbar>
+                </paper-header-panel>
+            </div>
+        </paper-drawer-panel>
+
+    </template>
+    <script>
+        Polymer({
+            is: 'raumreservierung-teacher',
+
+            properties: {
+                response: Object,
+            },
+
+            listeners: {
+                'dataRequest.request':'_onRequest',
+                'dataRequest.response':'_onResponse',
+                'dataRequest.error':'_onError'
+            },
+
+            ready: function() {
+                this.fire('pageLoad', this.nodeName);
+                this.$.dataRequest.body = "request=getUserData";
+                this.$.dataRequest.generateRequest();
+            },
+
+            /** Standard Functions */
+            openPrivacy: function() {
+                this.$.loadIndicator.open();
+                this.importHref('src/raumreservierung-privacy/raumreservierung-privacy.html', this._onPrivacyLoad, this._onPrivacyLoadError, true);
+            },
+            _onPrivacyLoad: function() {
+                this.$.loadIndicator.close();
+                this.$.privacy.innerHTML = '<raumreservierung-privacy opened></raumreservierung-privacy>';
+                // Opened attribute is set, means it auto-opens once loaded :)
+            },
+            _onPrivacyLoadError: function() {
+                this.$.loadIndicator.close();
+                this.$.errorContent.innerHTML = '<p style="color: red;">Die Datenschutzbestimmungen konnten nicht geladen werden. Bitte versuchen Sie es erneut!</p>';
+                this.$.errorDialog.center(), this.$.errorDialog.open();
+            },
+            _openReportForm: function() {
+                this.$.errorFormDialog.open();
+                this.importHref('src/reporting-form/reporting-form.html', this._onErrorPageLoad, this._onErrorPageLoadError, true);
+            },
+            _onErrorPageLoad: function() {
+                this.$.errorFormWrapper.innerHTML = '<reporting-form loggedin="[[response.loggedin]]" name="[[response.name]]"></reporting-form>';
+                this.async(function(){
+                    // Because the element needs (even if short) time to render itself
+                    this.$.errorFormDialog.center();
+                }, 50);
+                this.fire('pageLoad', this.$$('reporting-form').nodeName);
+            },
+            _onErrorPageLoadError: function() {
+                this.$.errorFormDialog.close();
+                this.$.errorContent.innerHTML = '<p style="color: red;">Das Error-Formular konnte nicht geladen werden!</p>';
+                this.$.errorDialog.center();
+                this.$.errorDialog.open();
+            },
+            closeErrorReport: function() {
+                this.$.errorFormDialog.close();
+            },
+        });
+    </script>
+</dom-module>
