@@ -75,27 +75,36 @@
                 case "changePassword":
                     if(isset($_SESSION['loggedin']) && $_SESSION['loggedin'] == true && isset($_SESSION['name']) && isset($_SESSION['accstatus'])) {
 
+                        // Allow password changing only if account is activated :)
                         if($_SESSION['accstatus'] == 3) {
-                            // Allow password changin only if account is activated :)
-                            if(isset($_POST['oldpw']) && isset($_POST['oldpw'])) {
 
-                                $name = $_SESSION['name'];
-                                $old = preg_replace("/::AMP::/", "&", $_POST['oldpw']);
-                                $new = preg_replace("/::AMP::/", "&", $_POST['newpw']);
+                            // Allow password changing only if email is set (should always be set when activated, but
+                            // if an administrator changes the status for an account without email provided, it is not)
+                            if($_SESSION['email'] != null && $_SESSION['email'] != "") {
 
-                                require_once ('../accountsystem/userManagement.class.php');
+                                if(isset($_POST['oldpw']) && isset($_POST['oldpw'])) {
 
-                                $um = new userManagement($pdo);
-                                $status = $um->selfChangePassword($name, $old, $new);
+                                    $name = $_SESSION['name'];
+                                    $old = preg_replace("/::AMP::/", "&", $_POST['oldpw']);
+                                    $new = preg_replace("/::AMP::/", "&", $_POST['newpw']);
 
-                                if($status['error'] == true) {
-                                    echo json_encode(array("success" => false, "message" => $status['message']));
+                                    require_once ('../accountsystem/userManagement.class.php');
+
+                                    $um = new userManagement($pdo);
+                                    $status = $um->selfChangePassword($name, $old, $new);
+
+                                    if($status['error'] == true) {
+                                        echo json_encode(array("success" => false, "message" => $status['message']));
+                                    } else {
+                                        echo json_encode(array("success" => true));
+                                    }
+
                                 } else {
-                                    echo json_encode(array("success" => true));
+                                    echo json_encode(array("success" => false, "message" => "Es wurden nicht alle benötigten Daten angegeben!"));
                                 }
 
                             } else {
-                                echo json_encode(array("success" => false, "message" => "Es wurden nicht alle benötigten Daten angegeben!"));
+                                echo json_encode(array("success" => false, "message" => "Das Passwort kann nicht geändert werden, da für diesen Account noch keine E-Mail eingetragen wurde!"));
                             }
                         } else {
                             echo json_encode(array("success" => false, "message" => "Sie können Ihr Passwort erst ändern, wenn Sie Ihren Account aktiviert haben."));

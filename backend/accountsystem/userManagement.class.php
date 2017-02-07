@@ -364,7 +364,7 @@ HTML;
                     $this->pdo->commit();
                 else
                     $this->pdo->rollBack();
-                return array("error" => $stat, "message" => $stat ? "Der Nutzer konnte nicht gefunden werden!" : "");
+                return array("error" => $stat);
             } catch( PDOException $e ) {
                 $this->pdo->rollBack();
                 return array("error" => true, "message" => "Es ist ein Fehler beim Ändern des Passwortes aufgetreten: ".$e->getMessage());
@@ -640,8 +640,9 @@ HTML;
                 $userPW = hash_pbkdf2('sha512', $old, $data['salt'], $data['iterations'], 255);
                 if(hash_equals($data['password'], $userPW)) {
                     // Old PW correct, change PW
-                    $this->sendPasswordChangeMail($name, $data['email']);
-                    return $this->changePassword($name, $new);
+                    if($this->sendPasswordChangeMail($name, $data['email']) == true){
+                        return $this->changePassword($name, $new);
+                    }
                 } else {
                     // Old PW incorrect
                     return array("error" => true, "message" => "Das eingegebene (alte) Passwort ist falsch, bitte überprüfen Sie Ihre Eingaben!");
