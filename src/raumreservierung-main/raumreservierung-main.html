@@ -478,6 +478,7 @@
         },
         _triggerLogout: function () {
             this.userPageLoaded = false;
+            this.$.userpage.innerHTML = "";
             this.$.logoutRequest.body = "r=logout";
             this.$.logoutRequest.generateRequest();
         },
