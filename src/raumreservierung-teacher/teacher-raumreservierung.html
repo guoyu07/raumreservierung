@@ -125,7 +125,7 @@
                     <div class="card-content">
                         <p>
                             In welcher Stunde m&ouml;chten Sie den Raum reservieren?<br>
-                            <span class="secondary">(Sie k&ouml;nnen einzelne Stunden oder ganze Blocks ausw&auml;hlen)</span>
+                            <span class="secondary">(Sie k&ouml;nnen einzelne Stunden oder maximal einen Block ausw&auml;hlen)</span>
                         </p>
                         <p>
                             <b>Information</b><br>
@@ -204,19 +204,25 @@
             },
             confirmDate: function() {
                 var today = new Date().setHours(0, 0, 0, 0);
-                var chosen = this.$$('teacher-datepicker').selectedDate;
-                // getDay() == 6 -> Saturday
-                // getDay() == 0 -> Sunday
-                if(chosen >= today && chosen.getDay() != 0 && chosen.getDay() != 6 && chosen <= today+1000*3600*24*14) {
-                    if(this.$$('#datePickerError'))
-                        this.$$('#datePickerError').innerHTML = '';
-                    // Date is correct, go to next step
-                    this.chosenDate = new Date(chosen.setHours(0, 0, 0, 0));
-                    this.nextStep();
+                if(this.$$('teacher-datepicker').selectedDate != "") {
+                    var chosen = this.$$('teacher-datepicker').selectedDate;
+                    // getDay() == 6 -> Saturday
+                    // getDay() == 0 -> Sunday
+                    if(chosen >= today && chosen.getDay() != 0 && chosen.getDay() != 6 && chosen <= today+1000*3600*24*14) {
+                        if(this.$$('#datePickerError'))
+                            this.$$('#datePickerError').innerHTML = '';
+                        // Date is correct, go to next step
+                        this.chosenDate = new Date(chosen.setHours(0, 0, 0, 0));
+                        this.nextStep();
+                    } else {
+                        if(this.$$('#datePickerError'))
+                            this.$$('#datePickerError').innerHTML = '<p style="color: red;">Bitte geben Sie ein g&uuml;ltiges Datum an!</p>';
+                    }
                 } else {
                     if(this.$$('#datePickerError'))
                         this.$$('#datePickerError').innerHTML = '<p style="color: red;">Bitte geben Sie ein g&uuml;ltiges Datum an!</p>';
                 }
+
             },
             confirmRoom: function() {
                 var raumid = Number(this.$$('teacher-raumreservierung-roomlist').raumid);

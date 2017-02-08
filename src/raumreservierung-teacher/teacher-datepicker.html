@@ -1,5 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-date-picker/paper-date-picker.html">
+<link rel="import" href="../../bower_components/vaadin-date-picker/vaadin-date-picker.html">
 
 <dom-module id="teacher-datepicker">
     <template>
@@ -19,7 +19,7 @@
         </style>
 
         <div id="pdpw">
-            <paper-date-picker id="datepicker" date="{{selectedDate}}" min-date="{{minDate}}" max-date="{{maxDate}}"></paper-date-picker>
+            <vaadin-date-picker id="datepicker" label="Datum ausw&auml;hlen" initial-position="{{today}}" value="{{selectedValue}}" min="{{minDate}}" max="{{maxDate}}"></vaadin-date-picker>
         </div>
 
     </template>
@@ -32,16 +32,15 @@
                 today: {
                     type: Date,
                     value: function () {
-                        return new Date().setHours(0, 0, 0, 0);
+                        var d = new Date(new Date().setHours(0, 0, 0, 0));
+                        return d.getFullYear()+"-"+this.checkZero(d.getMonth()+1)+"-"+this.checkZero(d.getDate());
                     }
                 },
                 minDate: {
                     type: Date,
                     value: function () {
-                        var d = new Date();
-                        return new Date(
-                            d.getFullYear(), d.getMonth()
-                        );
+                        var d = new Date(new Date().setHours(0, 0, 0, 0));
+                        return d.getFullYear()+"-"+this.checkZero(d.getMonth()+1)+"-"+this.checkZero(d.getDate());
                     }
                 },
                 maxDate: {
@@ -57,13 +56,25 @@
                             nextFriday = today.getDate() - day + 5;
                         }
 
-                        return new Date(new Date( today.getFullYear(), today.getMonth(), nextFriday ).setHours(23, 59, 59, 999) + 1000*3600*24*7);
+                        var d = new Date(new Date(today.getFullYear(), today.getMonth(), nextFriday, 0).getTime()+1000*3600*24*7);
+                        var year = d.getFullYear();
+                        var month = d.getMonth()+1;
+                        day = d.getDate();
+
+                        return year+"-"+this.checkZero(month)+"-"+this.checkZero(day);
 
                     }
                 },
+                selectedValue: {
+                    type: String,
+                    observer: '_validateDate',
+                    value: function() {
+                        var d = new Date(new Date().setHours(0, 0, 0, 0));
+                        return d.getFullYear()+"-"+this.checkZero(d.getMonth()+1)+"-"+this.checkZero(d.getDate());
+                    }
+                },
                 selectedDate: {
-                    type: Date,
-                    observer: '_validateDate'
+                    type: Date
                 },
                 reload: {
                     type: Boolean,
@@ -76,6 +87,77 @@
 
             ready: function () {
                 this.fire('pageLoad', this.nodeName);
+                this.$.datepicker.i18n = Object({
+                    // An array with the full names of months starting
+                    // with January.
+                    monthNames: [
+                        'Januar', 'Feburar', 'März', 'April', 'Mai',
+                        'Juni', 'Juli', 'August', 'September',
+                        'Oktober', 'November', 'Dezember'
+                    ],
+
+                    // An array of weekday names starting with Sunday. Used
+                    // in screen reader announcements.
+                    weekdays: [
+                        'Sonntag', 'Montag', 'Dienstag', 'Mittwoch',
+                        'Donnerstag', 'Freitag', 'Samstag'
+                    ],
+
+                    // An array of short weekday names starting with Sunday.
+                    // Displayed in the calendar.
+                    weekdaysShort: [
+                        'So', 'Mo', 'Die', 'Mi', 'Do', 'Fr', 'Sa'
+                    ],
+
+                    // An integer indicating the first day of the week
+                    // (0 = Sunday, 1 = Monday, etc.).
+                    firstDayOfWeek: 0,
+
+                    // Used in screen reader announcements along with week
+                    // numbers, if they are displayed.
+                    week: 'Woche',
+
+                    // Translation of the Calendar icon button title.
+                    calendar: 'Kalender',
+
+                    // Translation of the Clear icon button title.
+                    clear: 'Zurücksetzen',
+
+                    // Translation of the Today shortcut button text.
+                    today: 'Heute',
+
+                    // Translation of the Cancel button text.
+                    cancel: 'Abbrechen',
+
+                    // A function to format given `Date` object as
+                    // date string.
+                    formatDate: function(d) {
+                        // returns a string representation of the given
+                        // Date object in 'MM/DD/YYYY' -format
+                        return d.getDate()+"-"+Number(d.getMonth()+1)+"-"+d.getFullYear();
+                    },
+
+                    // A function to parse the given text to a `Date`
+                    // object. Must properly parse (at least) text
+                    // formatted by `formatDate`.
+                    // Setting the property to null will disable
+                    // keyboard input feature.
+                    parseDate: function(text) {
+                        // Parses a string in 'MM/DD/YY', 'MM/DD' or 'DD' -format to
+                        // a Date object
+                    },
+
+                    // A function to format given `monthName` and
+                    // `fullYear` integer as calendar title string.
+                    formatTitle: function(monthName, fullYear) {
+                        return monthName + ' ' + fullYear;
+                    }
+
+                });
+            },
+
+            checkZero: function(n) {
+                return (String(n).length < 2) ? "0"+n : n;
             },
 
             _validateDate: function () {
@@ -86,13 +168,24 @@
                  *
                  * https://github.com/bendavis78/paper-date-picker/issues/170#issuecomment-277317879
                  **/
-                if (this.selectedDate < this.today || this.selectedDate > this.maxDate) {
-                    this.$.datepicker.date = new Date(this.today);
+                if(this.selectedValue != "" && typeof(this.selectedValue) == "string") {
+                    var dates = this.selectedValue.split('-');
+                    var y=dates[0],m=dates[1],d=dates[2];
+                    if(d && m && y) {
+                        var selectedDate = new Date(y, m-1, d, 0);
+
+                        if ( selectedDate < this.today || selectedDate > this.maxDate ) {
+                            this.$.datepicker.value = this.today;
+                        }
+
+                        this.selectedDate = selectedDate;
+
+                    }
                 }
             },
             _onReload: function() {
                 if(this.reload == true) {
-                    this.$.datepicker.date = new Date(this.today);
+                    this.$.datepicker.value = this.today;
                     this.reload = false;
                 }
             }
