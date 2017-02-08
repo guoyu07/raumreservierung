@@ -57,8 +57,6 @@
                             nextFriday = today.getDate() - day + 5;
                         }
 
-                        console.log(nextFriday);
-
                         return new Date(new Date( today.getFullYear(), today.getMonth(), nextFriday ).setHours(23, 59, 59, 999) + 1000*3600*24*7);
 
                     }
@@ -66,6 +64,11 @@
                 selectedDate: {
                     type: Date,
                     observer: '_validateDate'
+                },
+                reload: {
+                    type: Boolean,
+                    value: false,
+                    observer: '_onReload'
                 }
             },
 
@@ -85,6 +88,12 @@
                  **/
                 if (this.selectedDate < this.today || this.selectedDate > this.maxDate) {
                     this.$.datepicker.date = new Date(this.today);
+                }
+            },
+            _onReload: function() {
+                if(this.reload == true) {
+                    this.$.datepicker.date = new Date(this.today);
+                    this.reload = false;
                 }
             }
         });

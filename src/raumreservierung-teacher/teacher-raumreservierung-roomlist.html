@@ -1,0 +1,131 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-datatable/paper-datatable.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+
+<dom-module id="teacher-raumreservierung-roomlist">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+            #content {
+                @apply(--layout-vertical);
+            }
+            #roomChooser {
+                @apply(--layout-self-center);
+                @apply(--layout-vertical);
+            }
+        </style>
+
+        <iron-ajax url="../../backend/api/teacher-main.php"
+                   id="dataRequest"
+                   method="POST"
+                   content-type="application/x-www-form-urlencoded"
+                   handle-as="json"
+                   debounce-duration="300"
+                   timeout="5000"
+                   last-response="{{response}}"
+                   loading="{{onFlight}}"></iron-ajax>
+
+        <div id="content">
+
+            <template is="dom-if" if="{{response.success}}">
+
+                <template is="dom-if" if="{{onFlight}}">
+                    <div style="text-align: center;"><paper-spinner active></paper-spinner></div>
+                </template>
+
+                <template is="dom-if" if="{{!onFlight}}">
+                    <paper-dropdown-menu id="roomChooser" selected-item-label="{{raumid}}" invalid="{{invalid}}" label="Raum ausw&auml;hlen" id="menu">
+                        <paper-listbox selected="{{selectedItem}}" class="dropdown-content">
+                            <template is="dom-repeat" items="{{response.data}}">
+                                <paper-item label="[[item.raumid]]">[[item.raum_lang]] ([[item.raum_kurz]])</paper-item>
+                            </template>
+                        </paper-listbox>
+                    </paper-dropdown-menu>
+                </template>
+
+            </template>
+
+            <template is="dom-if" if="{{!response.success}}">
+
+                <p style="font-size: 23px;">Es ist ein Fehler aufgetreten!</p>
+                <p style="color: red;">
+                    Es ist ein Fehler bei der Abfrage der Daten aufgetreten!<br>
+                    [[response.message]]
+                </p>
+
+            </template>
+
+            <template is="dom-if" if="{{invalid}}">
+                <p style="color: red; text-align: center;">
+                    Bitte w&auml;hlen Sie einen Raum aus!
+                </p>
+            </template>
+
+        </div>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'teacher-raumreservierung-roomlist',
+
+            properties: {
+                parsedDate: {
+                    type: String
+                },
+                response: Object,
+                invalid: {
+                    type: Boolean,
+                    value: false
+                },
+                reload: {
+                    type: Boolean,
+                    value: false,
+                    observer: '_onReload'
+                },
+                selectedItem: Number
+            },
+
+            listeners: {
+
+            },
+
+            ready: function () {
+                this.fire('pageLoad', this.nodeName);
+                this.$.dataRequest.body = "request=getRoomlist";
+                this.$.dataRequest.generateRequest();
+            },
+            _onReload: function() {
+                if(this.reload == true) {
+                    this.invalid = false;
+                    this.selectedItem = -1;
+                    this.reload = false;
+                }
+            }
+
+            /** Old validator function, will be used at another element
+             *
+             _onDateChange: function() {
+                var d = new Date(this.chosenDate);
+                var day = d.getDate(), month = d.getMonth(), year = d.getFullYear();
+                if(day < 10) {
+                    day = "0"+day;
+                }
+                if(month < 10) {
+                    month = "0"+month;
+                }
+                this.parsedDate = day+"."+month+"."+year;
+                this.$.dataRequest.body = "request=getRoomlist&date="+String(d.getTime()/1000).replace(/&/g, '');
+                this.$.dataRequest.generateRequest();
+             }
+             *
+             */
+        });
+    </script>
+</dom-module>

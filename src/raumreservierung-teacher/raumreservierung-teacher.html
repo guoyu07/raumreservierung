@@ -275,7 +275,8 @@
             listeners: {
                 'dataRequest.request':'_onRequest',
                 'dataRequest.response':'_onResponse',
-                'dataRequest.error':'_onError'
+                'dataRequest.error':'_onError',
+                'teacher-cancel-reservation': 'resetPages'
             },
 
             ready: function() {
@@ -421,6 +422,9 @@
                         this.$$('paper-tabs').items[i].disabled = false;
                     }
                 }
+            },
+            resetPages: function() {
+                this.selected = 3;
             }
 
         });

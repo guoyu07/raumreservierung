@@ -11,9 +11,9 @@
     {
         public function __construct($pdo)
         {
-            $HTTPS_ONLY = false;  /** !!!CHANGE THIS TO TRUE WHEN NOT ON LOCAL SERVER!!! */
-            session_set_cookie_params(1800, "/", "localhost", $HTTPS_ONLY, true);
             session_start();
+            $HTTPS_ONLY = false;  /** !!!CHANGE THIS TO TRUE WHEN NOT ON LOCAL SERVER!!! */
+            session_set_cookie_params(3600, "/", "localhost", $HTTPS_ONLY, true);
             $this->pdo = $pdo;
             if(empty($_SESSION['loggedin']) || !isset($_SESSION['loggedin'])){
                 session_unset();
