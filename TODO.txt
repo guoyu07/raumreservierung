@@ -1,4 +1,0 @@
-Admin tools are done and now in Bug-Testing-Phase
----
-Next coming up: First implementations of the room-reservation backend including some specific
-information about the logged in teacher's lessons
