@@ -19,6 +19,9 @@
                 @apply(--layout-self-center);
                 @apply(--layout-vertical);
             }
+            paper-item:hover{
+                cursor: pointer;
+            }
         </style>
 
         <iron-ajax url="../../backend/api/teacher-main.php"
@@ -40,10 +43,10 @@
                 </template>
 
                 <template is="dom-if" if="{{!onFlight}}">
-                    <paper-dropdown-menu id="roomChooser" selected-item-label="{{raumid}}" invalid="{{invalid}}" label="Raum ausw&auml;hlen" id="menu">
+                    <paper-dropdown-menu id="roomChooser" selected-item-label="{{raum_kurz}}" required invalid="{{invalid}}" label="Raum ausw&auml;hlen" id="menu">
                         <paper-listbox selected="{{selectedItem}}" class="dropdown-content">
                             <template is="dom-repeat" items="{{response.data}}">
-                                <paper-item label="[[item.raumid]]">[[item.raum_lang]] ([[item.raum_kurz]])</paper-item>
+                                <paper-item label="[[item.raum_kurz]]">[[item.raum_lang]] ([[item.raum_kurz]])</paper-item>
                             </template>
                         </paper-listbox>
                     </paper-dropdown-menu>
@@ -89,7 +92,12 @@
                     value: false,
                     observer: '_onReload'
                 },
-                selectedItem: Number
+                selectedItem: Number,
+                raum_kurz: {
+                    type: String,
+                    observer: '_selectionChanged'
+                },
+                raumid: Number
             },
 
             listeners: {
@@ -107,25 +115,16 @@
                     this.selectedItem = -1;
                     this.reload = false;
                 }
+            },
+            _selectionChanged: function() {
+                var short = this.raum_kurz;
+                for(var i=0; i < this.response.data.length; i++) {
+                    if(this.response.data[i].raum_kurz == short) {
+                        this.raumid = this.response.data[i].raumid;
+                        break;
+                    }
+                }
             }
-
-            /** Old validator function, will be used at another element
-             *
-             _onDateChange: function() {
-                var d = new Date(this.chosenDate);
-                var day = d.getDate(), month = d.getMonth(), year = d.getFullYear();
-                if(day < 10) {
-                    day = "0"+day;
-                }
-                if(month < 10) {
-                    month = "0"+month;
-                }
-                this.parsedDate = day+"."+month+"."+year;
-                this.$.dataRequest.body = "request=getRoomlist&date="+String(d.getTime()/1000).replace(/&/g, '');
-                this.$.dataRequest.generateRequest();
-             }
-             *
-             */
         });
     </script>
 </dom-module>

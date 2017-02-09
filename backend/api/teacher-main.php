@@ -46,6 +46,86 @@
                             echo json_encode(array("success" => false, "message" => "Der Server lieferte ein leeres Resultat!"));
                         }
                         break;
+                    case "getTimeList":
+                        if(isset($_POST['date']) && isset($_POST['raumid'])) {
+                            $time = $_POST['date'];
+                            $raumid = $_POST['raumid'];
+
+                            if(!empty($time) && !empty($raumid)) {
+
+                                // Get Weekday (1=Monday; 5=Friday)
+                                $weekday = date('w', $time);
+                                $date = date('Y-m-d', $time);
+
+                                require_once('../roomsystem/reservation.class.php');
+                                $res = new reservation($pdo);
+                                $list = $res->getTimeList($_SESSION['name'], $weekday, $raumid, $date);
+
+                                if($list['error'] == false) {
+
+                                    $a = $list['list'];
+
+                                    // Stunden-Array
+
+                                    $stunden = array("1","2","3","4","5","6","7","8","9");
+                                    $resStunden = array();
+                                    foreach($a as $l) {
+                                        array_push($resStunden, $l['stunde']);
+                                    }
+
+                                    $d = array_diff($stunden, $resStunden);
+
+                                    foreach($d as $s) {
+                                        array_push($a, array(
+                                            "stunde" => $s,
+                                            "besetzt" => false
+                                        ));
+                                    }
+
+                                    for($i=0; $i < count($a); $i++) {
+                                        $a[$i]['besetzt'] = isset($a[$i]['lehrer_kurz']) ? "Ja" : "Nein";
+                                        $a[$i]['von'] = isset($a[$i]['lehrer_kurz']) ? $a[$i]['lehrer_kurz'] : "";
+                                        $a[$i]['woche'] = isset($a[$i]['woche']) ? $a[$i]['woche'] : "";
+                                     }
+
+                                     sort($a);
+
+                                    echo json_encode(array("success" => true, "list" => $a));
+
+                                } else {
+                                    echo json_encode(array("success" => false, "message" => $list['message']));
+                                }
+
+                            } else {
+                                echo json_encode(array("success" => false, "message" => "Die übermittelten Daten sind ungültig!"));
+                            }
+
+                        } else {
+                            echo json_encode(array("success" => false, "message" => "Es wurden nicht alle Daten angegeben!"));
+                        }
+                        break;
+                    case "reserveRoom":
+                        if(isset($_POST['date']) && isset($_POST['room']) && isset($_POST['stunde'])) {
+
+                            $time = $_POST['date'];
+                            $raumid = $_POST['room'];
+                            $stunde = $_POST['stunde'];
+                            $weekday = date('w', $time);
+                            $date = date('Y-m-d', $time);
+
+                            require_once ('../roomsystem/reservation.class.php');
+                            $reservation = new reservation($pdo);
+                            $state = $reservation->reserveRoom($_SESSION['name'], $raumid, $stunde, $weekday, $date);
+                            if($state['error'] == false) {
+                                echo json_encode(array("success" => true));
+                            } else {
+                                echo json_encode(array("success" => false, "message" => $state['message']));
+                            }
+
+                        } else {
+                            echo json_encode(array("success" => false, "message" => "Die angegebenen Daten sind ungültig!"));
+                        }
+                        break;
                     default:
                         echo json_encode(array("success" => false, "message" => "Die angeforderte Anfrage konnte nicht gefunden werden!"));
                         break;

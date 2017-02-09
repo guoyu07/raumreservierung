@@ -5,6 +5,8 @@
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="teacher-raumreservierung-roomlist.html">
+<link rel="import" href="teacher-timelist.html">
+<link rel="import" href="teacher-reservation-request.html">
 
 <dom-module id="teacher-raumreservierung">
     <template>
@@ -85,7 +87,7 @@
                             </span>
                         </p>
 
-                        <teacher-datepicker style="width: 100%;" date="{{selectedDate}}"></teacher-datepicker>
+                        <teacher-datepicker style="width: 100%;" selected-value="{{selectedValue}}"></teacher-datepicker>
 
                         <div id="datePickerError" style="text-align: center;"></div>
 
@@ -125,19 +127,54 @@
                     <div class="card-content">
                         <p>
                             In welcher Stunde m&ouml;chten Sie den Raum reservieren?<br>
-                            <span class="secondary">(Sie k&ouml;nnen einzelne Stunden oder maximal einen Block ausw&auml;hlen)</span>
+                            <span class="secondary">(W&auml;hlen Sie dazu die zu Reservierende Stunde / Tabellenzeile aus)</span>
                         </p>
-                        <p>
-                            <b>Information</b><br>
-                            Stunden, in denen der Raum bereits reserviert ist oder anderweitig besetzt ist, werden hier
-                            <span style="color: red;">rot markiert</span>!
-                        </p>
+
+                        <teacher-timelist raum="[[raum]]" date="[[chosenDate]]" stunde="[[stunde]]"></teacher-timelist>
+
                     </div>
                     <div class="card-actions">
                         <paper-button style="float: left;" class="cancelButton" on-click="cancel">Abbrechen</paper-button>
                         <div style="float: right;">
                             <paper-button on-click="previousStep">Zur&uuml;ck</paper-button>
-                            <paper-button on-click="confirm">Weiter</paper-button>
+                            <paper-button on-click="confirmTime">Weiter</paper-button>
+                        </div>
+                    </div>
+                </paper-card>
+            </div>
+
+            <div id="step5" class="contentWrapper">
+                <paper-card class="contentCard" heading="Einen neuen Raum reservieren">
+                    <div class="card-content">
+                        <p>
+                            Um den Raum zu reservieren, &uuml;berpr&uuml;fen und best&auml;tigen Sie bitte die
+                            Richtigkeit der von Ihnen gew&auml;hlten Daten.<br>
+                            <i><span class="secondary">
+                                (Sie k&ouml;nnen Ihre Reservierungen jederzeit unter dem Men&uuml;punkt "Meine
+                                Reservierungen" verwalten und l&ouml;schen)
+                            </span></i>
+                        </p>
+                        <table style="margin: 0 auto;" cellpadding="2px">
+                            <tr>
+                                <td style="padding-right: 20px;">Datum:</td>
+                                <td>[[parsedDate]]</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-right: 20px;">Raum:</td>
+                                <td>[[raum.raum_kurz]]</td>
+                            </tr>
+                            <tr>
+                                <td style="padding-right: 20px;">Stunde:</td>
+                                <td>[[stunde]]</td>
+                            </tr>
+                        </table>
+                        <teacher-reservation-request date="[[chosenDate]]" raum="[[raum.raumid]]" stunde="[[stunde]]"></teacher-reservation-request>
+                    </div>
+                    <div class="card-actions">
+                        <paper-button style="float: left;" class="cancelButton" on-click="cancel">Abbrechen</paper-button>
+                        <div style="float: right;">
+                            <paper-button on-click="previousStep">Zur&uuml;ck</paper-button>
+                            <paper-button on-click="reserveRoom">Reservieren</paper-button>
                         </div>
                     </div>
                 </paper-card>
@@ -166,7 +203,16 @@
                     reflectToAttribute: false,
                     notify: false
                 },
-                raumid: {
+                parsedDate: {
+                    type: Date
+                },
+                raum: {
+                    type: Object,
+                    reflectToAttribute: false,
+                    notify: false
+                },
+                selectedDate: Date,
+                stunde: {
                     type: Number,
                     reflectToAttribute: false,
                     notify: false
@@ -192,11 +238,23 @@
             cancel: function() {
                 this.step = 0;
                 this.reload = true;
+                if(this.$$('#datePickerError'))
+                    this.$$('#datePickerError').innerHTML = '';
+                if(this.$$('teacher-raumreservierung-roomlist'))
+                    this.$$('teacher-raumreservierung-roomlist').raumid = "";
+                if(this.$$('teacher-timelist'))
+                    this.$$('teacher-timelist').response = Object({});
                 this.fire('teacher-cancel-reservation');
             },
             nextStep: function() {
-                if(this.step < this.$$('#steps').items.length)
+                if(this.step < this.$$('#steps').items.length - 1)
                     this.step++;
+                if(this.step == 3) {
+                    // Load Timelist
+                    if(this.$$('teacher-timelist')) {
+                        this.$$('teacher-timelist').reload = true;
+                    }
+                }
             },
             previousStep: function() {
                 if(this.step > 0)
@@ -204,8 +262,15 @@
             },
             confirmDate: function() {
                 var today = new Date().setHours(0, 0, 0, 0);
-                if(this.$$('teacher-datepicker').selectedDate != "") {
-                    var chosen = this.$$('teacher-datepicker').selectedDate;
+                if(this.$$('teacher-datepicker').selectedValue != "") {
+                    var chosenDate = this.$$('teacher-datepicker').selectedValue;
+                    var date = chosenDate.split('-');
+                    var y=date[0],m=date[1],d=date[2];
+                    // Convert Back
+                    if(m >= 1) {
+                        m = m-1;
+                    } else { m = 12; }
+                    var chosen = new Date(y, m, d, 0);
                     // getDay() == 6 -> Saturday
                     // getDay() == 0 -> Sunday
                     if(chosen >= today && chosen.getDay() != 0 && chosen.getDay() != 6 && chosen <= today+1000*3600*24*14) {
@@ -213,6 +278,7 @@
                             this.$$('#datePickerError').innerHTML = '';
                         // Date is correct, go to next step
                         this.chosenDate = new Date(chosen.setHours(0, 0, 0, 0));
+                        this.parsedDate = this.parseDate(this.chosenDate);
                         this.nextStep();
                     } else {
                         if(this.$$('#datePickerError'))
@@ -226,13 +292,41 @@
             },
             confirmRoom: function() {
                 var raumid = Number(this.$$('teacher-raumreservierung-roomlist').raumid);
-                this.$$('teacher-raumreservierung-roomlist').invalid = false;
+                var raum_kurz = String(this.$$('teacher-raumreservierung-roomlist').raum_kurz);
                 if(raumid > 0 && raumid.toString().length <= 4) {
-                    this.raumid = raumid;
+                    this.$$('teacher-raumreservierung-roomlist').invalid = false;
+                    this.raum = Object({"raumid":raumid, "raum_kurz":raum_kurz});
                     this.nextStep();
                 } else {
                     this.$$('teacher-raumreservierung-roomlist').invalid = true;
                 }
+            },
+            confirmTime: function(){
+                if(this.$$('teacher-timelist')) {
+                    var elem = this.$$('teacher-timelist');
+                    if(elem.validate()) {
+                        this.stunde = elem.stunde;
+                        this.nextStep();
+                    }
+                } else {
+                    console.warn("WARNING: Can't find teacher-timelist - Element to confirm!!!");
+                }
+            },
+            reserveRoom: function() {
+                if(this.$$('teacher-reservation-request'))
+                    this.$$('teacher-reservation-request').sendRequest();
+            },
+            parseDate: function() {
+                var d = this.chosenDate.getDate(),
+                    m = this.chosenDate.getMonth(),
+                    y = this.chosenDate.getFullYear();
+                if(String(d).length < 2) {
+                    d = "0"+d;
+                }
+                if(String(m).length < 2) {
+                    m = "0"+m;
+                }
+                return d+"."+m+"."+y;
             }
         });
     </script>

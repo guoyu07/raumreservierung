@@ -1,0 +1,169 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/vaadin-grid/vaadin-grid.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+
+<dom-module id="teacher-timelist">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+            #grid {
+                max-height: 450px;
+            }
+        </style>
+
+        <iron-ajax url="../../backend/api/teacher-main.php"
+                   method="POST"
+                   handle-as="json"
+                   content-type="application/x-www-form-urlencoded"
+                   id="dataRequest"
+                   debounce-duration="300"
+                   timeout="5000"
+                   last-response="{{response}}"></iron-ajax>
+
+        <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
+            <h2>Laden...</h2>
+            <div style="text-align: center;"><paper-spinner active></paper-spinner></div>
+        </paper-dialog>
+
+        <paper-dialog id="errorDialog" with-backdrop>
+            <h2>Es ist ein Fehler aufgetreten!</h2>
+            <p>
+                <span style="color: red;" id="errorContent"></span>
+            </p>
+            <div class="buttons">
+                <paper-button style="color: red;" dialog-confirm>OK</paper-button>
+            </div>
+        </paper-dialog>
+
+        <template is="dom-if" if="[[response.success]]">
+            <vaadin-grid id="grid">
+                <table>
+                    <colgroup>
+                        <col name="stunde" sortable sort-direction="asc">
+                        <col name="besetzt" sortable sort-direction="asc">
+                        <col name="von">
+                        <col name="woche" hidable>
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th>Stunde</th>
+                        <th>Besetzt</th>
+                        <th>Von</th>
+                        <th>Woche</th>
+                    </tr>
+                    </thead>
+                </table>
+            </vaadin-grid>
+        </template>
+        <template is="dom-if" if="[[!response.success]]">
+            <paper-material elevation="1" style="width: 90%; padding: 16px; margin: 0 auto;">
+                <h2>Es ist ein Fehler aufgetreten!</h2>
+                <p style="color:red;">
+                    [[response.message]]
+                </p>
+                <paper-button style="text-align: center; margin: 0 auto; color:#3F51B5;" on-click="reloadData">Daten neu laden</paper-button>
+            </paper-material>
+        </template>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'teacher-timelist',
+
+            properties: {
+                /** Date & RoomID defined as outside Attributes */
+                date: Date,
+                raum: Object,
+                response: {
+                    type: Object
+                },
+                reload: {
+                    type: Boolean,
+                    value: false,
+                    observer: '_onReload'
+                },
+                stunde: {
+                    type: Number
+                }
+            },
+
+            listeners: {
+                'dataRequest.request':'_onRequest',
+                'dataRequest.response':'_onResponse',
+                'dataRequest.error':'_onError'
+            },
+
+            ready: function () {
+                this.fire('pageLoad', this.nodeName);
+            },
+            _onRequest: function() {
+                this.$.loadIndicator.open();
+            },
+            _onResponse: function() {
+                this.$.loadIndicator.close();
+                this.response = this.$.dataRequest.lastResponse;
+                if(this.response.success) {
+                    this.async(function(){
+                        this.$$('#grid').items = this.response.list;
+                    }.bind(this), 50);
+                }
+            },
+            _onError: function() {
+                this.$.loadIndicator.close();
+            },
+            reloadData: function() {
+                this.$.dataRequest.body = "request=getTimeList&date="+String(this.date.getTime()/1000).replace(/&/g, '')+"&raumid="+this.raum.raumid;
+                this.$.dataRequest.generateRequest();
+            },
+            _onReload: function() {
+                if (this.reload == true) {
+                    this.reloadData();
+                    if(this.$$('#grid'))
+                        this.$$('#grid').selection.clear();
+                    this.reload = false;
+                }
+            },
+            validate: function() {
+                if(this.$$('#grid')) {
+                    var grid = this.$$('#grid');
+                    var selection = grid.selection.selected();
+                    if(typeof selection != "undefined") {
+                        var item = grid.items[selection];
+                        if(typeof item != "undefined") {
+                            if(item.besetzt == "Nein") {
+                                this.stunde = item.stunde;
+                                return true;
+                            } else {
+                                grid.selection.clear();
+                                this.openError("Die von Ihnen ausgewählte Stunde ist bereits belegt!");
+                                return false;
+                            }
+                        } else {
+                            grid.selection.clear();
+                            this.openError("Bitte wählen Sie eine Stunde aus, die Sie reservieren möchten!");
+                            return false;
+                        }
+                    } else {
+                        grid.selection.clear();
+                        return false;
+                    }
+                } else {
+                    console.warn("WARNING: Could not find Grid-Element!");
+                    return false;
+                }
+            },
+            openError: function(text) {
+                this.$.errorContent.innerText = text;
+                this.$.errorDialog.center(), this.$.errorDialog.open();
+            }
+        });
+    </script>
+</dom-module>
