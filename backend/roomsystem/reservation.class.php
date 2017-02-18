@@ -163,7 +163,7 @@
                 $sql = "SELECT reservations.*, plan_lehrer.lehrer_accname FROM reservations, plan_lehrer
                         WHERE reservations.lehrer_kurz = plan_lehrer.lehrer_kurz
                         AND plan_lehrer.lehrer_accname = :accname
-                        ORDER BY reservations.datum DESC";
+                        ORDER BY reservations.datum ASC";
 
                 $r = $this->pdo->prepare($sql);
 
@@ -172,12 +172,17 @@
                     $r->execute(array(":accname" => $name));
                     $this->pdo->commit();
                     $res = $r->fetchAll();
-                    // Can't read [0] of empty array due to not being dimensional :) #NerdComment
-                    if(!empty($res) && isset($res[0])) {
-                        return array("error" => false, "data" => $res[0]);
-                    } else {
-                        return array("error" => false, "data" => array());
+
+                    if(!empty($res)) {
+                        $days = array(1 => "Montag", 2 => "Dienstag", 3 => "Mittwoch", 4 => "Donnerstag", 5 => "Freitag");
+                        for($i = 0; $i<count($res); $i++) {
+                            $dp = explode('-', $res[$i]['datum']);
+                            $res[$i]['datum'] = $dp[2].".".$dp[1].".".$dp[0];
+                            $res[$i]['dayString'] = $days[$res[$i]['tag']];
+                        }
                     }
+
+                    return array("error" => false, "data" => $res);
                 } catch (PDOException $e) {
                     $this->pdo->rollBack();
                     return array("error" => true, "message" => $e->getMessage());
@@ -191,6 +196,20 @@
 
             } else {
                 return array("error" => true, "message" => "Der Nutzeraccount konnte nicht gefunden werden oder ist nicht aktiviert!");
+            }
+        }
+
+        public function deleteReservation($rid) {
+            $sql = "DELETE FROM reservations WHERE R_ID=:rid";
+            $r = $this->pdo->prepare($sql);
+            try {
+                $this->pdo->beginTransaction();
+                $r->execute(array(":rid" => $rid));
+                $this->pdo->commit();
+                return array("error" => false);
+            } catch (PDOException $e) {
+                $this->pdo->rollBack();
+                return array("error" => true, "message" => "Es ist ein Fehler bei der Datenbankabfrage aufgetreten!");
             }
         }
     }

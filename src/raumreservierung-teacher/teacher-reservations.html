@@ -5,20 +5,17 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
 
 <dom-module id="teacher-reservations">
     <template>
-        <style includes="app-grid-style">
+        <style include="app-grid-style">
             :host {
                 display: block;
-
-                /**
-                TODO: INCLUDE APP GRID
                 --app-grid-columns: auto;
                 --app-grid-expandible-item-columns: auto;
                 --app-grid-item-height: auto;
-                --app-grid-gutter: 10px;
-                **/
+                --app-grid-gutter: 20px;
             }
             .spinnerWrapper {
                 text-align: center;
@@ -32,6 +29,53 @@
             }
             .cardWrapper > paper-card {
                 @apply(--layout-self-center);
+            }
+            .actionFab {
+                z-index: 999;
+                position: fixed;
+                bottom: 18px;
+                right: 18px;
+            }
+            .app-grid{
+                list-style-type: none;
+                @apply(--layout-horizontal);
+            }
+            .item{
+                @apply(--layout-vertical);
+            }
+            .secondary {
+                color: var(--secondary-text-color);
+                margin: 20px 0 -20px 20px;
+            }
+            #emptyContent {
+                @apply(--layout-fit);
+                background-image: url('../../img/error_icon.png');
+                background-repeat: no-repeat;
+                background-position: 50% 60%;
+                background-color: var(--google-grey-300);
+                min-height: 400px;
+            }
+            @media (min-width: 800px) {
+                #emptyContent {
+                    background-size: 300px;
+                }
+            }
+            @media (max-width: 799px) {
+                #emptyContent {
+                    background-size: 40%;
+                }
+            }
+            .pseudoLink {
+                color: var(--paper-indigo-500);
+                -webkit-transition: color 0.25s;
+                -moz-transition: color 0.25s;
+                -ms-transition: color 0.25s;
+                -o-transition: color 0.25s;
+                transition: color 0.25s;
+            }
+            .pseudoLink:hover {
+                cursor: pointer;
+                color: var(--paper-indigo-700);
             }
         </style>
 
@@ -47,7 +91,7 @@
         </paper-dialog>
 
         <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
-            <h2>Laden, bitte warten...</h2>
+            <h2>Lade Reservierungen, bitte warten...</h2>
             <div class="spinnerWrapper"><paper-spinner active></paper-spinner></div>
         </paper-dialog>
 
@@ -60,11 +104,71 @@
                    debounce-duration="300"
                    last-response="{{response}}"></iron-ajax>
 
-        <template is="dom-if" if="[[response.success">
+        <paper-dialog with-backdrop id="deleteDialog">
+            <div>
+                <h2>Achtung!</h2>
+                <p>
+                    Sie sind im Begriff, Ihre Reservierung des Raumes <b>[[selectedRoom]] am [[selectedDate]] in der [[selectedHour]]. Stunde</b> zu l&ouml;schen!
+                    <br><br>
+                    Möchten Sie Ihre Reservierung wirklich l&ouml;schen?
+                </p>
+            </div>
+            <div class="buttons">
+                <paper-button style="color: #3F51B5;" dialog-dismiss>Abbrechen</paper-button>
+                <paper-button style="color: #3F51B5;" on-click="finalDelete" dialog-confirm>Löschen</paper-button>
+            </div>
+        </paper-dialog>
 
+        <template is="dom-if" if="[[response.success]]">
+            <paper-fab on-click="reloadData" icon="refresh" class="actionFab"></paper-fab>
+            <template is="dom-if" if="[[response.empty]]">
+                <div id="emptyContent" style="text-align: center;">
+                    <h2 style="color: #616161;">Sie haben keine R&auml;me reserviert!</h2>
+                    <p class="pseudoLink" on-click="fireRedirectToReservation">Jetzt einen neuen Raum reservieren!</p>
+                </div>
+            </template>
+            <template is="dom-if" if="[[!response.empty]]">
+                <div>
+                    <h3 class="secondary">
+                        Zuletzt aktualisiert: [[lastRefreshString]]
+                    </h3>
+                </div>
+                <div class="cardWrapper">
+                    <ul class="app-grid">
+                        <template is="dom-repeat" items="[[response.data]]" as="res">
+                            <li>
+                                <paper-card heading="[[res.datum]]" class="item">
+                                    <div class="card-content" style="align-self: center;">
+                                        <b>Ihre Reservierung:</b>
+                                        <table>
+                                            <tbody>
+                                            <tr>
+                                                <td style="padding-right: 20px;">Stunde:</td>
+                                                <td>[[res.stunde]]</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-right: 20px;">Raum:</td>
+                                                <td>[[res.raum_kurz]]</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="padding-right: 20px;">Wochentag:</td>
+                                                <td>[[res.dayString]]</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="card-actions">
+                                        <paper-button style="float: right; color: #3F51B5;" on-click="deleteReservation" itemid="[[res.R_ID]]">L&ouml;schen</paper-button>
+                                    </div>
+                                </paper-card>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
+            </template>
         </template>
 
-        <template is="dom-if" if="[[!response.success">
+        <template is="dom-if" if="[[!response.success]]">
             <div class="cardWrapper" style="margin-top: 20px;">
                 <paper-card heading="Es ist ein Fehler aufgetreten!">
                     <div class="card-content">
@@ -89,7 +193,24 @@
             is: 'teacher-reservations',
 
             properties: {
-                response: Object
+                response: Object,
+                lastRefresh: {
+                    type: Date,
+                    value: function() {
+                        return new Date();
+                    },
+                    observer: 'dateChanged'
+                },
+                lastRefreshString: {
+                    type: String,
+                    value: function() {
+                        return this.getDateTimeString();
+                    }
+                },
+                selectedId: Number,
+                selectedDate: Date,
+                selectedRoom: String,
+                selectedHour: Number
             },
 
             listeners: {
@@ -107,7 +228,20 @@
                 this.$.loadIndicator.open();
             },
             _onResponse: function() {
+                this.lastRefresh = new Date();
                 this.$.loadIndicator.close();
+                if(this.$.dataRequest.lastResponse) {
+                    if(this.$.dataRequest.lastResponse.next) {
+                        switch(this.$.dataRequest.lastResponse.next) {
+                            case "reload":
+                                this.reloadData();
+                                break;
+                            default:
+                                this.reloadData();
+                                break;
+                        }
+                    }
+                }
             },
             _onError: function(e) {
                 this.$.loadIndicator.close();
@@ -122,6 +256,39 @@
             reloadData: function() {
                 this.$.dataRequest.body = "request=getReservations";
                 this.$.dataRequest.generateRequest();
+            },
+            checkZero: function(n) {
+                if(Number(n) < 10 && Number(n) > 0) {
+                    return "0"+n;
+                } else {
+                    return n;
+                }
+            },
+            getDateTimeString: function() {
+                var date = new Date(this.lastRefresh);
+                return this.checkZero(date.getHours())+":"+this.checkZero(date.getMinutes())+":"+this.checkZero(date.getSeconds());
+            },
+            dateChanged: function() {
+                this.lastRefreshString = this.getDateTimeString();
+            },
+            deleteReservation: function(e) {
+                var id = e.path[0].itemid;
+                this.selectedId = id;
+                for(var i = 0; i < this.response['data'].length; i++){
+                    if(this.response['data'][i]['R_ID'] == id) {
+                        this.selectedDate = this.response['data'][i]['datum'];
+                        this.selectedRoom = this.response['data'][i]['raum_kurz'];
+                        this.selectedHour = this.response['data'][i]['stunde'];
+                    }
+                }
+                this.$.deleteDialog.open();
+            },
+            finalDelete: function() {
+                this.$.dataRequest.body = "request=deleteReservation&rid="+String(this.selectedId).replace(/&/g, '');
+                this.$.dataRequest.generateRequest();
+            },
+            fireRedirectToReservation: function() {
+                this.fire('teacher-redirect-to-reservation');
             }
         });
     </script>

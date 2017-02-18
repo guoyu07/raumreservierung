@@ -136,10 +136,25 @@
                             if($reservations['error'] == true) {
                                 echo json_encode(array("success" => false, "message" => $reservations['message']));
                             } else {
-                                echo json_encode(array("success" => true, "data" => $reservations['data']));
+                                echo json_encode(array("success" => true, "data" => $reservations['data'], "empty" => empty($reservations['data']) ));
                             }
                         } else {
                             echo json_encode(array("success" => false, "message" => "Es konnten keine Daten aus der Datenbank ausgelesen werden!"));
+                        }
+                        break;
+                    case "deleteReservation":
+                        if(isset($_POST['rid'])) {
+
+                            $rid = intval($_POST['rid']);
+                            require_once ('../roomsystem/reservation.class.php');
+                            $rs = new reservation($pdo);
+                            $res = $rs->deleteReservation($rid);
+
+                            echo empty($res) ? json_encode(array("success" => false, "message" => "Es ist ein unbekannter Fehler beim Löschen der Reservierung aufgetreten!", "next" => "reload"))
+                                             : json_encode(array("success" => $res['error'], "message" => $res['error'] ? $res['message'] : "", "next" => "reload"));
+
+                        } else {
+                            echo json_encode(array("success" => false, "message" => "Es wurde keine zu löschende Reservierung angegeben!"));
                         }
                         break;
                     default:
