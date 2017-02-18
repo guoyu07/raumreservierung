@@ -154,4 +154,43 @@
                 return array("error" => true, "message" => "Der Nutzer konnte nicht in der Datenbank gefunden werden!");
             }
         }
+
+        public function getReservationsByName($name) {
+            require_once ('../accountsystem/userManagement.class.php');
+            $um = new userManagement($this->pdo);
+            if($um->isUserInDB($name) && $um->isUserActivated($name)) {
+
+                $sql = "SELECT reservations.*, plan_lehrer.lehrer_accname FROM reservations, plan_lehrer
+                        WHERE reservations.lehrer_kurz = plan_lehrer.lehrer_kurz
+                        AND plan_lehrer.lehrer_accname = :accname
+                        ORDER BY reservations.datum DESC";
+
+                $r = $this->pdo->prepare($sql);
+
+                try {
+                    $this->pdo->beginTransaction();
+                    $r->execute(array(":accname" => $name));
+                    $this->pdo->commit();
+                    $res = $r->fetchAll();
+                    // Can't read [0] of empty array due to not being dimensional :) #NerdComment
+                    if(!empty($res) && isset($res[0])) {
+                        return array("error" => false, "data" => $res[0]);
+                    } else {
+                        return array("error" => false, "data" => array());
+                    }
+                } catch (PDOException $e) {
+                    $this->pdo->rollBack();
+                    return array("error" => true, "message" => $e->getMessage());
+                }
+
+                /**
+                 * Whoever reads this comment:
+                 * https://youtu.be/US9HvJIBw5k?t=8m6s
+                 * Thank me later <3
+                 */
+
+            } else {
+                return array("error" => true, "message" => "Der Nutzeraccount konnte nicht gefunden werden oder ist nicht aktiviert!");
+            }
+        }
     }

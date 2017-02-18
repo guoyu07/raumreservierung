@@ -127,14 +127,20 @@
                         }
                         break;
                     case "getReservations":
-                        // TODO: Get Reservations :D
-                        /**
-                         * SELECT * FROM reservations
-                         * WHERE reservations.name = ::$_SESSION['name']::
-                         * ORDER BY reservations.datum DESC
-                         */
-                        // Temporary Message until not finished
-                        echo json_encode(array("success" => false, "message" => "Request works fine, but corresponding function is not yet finished :c (teacher-main.php:130)"));
+                        // existance of session variable & contents has been checked before
+                        $name = $_SESSION['name'];
+                        require_once('../roomsystem/reservation.class.php');
+                        $rs = new reservation($pdo);
+                        $reservations = $rs->getReservationsByName($name);
+                        if(!empty($reservations)) {
+                            if($reservations['error'] == true) {
+                                echo json_encode(array("success" => false, "message" => $reservations['message']));
+                            } else {
+                                echo json_encode(array("success" => true, "data" => $reservations['data']));
+                            }
+                        } else {
+                            echo json_encode(array("success" => false, "message" => "Es konnten keine Daten aus der Datenbank ausgelesen werden!"));
+                        }
                         break;
                     default:
                         echo json_encode(array("success" => false, "message" => "Die angeforderte Anfrage konnte nicht gefunden werden!"));
