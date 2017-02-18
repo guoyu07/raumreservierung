@@ -360,11 +360,8 @@ HTML;
             try{
                 $this->pdo->beginTransaction();
                 $stat = $r->execute(array(":pw" => $pw, ":salt" => $salt, ":iterations" => $iterations, ":name" => $name));
-                if($stat)
-                    $this->pdo->commit();
-                else
-                    $this->pdo->rollBack();
-                return array("error" => $stat);
+                $this->pdo->commit();
+                return array("error" => false);
             } catch( PDOException $e ) {
                 $this->pdo->rollBack();
                 return array("error" => true, "message" => "Es ist ein Fehler beim Ändern des Passwortes aufgetreten: ".$e->getMessage());
