@@ -367,7 +367,13 @@
             this.$.pages.select(1);
         },
         _onComponentLoaded: function (e) {
-            console.log("[" + e.detail + "] component loaded and ready");
+            /**
+             * Raumreservierung v2.0
+             * This function is deactivated due to debugging not being relevant anymore.
+             * If any errors occur concerning element-loading etc., uncomment the line below to
+             * show element's load-logs
+             */
+            //console.log("[" + e.detail + "] component loaded and ready");
         },
         _redirect: function () {
             if(this.hash == "") {
