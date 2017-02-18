@@ -24,7 +24,7 @@
     "src/raumreservierung-teacher/teacher-reservations.html",
     "src/raumreservierung-teacher/teacher-timelist.html",
 
-    "src/raumreservierung/admin/src/admin-raumverwaltung/admin-reservation-control.html"
+    "src/raumreservierung-admin/src/admin-raumverwaltung/admin-reservation-control.html"
   ],
   "sources": [
     "img/*",
