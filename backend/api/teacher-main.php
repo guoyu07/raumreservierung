@@ -126,6 +126,16 @@
                             echo json_encode(array("success" => false, "message" => "Die angegebenen Daten sind ungültig!"));
                         }
                         break;
+                    case "getReservations":
+                        // TODO: Get Reservations :D
+                        /**
+                         * SELECT * FROM reservations
+                         * WHERE reservations.name = ::$_SESSION['name']::
+                         * ORDER BY reservations.datum DESC
+                         */
+                        // Temporary Message until not finished
+                        echo json_encode(array("success" => false, "message" => "Request works fine, but corresponding function is not yet finished :c (teacher-main.php:130)"));
+                        break;
                     default:
                         echo json_encode(array("success" => false, "message" => "Die angeforderte Anfrage konnte nicht gefunden werden!"));
                         break;

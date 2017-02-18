@@ -1,17 +1,86 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../bower_components/app-layout/app-grid/app-grid-style.html">
 
 <dom-module id="teacher-reservations">
     <template>
-        <style>
+        <style includes="app-grid-style">
             :host {
                 display: block;
+
+                /**
+                TODO: INCLUDE APP GRID
+                --app-grid-columns: auto;
+                --app-grid-expandible-item-columns: auto;
+                --app-grid-item-height: auto;
+                --app-grid-gutter: 10px;
+                **/
+            }
+            .spinnerWrapper {
+                text-align: center;
+            }
+            .cardButton {
+                color: var(--primary-color);
+                margin: 6px;
+            }
+            .cardWrapper {
+                @apply(--layout-vertical);
+            }
+            .cardWrapper > paper-card {
+                @apply(--layout-self-center);
             }
         </style>
 
-        <!-- Content comes here -->
+        <paper-dialog id="errorDialog" with-backdrop>
+            <h2>Es ist ein Fehler aufgetreten:</h2>
+            <div id="errorContent">
 
-        <h2>Reservations &commat; [[name]]</h2>
+            </div>
+            <p style="text-align: center"><i>Melden Sie diesen Fehler bitte ggf. einem Administrator!</i></p>
+            <div class="buttons">
+                <paper-button dialog-confirm autofocus style="color: #F44336;">OK</paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
+            <h2>Laden, bitte warten...</h2>
+            <div class="spinnerWrapper"><paper-spinner active></paper-spinner></div>
+        </paper-dialog>
+
+        <iron-ajax id="dataRequest"
+                   url="../../backend/api/teacher-main.php"
+                   content-type="application/x-www-form-urlencoded"
+                   method="POST"
+                   timeout="5000"
+                   handle-as="json"
+                   debounce-duration="300"
+                   last-response="{{response}}"></iron-ajax>
+
+        <template is="dom-if" if="[[response.success">
+
+        </template>
+
+        <template is="dom-if" if="[[!response.success">
+            <div class="cardWrapper" style="margin-top: 20px;">
+                <paper-card heading="Es ist ein Fehler aufgetreten!">
+                    <div class="card-content">
+                        <p style="color: red;">
+                            [[response.message]]
+                        </p>
+                    </div>
+                    <div class="card-actions">
+                        <div style="float:right;">
+                            <paper-button on-click="resetView" class="cardButton">Abbrechen</paper-button>
+                            <paper-button on-click="reloadData" class="cardButton">Neu Laden</paper-button>
+                        </div>
+                    </div>
+                </paper-card>
+            </div>
+        </template>
 
     </template>
 
@@ -20,15 +89,39 @@
             is: 'teacher-reservations',
 
             properties: {
-                name: String
+                response: Object
             },
 
             listeners: {
-
+                'dataRequest.request': '_onRequest',
+                'dataRequest.response': '_onResponse',
+                'dataRequest.error': '_onError'
             },
 
             ready: function () {
                 this.fire('pageLoad', this.nodeName);
+                this.$.dataRequest.body = "request=getReservations";
+                this.$.dataRequest.generateRequest();
+            },
+            _onRequest: function() {
+                this.$.loadIndicator.open();
+            },
+            _onResponse: function() {
+                this.$.loadIndicator.close();
+            },
+            _onError: function(e) {
+                this.$.loadIndicator.close();
+                var emsg = e.type + " - " + e.detail.error;
+                var t = "Es ist ein Fehler beim Laden der Daten aufgetreten:<br> "+emsg;
+                this.$.errorContent.textContent = '<p style="color: red;">' + t + '</p>';
+                this.$.errorDialog.center(), this.$.errorDialog.open();
+            },
+            resetView: function() {
+                this.fire('teacher-cancel');
+            },
+            reloadData: function() {
+                this.$.dataRequest.body = "request=getReservations";
+                this.$.dataRequest.generateRequest();
             }
         });
     </script>
