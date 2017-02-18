@@ -61,7 +61,7 @@
       hasValue: {
         type: Boolean,
         value: false,
-        readonly: true,
+        readOnly: true,
         reflectToAttribute: true
       },
 
@@ -105,6 +105,9 @@
        *
        * The item label is also used for matching items when processing user
        * input, i.e., for filtering and selecting items.
+       *
+       * When using item templates, the property is still needed because it is used
+       * for filtering, and for displaying the selected item value in the input box.
        */
       itemLabelPath: {
         type: String,
@@ -136,7 +139,12 @@
 
       _inputElementValue: String,
 
-      _closeOnBlurIsPrevented: Boolean
+      _closeOnBlurIsPrevented: Boolean,
+
+      _templatized: Boolean,
+      _itemTemplate: Boolean,
+
+      _previousDocumentPointerEvents: String
     },
 
     observers: [
@@ -357,8 +365,15 @@
       // before we update the overlay and the list positions and sizes.
       this.$.overlay.ensureItemsRendered();
 
-      this.$.overlay.notifyResize();
-      this.$.overlay.adjustScrollPosition();
+      // Ensure metrics are up-to-date
+      this.$.overlay.updateViewportBoundaries();
+      this.$.overlay.async(this.$.overlay.adjustScrollPosition);
+      this.$.overlay.async(this.$.overlay.notifyResize, 1);
+
+      // Set body pointer-events to 'none' to disable mouse interactions with
+      // other document nodes (combo-box is "modal")
+      this._previousDocumentPointerEvents = document.body.style.pointerEvents;
+      document.body.style.pointerEvents = 'none';
     },
 
     _onClosed: function() {
@@ -387,6 +402,8 @@
       this._clearSelectionRange();
 
       this.filter = '';
+
+      document.body.style.pointerEvents = this._previousDocumentPointerEvents;
     },
 
     /**
@@ -461,7 +478,7 @@
           this.value = '';
         }
 
-        this.hasValue = this.value !== '';
+        this._setHasValue(this.value !== '');
         this._inputElementValue = this.value;
       } else {
         var value = this._getItemValue(selectedItem);
@@ -469,7 +486,7 @@
           this.value = value;
         }
 
-        this.hasValue = true;
+        this._setHasValue(true);
         this._inputElementValue = this._getItemLabel(selectedItem);
       }
 
@@ -490,7 +507,7 @@
           this._inputElementValue = value;
         }
 
-        this.hasValue = this.value !== '';
+        this._setHasValue(this.value !== '');
       } else {
         this.selectedItem = null;
       }
@@ -602,6 +619,57 @@
       }
     },
 
+    get _instanceProps() {
+      return {
+        item: true,
+        index: true,
+        selected: true,
+        focused: true
+      };
+    },
+
+    _ensureTemplatized: function() {
+      if (!this._templatized) {
+        this._templatized = true;
+        this._itemTemplate = Polymer.dom(this).querySelector('template');
+        if (this._itemTemplate) {
+          this.templatize(this._itemTemplate);
+        }
+      }
+    },
+
+    _forwardParentProp: function(prop, value) {
+      var items = this.$.overlay.$.selector.querySelectorAll('vaadin-combo-box-item');
+      Array.prototype.forEach.call(items, function(item) {
+        item._itemTemplateInstance[prop] = value;
+      });
+    },
+
+    _forwardParentPath: function(path, value) {
+      var items = this.$.overlay.$.selector.querySelectorAll('vaadin-combo-box-item');
+      Array.prototype.forEach.call(items, function(item) {
+        item._itemTemplateInstance.notifyPath(path, value, true);
+      });
+    },
+
+    _preventInputBlur: function() {
+      if (this._toggleElement) {
+        this.listen(this._toggleElement, 'down', '_preventDefault');
+      }
+      if (this._clearElement) {
+        this.listen(this._clearElement, 'down', '_preventDefault');
+      }
+    },
+
+    _restoreInputBlur: function() {
+      if (this._toggleElement) {
+        this.unlisten(this._toggleElement, 'down', '_preventDefault');
+      }
+      if (this._clearElement) {
+        this.unlisten(this._clearElement, 'down', '_preventDefault');
+      }
+    },
+
     _preventDefault: function(e) {
       e.preventDefault();
     },
@@ -614,6 +682,7 @@
   /** @polymerBehavior vaadin.elements.combobox.ComboBoxBehavior */
   vaadin.elements.combobox.ComboBoxBehavior = [
     Polymer.IronFormElementBehavior,
+    Polymer.Templatizer,
     vaadin.elements.combobox.DropdownBehavior,
     vaadin.elements.combobox.ComboBoxBehaviorImpl
   ];

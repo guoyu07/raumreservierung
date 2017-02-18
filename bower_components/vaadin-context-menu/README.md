@@ -1,5 +1,5 @@
 ![Bower version](https://img.shields.io/bower/v/vaadin-context-menu.svg)
-[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://beta.webcomponents.org/element/vaadin/vaadin-context-menu)
+[![Published on webcomponents.org](https://img.shields.io/badge/webcomponents.org-published-blue.svg)](https://www.webcomponents.org/element/vaadin/vaadin-context-menu)
 [![Build Status](https://travis-ci.org/vaadin/vaadin-context-menu.svg?branch=master)](https://travis-ci.org/vaadin/vaadin-context-menu)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/vaadin/vaadin-core-elements?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
@@ -69,7 +69,7 @@
 
 1. Install [web-component-tester](https://www.npmjs.com/package/web-component-tester): `npm install -g web-component-tester`
 
-1. When in the `vaadin-context-menu` directory, run `wct` or `npm test`, browser will automatically open the component API documentation.
+1. When in the `vaadin-context-menu` directory, run `wct` or `npm test`
 
 
 ## Following the coding style

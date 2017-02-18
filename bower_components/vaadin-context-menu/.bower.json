@@ -1,6 +1,6 @@
 {
   "name": "vaadin-context-menu",
-  "description": "Vaadin Context Menu",
+  "description": "Polymer element for showing context dependent items for any element on the page",
   "homepage": "https://github.com/vaadin/vaadin-context-menu",
   "keywords": [
     "web-components",
@@ -26,7 +26,7 @@
     "paper-styles": "^1.1.5"
   },
   "devDependencies": {
-    "web-component-tester": "^4.3.5",
+    "web-component-tester": "^5.0.0",
     "iron-component-page": "polymerelements/iron-component-page#^1.1.0",
     "iron-test-helpers": "^1.2.5",
     "paper-menu": "^1.2.2",
@@ -36,12 +36,12 @@
     "iron-demo-helpers": "polymerelements/iron-demo-helpers#^1.0.0",
     "vaadin-grid": "^1.1.2"
   },
-  "version": "1.0.0",
-  "_release": "1.0.0",
+  "version": "1.0.1",
+  "_release": "1.0.1",
   "_resolution": {
     "type": "version",
-    "tag": "v1.0.0",
-    "commit": "0297f7f2b7bd1048870c049968c4da2128399355"
+    "tag": "v1.0.1",
+    "commit": "8114271088433d89dfb1193f0cddaac617e8c711"
   },
   "_source": "https://github.com/vaadin/vaadin-context-menu.git",
   "_target": "1.0.x",
