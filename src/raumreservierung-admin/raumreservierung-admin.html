@@ -221,7 +221,8 @@
       listeners: {
           'pageLoaded':'_onPageLoad', // Custom event fired by Elements when ready :)
           'logoutButton.tap': '_onLogoutRequest',
-          'admin-page-session-error': '_onLogoutRequest'    // Fired by custom elements when session data is invalid
+          'admin-page-session-error': '_onLogoutRequest',    // Fired by custom elements when session data is invalid
+          'admin-reset-pages': 'customResetPages'
       },
 
         ready: function() {
@@ -333,6 +334,9 @@
             this.selectedTab = 3;
             this.$.drawerPanel.closeDrawer();
             location.hash = "logout";
+        },
+        customResetPages: function() {
+            this.selectedPage = 4;
         }
     });
   </script>

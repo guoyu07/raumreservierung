@@ -1,0 +1,328 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../../../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../../../../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="../../../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../../../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../../../../bower_components/paper-menu/paper-submenu.html">
+<link rel="import" href="../../../../bower_components/paper-item/paper-item.html">
+
+<dom-module id="admin-reservation-control">
+    <template>
+        <style include="app-grid-style">
+            :host {
+                display: block;
+                --app-grid-columns: auto;
+                --app-grid-expandible-item-columns: auto;
+                --app-grid-item-height: auto;
+                --app-grid-gutter: 20px;
+            }
+            .spinnerWrapper {
+                text-align: center;
+            }
+            .cardButton {
+                color: var(--primary-color);
+                margin: 6px;
+            }
+            .cardWrapper {
+                @apply(--layout-vertical);
+            }
+            .cardWrapper > paper-card {
+                @apply(--layout-self-center);
+            }
+            .actionFab {
+                z-index: 999;
+                position: fixed;
+                bottom: 18px;
+                right: 18px;
+            }
+            .app-grid{
+                list-style-type: none;
+                @apply(--layout-horizontal);
+            }
+            .item{
+                @apply(--layout-vertical);
+            }
+            .secondary {
+                color: var(--secondary-text-color);
+            }
+            .refresh {
+                margin: 20px 0 -20px 20px;
+            }
+            #emptyContent {
+                @apply(--layout-fit);
+                background-image: url('../../img/error_icon.png');
+                background-repeat: no-repeat;
+                background-position: 50% 60%;
+                background-color: var(--google-grey-300);
+                min-height: 400px;
+            }
+            @media (min-width: 800px) {
+                #emptyContent {
+                    background-size: 300px;
+                }
+            }
+            @media (max-width: 799px) {
+                #emptyContent {
+                    background-size: 40%;
+                }
+            }
+            .pseudoLink {
+                color: var(--paper-indigo-500);
+                -webkit-transition: color 0.25s;
+                -moz-transition: color 0.25s;
+                -ms-transition: color 0.25s;
+                -o-transition: color 0.25s;
+                transition: color 0.25s;
+            }
+            .pseudoLink:hover {
+                cursor: pointer;
+                color: var(--paper-indigo-700);
+            }
+            .centerCard {
+                @apply(--layout-self-center);
+            }
+            paper-item:hover {
+                cursor: pointer;
+            }
+        </style>
+
+        <!-- Content comes here -->
+
+        <paper-dialog id="errorDialog" with-backdrop>
+            <h2>Es ist ein Fehler aufgetreten:</h2>
+            <div id="errorContent">
+
+            </div>
+            <p style="text-align: center"><i>Melden Sie diesen Fehler bitte ggf. einem Administrator!</i></p>
+            <div class="buttons">
+                <paper-button dialog-confirm autofocus style="color: #F44336;">OK</paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
+            <h2>Lade Reservierungen, bitte warten...</h2>
+            <div class="spinnerWrapper"><paper-spinner active></paper-spinner></div>
+        </paper-dialog>
+
+        <iron-ajax id="dataRequest"
+                   url="../../../../backend/api/admin-reservation.php"
+                   content-type="application/x-www-form-urlencoded"
+                   method="POST"
+                   timeout="5000"
+                   handle-as="json"
+                   debounce-duration="300"
+                   last-response="{{response}}"></iron-ajax>
+
+        <paper-dialog with-backdrop id="deleteDialog">
+            <div>
+                <h2>Achtung!</h2>
+                <p>
+                    Sie sind im Begriff, die Reservierung des Raumes <b>[[selectedRoom]] am [[selectedDate]] in der [[selectedHour]]. Stunde von "[[selectedTeacher]]"</b> zu l&ouml;schen!
+                    <br><br>
+                    Möchten Sie Ihre Reservierung wirklich l&ouml;schen?
+                </p>
+            </div>
+            <div class="buttons">
+                <paper-button style="color: #3F51B5;" dialog-dismiss>Abbrechen</paper-button>
+                <paper-button style="color: #3F51B5;" on-click="finalDelete" dialog-confirm>Löschen</paper-button>
+            </div>
+        </paper-dialog>
+
+        <template is="dom-if" if="[[response.success]]">
+            <paper-fab on-click="reloadData" icon="refresh" class="actionFab"></paper-fab>
+            <template is="dom-if" if="[[response.empty]]">
+                <div id="emptyContent" style="text-align: center;">
+                    <h2 style="color: #616161;">Es wurden noch keine R&auml;ume reserviert!</h2>
+                    <p class="pseudoLink" on-click="fireRedirectToReservation">Jetzt einen neuen Raum reservieren!</p>
+                </div>
+            </template>
+            <template is="dom-if" if="[[!response.empty]]">
+                <div>
+                    <h3 class="secondary refresh">
+                        Zuletzt aktualisiert: [[lastRefreshString]]
+                    </h3>
+                </div>
+                <div class="cardWrapper">
+                    <paper-card heading="Reservierungen" class="centerCard" style="margin-top: 24px;">
+                        <div class="card-content">
+                            <span class="secondary">
+                                Klicken Sie zum &Ouml;ffnen der Liste der Reservierungen eines Lehrers auf dessen
+                                Lehrerk&uuml;rzel. Um eine der Reservierungen zu l&ouml;schen, klicken Sie auf diese.
+                                Im Anschlie&szlig;enden Schritt m&uuml;ssen Sie Ihre Auswahl nur noch best&auml;tigen!
+                            </span>
+                            <paper-menu>
+                                <template is="dom-repeat" items="[[groupedData]]">
+                                    <paper-submenu>
+                                        <paper-item class="menu-trigger">Lehrer "[[item.name]]"</paper-item>
+                                        <paper-menu class="menu-content">
+                                            <template is="dom-repeat" items="[[item]]">
+                                                <paper-item itemid="[[item.R_ID]]" on-click="deleteReservation">[[item.datum]] - Stunde [[item.stunde]], Raum [[item.raum_kurz]]</paper-item>
+                                            </template>
+                                        </paper-menu>
+                                    </paper-submenu>
+                                </template>
+                            </paper-menu>
+                        </div>
+                        <div class="card-actions">
+
+                        </div>
+                    </paper-card>
+                </div>
+            </template>
+        </template>
+
+        <template is="dom-if" if="[[!response.success]]">
+            <div class="cardWrapper" style="margin-top: 20px;">
+                <paper-card heading="Es ist ein Fehler aufgetreten!">
+                    <div class="card-content">
+                        <p style="color: red;">
+                            [[response.message]]
+                        </p>
+                    </div>
+                    <div class="card-actions">
+                        <div style="float:right;">
+                            <paper-button on-click="resetView" class="cardButton">Abbrechen</paper-button>
+                            <paper-button on-click="reloadData" class="cardButton">Neu Laden</paper-button>
+                        </div>
+                    </div>
+                </paper-card>
+            </div>
+        </template>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'admin-reservation-control',
+
+            properties: {
+                response: Object,
+                groupedData: Object,
+                lastRefresh: {
+                    type: Date,
+                    value: function() {
+                        return new Date();
+                    },
+                    observer: 'dateChanged'
+                },
+                lastRefreshString: {
+                    type: String,
+                    value: function() {
+                        return this.getDateTimeString();
+                    }
+                },
+                selectedTeacher: String,
+                selectedRoom: String,
+                selectedId: Number,
+                selectedDate: String,
+                selectedHour: Number
+            },
+
+            listeners: {
+                'dataRequest.request': '_onRequest',
+                'dataRequest.response': '_onResponse',
+                'dataRequest.error': '_onError'
+            },
+
+            ready: function () {
+                this.fire('pageLoad', this.nodeName);
+                this.$.dataRequest.body = "request=getReservations";
+                this.$.dataRequest.generateRequest();
+            },
+            _onRequest: function() {
+                this.$.loadIndicator.open();
+            },
+            _onResponse: function() {
+                this.lastRefresh = new Date();
+                this.$.loadIndicator.close();
+                if(this.$.dataRequest.lastResponse) {
+                    if(this.$.dataRequest.lastResponse.next) {
+                        switch(this.$.dataRequest.lastResponse.next) {
+                            case "reload":
+                                this.reloadData();
+                                break;
+                            default:
+                                this.reloadData();
+                                break;
+                        }
+                    }
+                }
+                if(this.response)
+                    if(this.response.data)
+                        this.groupedData = this.groupBy(this.response.data, "lehrer_kurz");
+            },
+            _onError: function(e) {
+                this.$.loadIndicator.close();
+                var emsg = e.type + " - " + e.detail.error;
+                var t = "Es ist ein Fehler beim Laden der Daten aufgetreten:<br> "+emsg;
+                this.$.errorContent.textContent = '<p style="color: red;">' + t + '</p>';
+                this.$.errorDialog.center(), this.$.errorDialog.open();
+            },
+            fireRedirectToReservation: function() {
+                this.fire('teacher-redirect-to-reservation');
+            },
+            reloadData: function() {
+                this.$.dataRequest.body = "request=getReservations";
+                this.$.dataRequest.generateRequest();
+            },
+            checkZero: function(n) {
+                if(Number(n) < 10 && Number(n) > 0) {
+                    return "0"+n;
+                } else {
+                    return n;
+                }
+            },
+            getDateTimeString: function() {
+                var date = new Date(this.lastRefresh);
+                return this.checkZero(date.getHours())+":"+this.checkZero(date.getMinutes())+":"+this.checkZero(date.getSeconds());
+            },
+            dateChanged: function() {
+                this.lastRefreshString = this.getDateTimeString();
+            },
+            groupBy: function(collection, property) {
+                var i = 0, val, index,
+                    values = [], result = [];
+                for (; i < collection.length; i++) {
+                    val = collection[i][property];
+                    index = values.indexOf(val);
+                    if (index > -1)
+                        result[index].push(collection[i]);
+                    else {
+                        values.push(val);
+                        result.push([collection[i]]);
+                    }
+                }
+
+                // rrrrrr
+
+                for(i=0; i<result.length; i++) {
+                    result[i]["name"] = result[i][0][property];
+                }
+                return result;
+            },
+            deleteReservation: function(e) {
+                var id = e.path[0].itemid;
+                if(this.response.data) {
+                    for(var i = 0; i < this.response.data.length; i++) {
+                        if(this.response.data[i]['R_ID'] == id) {
+                            this.selectedTeacher = this.response.data[i]['lehrer_kurz'];
+                            this.selectedDate = this.response.data[i]['datum'];
+                            this.selectedHour = this.response.data[i]['stunde'];
+                            this.selectedRoom = this.response.data[i]['raum_kurz'];
+                            this.selectedId = this.response.data[i]['R_ID'];
+                        }
+                    }
+                }
+                this.$.deleteDialog.open();
+            },
+            finalDelete: function() {
+                this.$.dataRequest.body = "request=deleteReservation&id="+String(this.selectedId).replace(/&/g, '');
+                this.$.dataRequest.generateRequest();
+            }
+        });
+    </script>
+</dom-module>

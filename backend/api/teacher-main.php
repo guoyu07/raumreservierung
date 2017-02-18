@@ -13,7 +13,7 @@
     if(!isset($_SESSION) || !isset($_SESSION['loggedin']) || !isset($_SESSION['accstatus']) || !isset($_SESSION['acctype']) || !isset($_SESSION['name']) || $_SESSION['loggedin'] !== true) {
         echo json_encode(array("success" => false, "message" => "Sie müssen eingeloggt sein, um Zugriff auf diese Seite zu erhalten!", "sessionError" => true));
     } else {
-        if($_SESSION['accstatus'] == 3 && $_SESSION['acctype'] == 3) {
+        if($_SESSION['accstatus'] == 3 && ($_SESSION['acctype'] == 3 || $_SESSION['acctype'] == 1)) {
 
             if(isset($_POST['request'])) {
                 switch ($_POST['request']) {

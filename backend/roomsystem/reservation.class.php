@@ -215,4 +215,22 @@
                 return array("error" => true, "message" => "Es ist ein Fehler bei der Datenbankabfrage aufgetreten!");
             }
         }
+
+        public function getAllReservations() {
+            $sql = "SELECT * FROM reservations";
+            $r = $this->pdo->prepare($sql);
+            $r->execute();
+            $res = $r->fetchAll();
+
+            if(!empty($res)) {
+                $days = array(1 => "Montag", 2 => "Dienstag", 3 => "Mittwoch", 4 => "Donnerstag", 5 => "Freitag");
+                for($i = 0; $i<count($res); $i++) {
+                    $dp = explode('-', $res[$i]['datum']);
+                    $res[$i]['datum'] = $dp[2].".".$dp[1].".".$dp[0];
+                    $res[$i]['dayString'] = $days[$res[$i]['tag']];
+                }
+            }
+
+            return array("error" => false, "data" => $res);
+        }
     }
