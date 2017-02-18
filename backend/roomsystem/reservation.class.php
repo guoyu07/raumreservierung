@@ -161,7 +161,10 @@
             if($um->isUserInDB($name) && $um->isUserActivated($name)) {
 
                 $sql = "SELECT reservations.*, plan_lehrer.lehrer_accname FROM reservations, plan_lehrer
-                        WHERE reservations.lehrer_kurz = plan_lehrer.lehrer_kurz
+                        -- Don't show past reservations as they will be deleted
+                        -- automatically by an (hopefully active) cronjob
+                        WHERE reservations.datum > DATE(NOW()-1)
+                        AND reservations.lehrer_kurz = plan_lehrer.lehrer_kurz
                         AND plan_lehrer.lehrer_accname = :accname
                         ORDER BY reservations.datum ASC";
 
