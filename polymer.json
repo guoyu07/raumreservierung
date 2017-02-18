@@ -21,13 +21,13 @@
     "src/raumreservierung-teacher/teacher-datepicker.html",
     "src/raumreservierung-teacher/teacher-raumreservierung.html",
     "src/raumreservierung-teacher/teacher-raumreservierung-roomlist.html",
-    "src/raumreservierung-teacher/teacher-reports.html",
     "src/raumreservierung-teacher/teacher-reservation-request.html",
     "src/raumreservierung-teacher/teacher-reservations.html",
     "src/raumreservierung-teacher/teacher-timelist.html"
   ],
   "sources": [
     "img/*",
+    "bower_components/vaadin-grid/img/*",
     "src/raumreservierung-admin/img/*",
     "backend/**/**/*",
     "backend/cronjobs/.htaccess",

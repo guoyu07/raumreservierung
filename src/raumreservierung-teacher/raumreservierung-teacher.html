@@ -14,6 +14,11 @@
 
 <dom-module id="raumreservierung-teacher">
     <template>
+
+        <!--
+          @RAUMRESERVIERUNG-TEACHER, WICH IS THE MAIN SHELL FOR THE TEACHER-VIEW
+        -->
+
         <style>
             :host {
                 display: block;
@@ -191,7 +196,6 @@
                                 <paper-tabs scrollable no-slide fit-container selected="{{selected}}">
                                     <paper-tab>Raumreservierung</paper-tab>
                                     <paper-tab>Meine Reservierungen</paper-tab>
-                                    <paper-tab>Meldungen</paper-tab>
                                 </paper-tabs>
                             </template>
                         </div>
@@ -202,19 +206,16 @@
                     <template is="dom-if" if="{{response.success}}">
                         <iron-pages selected="{{selected}}">
                             <teacher-raumreservierung></teacher-raumreservierung>
-                            <teacher-reservations name="[[response.name]]"></teacher-reservations>
-                            <teacher-reports name="[[response.name]]"></teacher-reports>
+                            <teacher-reservations></teacher-reservations>
                             <div class="centerCardWrapper">
-                                <!-- Welcome Page -->
+                                <!-- Welcome Page / Card -->
                                 <paper-card heading="Willkommen!" class="centerCard" style="margin-top: 20px;">
                                     <div class="card-content">
                                         <p>
                                             Willkommen zur&uuml;ck bei der Raumreservierung.<br>
                                             Um einen Raum auf Ihren Namen zu reservieren, w&auml;hlen Sie oben bitte
                                             "Raumreservierung" aus. Andernfalls k&ouml;nnen Sie unter "Meine Reservierungen"
-                                            Ihre bereits reservierten R&auml;ume einsehen und verwalten, oder unter
-                                            "Meldungen" - wenn vorhanden - Nachrichten einsehen, die Ihnen Ihre Kollegen
-                                            bez&uuml;glich einer Reservierung gesendet haben.<br>
+                                            Ihre bereits reservierten R&auml;ume einsehen und verwalten.<br>
                                         </p>
                                     </div>
                                 </paper-card>
@@ -267,7 +268,7 @@
                 response: Object,
                 selected: {
                     type: Number,
-                    value: 3,
+                    value: 2,
                     observer: '_onSelectedChange'
                 }
             },
@@ -276,7 +277,8 @@
                 'dataRequest.request':'_onRequest',
                 'dataRequest.response':'_onResponse',
                 'dataRequest.error':'_onError',
-                'teacher-cancel-reservation': 'resetPages'
+                'teacher-cancel-reservation': 'resetPages',
+                'teacher-cancel': 'resetPages'
             },
 
             ready: function() {
@@ -362,14 +364,11 @@
                                 // Import My Reservations
                                 this.importHref('src/raumreservierung-teacher/teacher-reservations.html', this._onPageLoad, this._onPageLoadError, true);
                                 break;
-                            case 2:
-                                // Import Reports
-                                this.importHref('src/raumreservierung-teacher/teacher-reports.html', this._onPageLoad, this._onPageLoadError, true);
-                                break;
+                            /** Removed reports cause it is a redundant feature ;) */
                             default:
                                 this.freeTabs();
                                 this.$.loadIndicator.close();
-                                this.selected = 3;
+                                this.selected = 2;
                                 break;
                         }
                     }
