@@ -94,6 +94,13 @@
                 bottom: 20px;
                 z-index: 999;
             }
+            #deleteAllFab {
+                --paper-fab-background: var(--accent-color);
+                position: fixed;
+                right: 20px;
+                bottom: 90px;
+                z-index: 999;
+            }
             .cardCenter {
                 @apply(--layout-vertical);
             }
@@ -118,9 +125,21 @@
             <p>Bitte haben Sie einen Moment Geduld...</p>
         </paper-dialog>
 
+        <paper-dialog id="deleteAllDialog" with-backdrop>
+            <h2>Alle Logs l&ouml;schen?</h2>
+            <p>
+                M&ouml;chten Sie wirklich <b>alle</b> Logs aus der Datenbank l&ouml;schen?
+            </p>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Abbrechen</paper-button>
+                <paper-button on-click="deleteAll">Best&auml;tigen</paper-button>
+            </div>
+        </paper-dialog>
+
         <paper-card id="errorbox" class="errorCard"></paper-card>
 
         <paper-fab icon="refresh" id="reloadDataFab"></paper-fab>
+        <paper-fab icon="delete" id="deleteAllFab"></paper-fab>
 
         <template is="dom-if" if="{{data.success}}">
             <template is="dom-if" if="{{data.logs}}">
@@ -189,7 +208,8 @@
                 'dataRequest.request':'_onRequest',
                 'dataRequest.response':'_onResponse',
                 'dataRequest.error':'_onAjaxError',
-                'reloadDataFab.tap':'reloadData'
+                'reloadDataFab.tap':'reloadData',
+                'deleteAllFab.tap':'deleteAllRoutine'
             },
 
             ready: function() {
@@ -263,6 +283,14 @@
                     this.$.dataRequest.generateRequest();
                 }
 
+            },
+            deleteAllRoutine: function() {
+                this.$.deleteAllDialog.open();
+            },
+            deleteAll: function() {
+                this.$.deleteAllDialog.close();
+                this.$.dataRequest.body = "request=deleteAllLogs";
+                this.$.dataRequest.generateRequest();
             }
         });
     </script>

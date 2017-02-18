@@ -15,10 +15,19 @@
     "src/raumreservierung-imprint/raumreservierung-imprint.html",
     "src/raumreservierung-reset-password/raumreservierung-reset-password.html",
     "src/raumreservierung-account-page/raumreservierung-account-page.html",
-    "src/raumreservierung-admin/src/admin-cronjobs/admin-cronjobs.html"
+    "src/raumreservierung-admin/src/admin-cronjobs/admin-cronjobs.html",
+
+    "src/raumreservierung-teacher/raumreservierung-teacher.html",
+    "src/raumreservierung-teacher/teacher-datepicker.html",
+    "src/raumreservierung-teacher/teacher-raumreservierung.html",
+    "src/raumreservierung-teacher/teacher-raumreservierung-roomlist.html",
+    "src/raumreservierung-teacher/teacher-reservation-request.html",
+    "src/raumreservierung-teacher/teacher-reservations.html",
+    "src/raumreservierung-teacher/teacher-timelist.html"
   ],
   "sources": [
     "img/*",
+    "bower_components/vaadin-grid/img/*",
     "src/raumreservierung-admin/img/*",
     "backend/**/**/*",
     "backend/cronjobs/.htaccess",

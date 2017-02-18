@@ -1,0 +1,126 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+
+<dom-module id="teacher-reservation-request">
+    <template>
+        <style>
+            :host {
+                display: block;
+            }
+            .secondary {
+                color: var(--secondary-text-color);
+            }
+        </style>
+
+        <iron-ajax url="../../backend/api/teacher-main.php"
+                   method="POST"
+                   handle-as="json"
+                   content-type="application/x-www-form-urlencoded"
+                   id="dataRequest"
+                   debounce-duration="300"
+                   timeout="5000"
+                   last-response="{{response}}"></iron-ajax>
+
+        <paper-dialog id="errorDialog" with-backdrop>
+            <h2>Es ist ein Fehler aufgetreten!</h2>
+            <p>
+                <span style="color: red;" id="errorContent"></span>
+            </p>
+            <div class="buttons">
+                <paper-button style="color: red;" dialog-confirm>OK</paper-button>
+            </div>
+        </paper-dialog>
+
+        <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
+            <h2>Laden...</h2>
+            <div style="text-align: center;"><paper-spinner active></paper-spinner></div>
+        </paper-dialog>
+
+        <template is="dom-if" if="[[response.success]]">
+            <paper-dialog opened with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
+                <h2>Reservierung erfolgreich!</h2>
+                <paper-dialog-scrollable style="text-align: justify;">
+                    Der von Ihnen ausgew&auml;hlte Raum wurde erfolgreich auf Ihren Namen f&uuml;r das von Ihnen
+                    gew&auml;hlte Datum reserviert.<br><br>
+                    <i>
+                        <iron-icon icon="info-outline" class="secondary" style="margin-top: -2px; margin-right: 5px;"></iron-icon>
+                        <span class="secondary" style="text-align: left;">
+                            Sie k&ouml;nnen Ihre Reservierungen unter dem Men&uuml;punkt "Meine Reservierungen"
+                            verwalten!
+                        </span>
+                    </i>
+                </paper-dialog-scrollable>
+                <div class="buttons">
+                    <paper-button onclick="location.hash='index';">Schlie&szlig;en</paper-button>
+                </div>
+            </paper-dialog>
+        </template>
+        <template is="dom-if" if="[[!response.success]]">
+            <h2>Es ist ein Fehler bei der Reservierung aufgetreten!</h2>
+            <p>
+                [[response.message]]
+            </p>
+        </template>
+
+    </template>
+
+    <script>
+        Polymer({
+            is: 'teacher-reservation-request',
+
+            properties: {
+                date: Date,
+                raum: Number,
+                stunde: Number,
+                response: {
+                    type: Object,
+                    reflectToAttribute: false
+                }
+            },
+
+            listeners: {
+                'dataRequest.request':'_onRequest',
+                'dataRequest.response':'_onResponse',
+                'dataRequest.error':'_onError'
+            },
+
+            ready: function () {
+                this.fire('pageLoad', this.nodeName);
+            },
+            _onRequest: function() {
+                this.$.loadIndicator.open();
+            },
+            _onResponse: function() {
+                this.$.loadIndicator.close();
+                this.response = this.$.dataRequest.lastResponse;
+                console.log(this.response);
+            },
+            _onError: function(e) {
+                this.$.loadIndicator.close();
+                this.showError(e.type);
+            },
+            sendRequest: function() {
+                if(this.validate()) {
+                    this.$.dataRequest.body = "request=reserveRoom&room="+this.safeString(this.raum)+"&date="+String(this.date.getTime()/1000).replace(/&/g, '')+"&stunde="+this.safeString(this.stunde);
+                    this.$.dataRequest.generateRequest();
+                } else {
+                    this.showError("Die übermittelten Werte sind ungültig!");
+                }
+            },
+            safeString: function(s) {
+                return String(s).replace(/&/g, '');
+            },
+            validate: function() {
+                return (typeof this.date != "undefined" && typeof this.raum != "undefined" && typeof this.stunde != "undefined");
+            },
+            showError: function(text) {
+                this.$.errorContent.innerText = text;
+                this.$.errorDialog.center(), this.$.errorDialog.open();
+            }
+        });
+    </script>
+</dom-module>

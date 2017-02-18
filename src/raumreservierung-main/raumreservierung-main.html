@@ -174,7 +174,8 @@
             'change-theme-color': '_onThemeColorChange',        // Change content of "theme-color" meta
             'toastReloadButton.tap': '_reloadPage',
             'toastCloseButton.tap': 'closeNewContentToast',
-            'activate-account-session-error': '_onSessionError'
+            'activate-account-session-error': '_onSessionError',
+            'session-error': '_onSessionError'
         },
 
         ready: function () {
@@ -283,8 +284,14 @@
             }
         },
         _pushToLog: function (e) {
-            if (e.detail[0] && e.detail[1])
-                console.log("[" + e.detail[0] + "] " + e.detail[1]);
+            /**
+             * Raumreservierung v2.0
+             * This function is deactivated due to debugging not being relevant anymore.
+             * If any errors occur concerning element specific log pushes,
+             * uncomment the two lines below to show element's logs
+             */
+            //if (e.detail[0] && e.detail[1])
+            //    console.log("[" + e.detail[0] + "] " + e.detail[1]);
         },
         loadMainPage: function () {
             this.$.loadIndicator.open();
@@ -366,7 +373,13 @@
             this.$.pages.select(1);
         },
         _onComponentLoaded: function (e) {
-            console.log("[" + e.detail + "] component loaded and ready");
+            /**
+             * Raumreservierung v2.0
+             * This function is deactivated due to debugging not being relevant anymore.
+             * If any errors occur concerning element-loading etc., uncomment the line below to
+             * show element's load-logs
+             */
+            //console.log("[" + e.detail + "] component loaded and ready");
         },
         _redirect: function () {
             if(this.hash == "") {
@@ -476,6 +489,8 @@
             this._triggerLogout();
         },
         _triggerLogout: function () {
+            this.userPageLoaded = false;
+            this.$.userpage.innerHTML = "";
             this.$.logoutRequest.body = "r=logout";
             this.$.logoutRequest.generateRequest();
         },

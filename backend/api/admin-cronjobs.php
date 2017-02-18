@@ -64,6 +64,20 @@
                             echo json_encode(array("success" => false, "message" => "Es wurde kein zu löschender Log-Eintrag angegeben!"));
                         }
                         break;
+                    case "deleteAllLogs":
+                        // user executing this needs DROP_PRIV to be enabled
+                        $sql = "TRUNCATE cronjob";
+                        $r = $pdo->prepare($sql);
+                        try {
+                            $pdo->beginTransaction();
+                            $r->execute();
+                            $pdo->commit();
+                            echo json_encode(array("success" => true, "next" => "reload"));
+                        } catch (PDOException $e) {
+                            $pdo->rollBack();
+                            echo json_encode(array("success" => false, "message" => $e->getMessage()));
+                        }
+                        break;
                     default:
                         echo json_encode(array("success" => false, "message" => "Die geforderte Abfrage konnte nicht gefunden werden!"));
                 }

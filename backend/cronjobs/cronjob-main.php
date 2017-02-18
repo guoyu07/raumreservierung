@@ -27,13 +27,18 @@
     $sql = "SELECT name, activationcode, status, last_status_change, email_confirmed, last_email FROM accounts";
     $r = $pdo->prepare($sql);
 
+    $sql2 = "SELECT R_ID, datum FROM reservations WHERE datum < DATE(NOW()-1)";
+    $r2 = $pdo->prepare($sql2);
+
     $log .= "Reading data from database\n";
 
     $status = $r->execute();
+    $status2 = $r2->execute();
 
-    if($status) {
+    if($status && $status2) {
 
         $res = $r->fetchAll();
+        $res2 = $r2->fetchAll();
 
         $log .= "-> Got response from database\n";
 
@@ -166,9 +171,24 @@
                 $log .= "--> No users to reset activationcodes for\n";
             }
 
+            if(!empty($res2)) {
+
+                $changes = true;
+                $log .= "\nStarting deletion of invalid reservations\n";
+                $s = "DELETE FROM reservations WHERE reservations.R_ID=:ID";
+                $dr = $pdo->prepare($s);
+                foreach($res2 as $reservation) {
+                    $dr->execute(array(":ID" => $reservation['R_ID']));
+                }
+                $log .= "-> Finished deletion of ".count($res2)." invalid reservations\n";
+
+            } else {
+                $log .= "--> No (invalid) reservations in Database\n";
+            }
+
 
         } else {
-            $log .= "--> Response from database is empty\n";
+            $log .= "--> Fetching of users failed\n";
         }
 
     } else {
