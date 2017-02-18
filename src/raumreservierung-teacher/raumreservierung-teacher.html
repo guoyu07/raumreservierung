@@ -308,9 +308,7 @@
                                 cn[i] = 'medium-tall';
                         }
                         this.$.mainTB.className = cn.join(' ');
-                        console.log(this.$.mainTB.className);
                     } else {
-
                         if(this.response.sessionError) {
                             this.fire('session-error');
                         }
@@ -319,8 +317,6 @@
                                 cn[i] = 'medium';
                         }
                         this.$.mainTB.className = cn.join(' ');
-                        console.log(this.$.mainTB.className);
-
                     }
                 }
             },
