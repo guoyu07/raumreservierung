@@ -359,7 +359,7 @@ HTML;
 
             try{
                 $this->pdo->beginTransaction();
-                $stat = $r->execute(array(":pw" => $pw, ":salt" => $salt, ":iterations" => $iterations, ":name" => $name));
+                $r->execute(array(":pw" => $pw, ":salt" => $salt, ":iterations" => $iterations, ":name" => $name));
                 $this->pdo->commit();
                 return array("error" => false);
             } catch( PDOException $e ) {
