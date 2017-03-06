@@ -217,7 +217,7 @@
         }
 
         public function getAllReservations() {
-            $sql = "SELECT * FROM reservations";
+            $sql = "SELECT * FROM reservations ORDER BY reservations.datum ASC";
             $r = $this->pdo->prepare($sql);
             $r->execute();
             $res = $r->fetchAll();
