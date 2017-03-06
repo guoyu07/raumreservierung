@@ -383,8 +383,6 @@
         },
         _redirect: function () {
             if(this.hash == "") {
-                this.$.loadIndicator.open();
-
                 if (this.response.data.type != "" && Number(this.response.data.type) >= 0 && Number(this.response.data.status) >= 0) {
                     switch (Number(this.response.data.status)) {
                         case 1:
