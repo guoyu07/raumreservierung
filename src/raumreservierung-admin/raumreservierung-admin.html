@@ -84,6 +84,9 @@
       .spinnerWrapper {
         text-align: center;
       }
+      paper-toolbar[hidden] {
+        display: none;
+      }
     </style>
 
     <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
@@ -148,7 +151,7 @@
 
         <paper-header-panel mode="standard">
 
-          <paper-toolbar class="medium-tall paper-header">
+          <paper-toolbar class="medium-tall paper-header" hidden$="[[frameLayout]]">
             <paper-icon-button icon="menu" paper-drawer-toggle title="Men&uuml; &ouml;ffnen" alt="Men&uuml; &ouml;ffnen"></paper-icon-button>
             <div class="title" style="padding-bottom: 1px;">Administration</div>
             <a href="https://gymnasium-klotzsche.de/" target="_self">
@@ -213,8 +216,14 @@
           },
           selectedPage: {
               type: Number,
-              value: 4,
+              value: "page5",
               observer: '_onPageChanged'
+          },
+          frameLayout: {
+              type: Boolean,
+              value: function() {
+                  return this.selectedTab == 1;
+              }
           }
       },
 
@@ -222,7 +231,8 @@
           'pageLoaded':'_onPageLoad', // Custom event fired by Elements when ready :)
           'logoutButton.tap': '_onLogoutRequest',
           'admin-page-session-error': '_onLogoutRequest',    // Fired by custom elements when session data is invalid
-          'admin-reset-pages': 'customResetPages'
+          'admin-reset-pages': 'customResetPages',
+          'close-frame': '_onLayoutClose'
       },
 
         ready: function() {
@@ -256,6 +266,8 @@
                     this._freeTabs();
                     break;
             }
+            /** Change layout to room reservation frame */
+            this.frameLayout = (this.selectedTab == 1);
         },
         _freeTabs: function() {
             this.$.loadIndicator.close();
@@ -337,6 +349,10 @@
         },
         customResetPages: function() {
             this.selectedPage = 4;
+        },
+        _onLayoutClose: function() {
+            this.frameLayout = false;
+            this.customResetPages();
         }
     });
   </script>

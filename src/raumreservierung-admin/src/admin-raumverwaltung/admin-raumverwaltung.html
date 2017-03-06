@@ -17,6 +17,12 @@
             #content {
                 @apply(--layout-fit);
             }
+            paper-toolbar > paper-icon-button:first-of-type {
+                margin-right: 16px;
+            }
+            paper-tabs {
+                --paper-tabs-selection-bar-color: white;
+            }
         </style>
 
         <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
@@ -38,9 +44,14 @@
         </paper-dialog>
 
         <div id="content">
-            <paper-header-panel>
+            <paper-header-panel mode="standard">
 
-                <paper-toolbar>
+                <paper-toolbar class="medium-tall paper-header">
+                    <paper-icon-button icon="arrow-back" onclick="this.fire('close-frame');" title="Zur&uuml;ck" alt="Zur&uuml;ck"></paper-icon-button>
+                    <div class="title" style="padding-bottom: 1px;">Raumreservierung</div>
+                    <a href="https://gymnasium-klotzsche.de/" target="_self">
+                        <div class="right"><img src="../../img/gykl-logo.gif" width="78px"></div>
+                    </a>
                     <paper-tabs id="tabs" scrollable no-slide fit-container selected="{{selected}}" class="bottom fit">
                         <paper-tab>Raum reservieren</paper-tab>
                         <paper-tab>Meine Reservierungen</paper-tab>
