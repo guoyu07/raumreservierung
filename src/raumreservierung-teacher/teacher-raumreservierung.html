@@ -320,6 +320,11 @@
                 var d = this.chosenDate.getDate(),
                     m = this.chosenDate.getMonth(),
                     y = this.chosenDate.getFullYear();
+                if(m < 12) {
+                    m = m + 1;
+                } else {
+                    m = 1;
+                }
                 if(String(d).length < 2) {
                     d = "0"+d;
                 }

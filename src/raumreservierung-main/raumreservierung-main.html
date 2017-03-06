@@ -33,21 +33,30 @@
         text-transform: none;
         color: #eeff41;
       }
+      @media (max-width: 639px) {
+        .toastButton {
+          text-align: center;
+          margin: 0 auto;
+        }
+      }
     </style>
 
     <iron-location hash="{{hash}}" id="locator"></iron-location>
 
     <!-- Toast if new content is available -->
     <paper-toast id="newContentToast"
-                 text="Es wurden neue Inhalte heruntergeladen!"
+                 text="Es ist eine neue Version dieser Seite verfügbar!"
                  duration="-1" always-on-top with-backdrop
                  no-cancel-on-outside-click
                  no-cancel-on-esc-key>
-      <br>
-      <div style="margin: 0 auto; text-align:center;">
-        <paper-button class="toastButton" id="toastReloadButton">Jetzt anzeigen</paper-button>
-        <paper-button class="toastButton" id="toastCloseButton">Sp&auml;ter</paper-button>
-      </div>
+      <paper-button class="toastButton" id="toastCloseButton">Sp&auml;ter</paper-button>
+      <paper-button class="toastButton" id="toastReloadButton">Aktualisieren</paper-button>
+    </paper-toast>
+
+    <paper-toast id="connectionStatus" duration="3000"
+                 always-on-top no-cancel-on-outside-click
+                 no-cancel-on-esc-key>
+      <paper-button class="toastButton" on-click="closeStatusToast">Schlie&szlig;en</paper-button>
     </paper-toast>
 
     <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
@@ -158,7 +167,8 @@
                 value: false,
                 observer: '_onNewContentAvailable'
             },
-            query: String
+            query: String,
+            online: Boolean
         },
 
         listeners: {
@@ -183,6 +193,20 @@
 
             this.$.userDataRequest.body = "r=getSessionData";
             this.$.userDataRequest.generateRequest();
+
+            window.addEventListener("offline", function() {
+                this._onOffline();
+            }.bind(this));
+            window.addEventListener("online", function() {
+                this._onOnline();
+            }.bind(this));
+
+            /** Check if internet connection is available on page load */
+            if('onLine' in navigator) {
+                if(!navigator.onLine) {
+                    this.$.connectionStatus.show("Achtung - Sie sind im Moment nicht mit dem Internet verbunden");
+                }
+            }
 
         },
         _onSelectedChanged: function () {
@@ -383,8 +407,6 @@
         },
         _redirect: function () {
             if(this.hash == "") {
-                this.$.loadIndicator.open();
-
                 if (this.response.data.type != "" && Number(this.response.data.type) >= 0 && Number(this.response.data.status) >= 0) {
                     switch (Number(this.response.data.status)) {
                         case 1:
@@ -602,6 +624,15 @@
             this.$.loadIndicator.close();
             this.$.errorContent.innerHTML = '<p style="color: red;">Die Account-Seite konnte nicht geladen werden!</p>';
             this.$.errorDialog.center(), this.$.errorDialog.open();
+        },
+        _onOffline: function() {
+            this.$.connectionStatus.show("Achtung - Sie sind nicht mehr mit dem Internet verbunden");
+        },
+        _onOnline: function() {
+            this.$.connectionStatus.show("Internetverbindung wiederhergestellt");
+        },
+        closeStatusToast: function() {
+            this.$.connectionStatus.close();
         }
     });
   </script>

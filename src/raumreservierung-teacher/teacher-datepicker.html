@@ -19,7 +19,7 @@
         </style>
 
         <div id="pdpw">
-            <vaadin-date-picker id="datepicker" label="Datum ausw&auml;hlen" initial-position="{{today}}" value="{{selectedValue}}" min="{{minDate}}" max="{{maxDate}}"></vaadin-date-picker>
+            <vaadin-date-picker id="datepicker" label="Datum ausw&auml;hlen" initial-position="{{tomorrow}}" value="{{selectedValue}}" min="{{minDate}}" max="{{maxDate}}"></vaadin-date-picker>
         </div>
 
     </template>
@@ -43,10 +43,23 @@
                         return d.getFullYear()+"-"+this.checkZero(month)+"-"+this.checkZero(d.getDate());
                     }
                 },
+                tomorrow: {
+                    type: Date,
+                    value: function() {
+                        var d = new Date(new Date(new Date().getTime()+1000*3600*24).setHours(0, 0, 0, 0));
+                        var month = d.getMonth();
+                        if(month < 12) {
+                            month = month+1;
+                        } else {
+                            month = 1;
+                        }
+                        return d.getFullYear()+"-"+this.checkZero(month)+"-"+this.checkZero(d.getDate());
+                    }
+                },
                 minDate: {
                     type: Date,
                     value: function () {
-                        var d = new Date(new Date().setHours(0, 0, 0, 0));
+                        var d = new Date(new Date(new Date().getTime()+1000*3600*24).setHours(0, 0, 0, 0));
                         var month = d.getMonth();
                         if(month < 12) {
                             month = month+1;
@@ -220,22 +233,14 @@
             },
 
             _validateDate: function () {
-                /**
-                 * Function to validate the selected Date,
-                 * Because paper-datatable is currently broken when using min-date & max-date and they both
-                 * are in the same month - see comment to the specific GitHub-Issue:
-                 *
-                 * https://github.com/bendavis78/paper-date-picker/issues/170#issuecomment-277317879
-                 **/
-
                 if(this.selectedValue != "" && typeof(this.selectedValue) == "string") {
                     var dates = this.selectedValue.split('-');
                     var y=dates[0],m=dates[1],d=dates[2];
                     if(d && m && y) {
                         var selectedDate = new Date(y, m, d, 0);
 
-                        if ( selectedDate < this.today || selectedDate > this.maxDate ) {
-                            this.$.datepicker.value = this.today;
+                        if ( selectedDate < this.tomorrow || selectedDate > this.maxDate ) {
+                            this.$.datepicker.value = this.tomorrow;
                         }
 
                         this.selectedDate = selectedDate;
@@ -245,7 +250,7 @@
             },
             _onReload: function() {
                 if(this.reload == true) {
-                    this.$.datepicker.value = this.today;
+                    this.$.datepicker.value = this.tomorrow;
                     this.reload = false;
                 }
             }

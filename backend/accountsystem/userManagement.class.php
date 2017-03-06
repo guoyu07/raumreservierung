@@ -463,6 +463,22 @@ HTML;
             }
         }
 
+        public function getTeacherByShortName($kurz) {
+            $sql = "SELECT name, lehrer_accname, lehrer_vorname, lehrer_nachname, lehrer_kurz
+                    FROM accounts_users, plan_lehrer
+                    WHERE plan_lehrer.lehrer_accname=accounts_users.name 
+                    AND LOWER(plan_lehrer.lehrer_kurz) = :kurz";
+            $r = $this->pdo->prepare($sql);
+            $r->execute(array(":kurz" => $kurz));
+            $res = $r->fetchAll();
+            if(!empty($res)) {
+                $u = $res[0];
+                return array("prename" => $u['lehrer_vorname'], "surname" => $u['lehrer_nachname'], "lehrer_kurz" => $u['lehrer_kurz'], "lehrer_accname" => $u['lehrer_accname']);
+            } else {
+                return false;
+            }
+        }
+
         public function sendPasswordResetMail($name, $email) {
 
             if($this->isEmailInDB($email)) {
