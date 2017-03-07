@@ -36,7 +36,11 @@
     ".htpasswd",
     "manifest.json",
     "LICENSE",
-    "sw-update.js"
+    "sw-update.js",
+    "favicon.ico",
+    "favicon.png",
+    "mstile-144.png",
+    "apple-touch-icon.png"
   ],
   "includeDependencies": [
     "bower_components/webcomponentsjs/webcomponents-lite.min.js",
