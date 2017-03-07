@@ -1,12 +1,21 @@
+# < Changelog >
+
 ## Latest Changes (07.03.2017)
+
+#### v2.5.0-public --> v2.5.3-public
+Improved Caching and SW-Functionality:
+- Added request headers to avoid the service-worker(.js) to be cached
+- Improved sw-update.js to only reload if network is available
+- Updated "BUILD.md" for better understanding of my choices (to add the
+function to force the file-refresh e.g.)
 
 #### v2.4.0-public --> v2.5.0-public
 Improved Service Workers:
 - Added precache-config for service worker builds
 - Added sw-update.js which will have to be called after the caches are
-returned in order to update the service worker accordingly to avoid
-it being cached itself (in disk cache and therefore not updating even
-if new version is available)
+returned in order to refresh the files after being loaded from the cache
+(see "BUILD.md" for further details on building
+and service-worker - options)
 - Added build instructions for service workers
 
 #### v2.3.2-public --> v2.4.0-public
