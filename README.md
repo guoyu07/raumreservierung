@@ -1,25 +1,11 @@
-# Raumreservierung v2.4.0-public
+# Raumreservierung v2.5.0-public
 <b>After implementing the teacher-view to the project, it's now time to test all of its functionality.
 <br>
 Everything done from now will be some fixes and improvements, no big changes are planned for the project from now on.</b>
 
 ## Latest Updates
 
-#### v2.1 --> v2.2
-- Fixing visual problems (Dynamic Toolbar in admin view to prevent toolbars stacking on each other)
-- Fixed a loading dialog to open even when not needed and therefore not being closed
-
-#### v2.2 --> v2.3.1-public
-- Added /backend/public/
-- Added "reservation-api.php" to /backend/public/
-- Implemented an API which returns the reservations by teacher name (all possible variations) and just all reservations (independant from teacher names)
-- Added a max-entry-value $max so you can limit the returned datarows
-
-#### v2.3.1-public --> v2.3.2-public
-- Added toast to app shell to indicate changes in connectivity (if the internet connection aborts)
-
-#### v2.3.2-public --> v2.4.0-public
-- Added Polymer CLI's Service Worker to Project (SWImport to /index.html)
+--> See CHANGELOG.md
 
 ### Usage of the public reservation-api:
 **Information:**

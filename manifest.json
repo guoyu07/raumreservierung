@@ -1,7 +1,7 @@
 {
   "name": "Raumreservierung",
   "short_name": "Raumreservierung",
-  "version": "2.4.0-public",
+  "version": "2.5.0-public",
   "description": "Raumreservierung des Gymnasiums Dresden-Klotzsche",
   "start_url": ".",
   "background_color": "#F5F5F5",
