@@ -6,6 +6,7 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
 <dom-module id="raumreservierung-main">
   <template>
@@ -207,6 +208,8 @@
                     this.$.connectionStatus.show("Achtung - Sie sind im Moment nicht mit dem Internet verbunden");
                 }
             }
+
+            this.validateBrowser();
 
         },
         _onSelectedChanged: function () {
@@ -633,6 +636,54 @@
         },
         closeStatusToast: function() {
             this.$.connectionStatus.close();
+        },
+        validateBrowser: function() {
+            /** Detect Browsers, otherwise show an error popup because main functions won't work */
+            var isIE = /*@cc_on!@*/false || !!document.documentMode;
+            var isSafari = /constructor/i.test(window.HTMLElement) || (function (p) { return p.toString() === "[object SafariRemoteNotification]"; })(!window['safari'] || safari.pushNotification);
+
+            // Reversing the boolean for local testing
+            if(isIE || isSafari) {
+                /** Show Information Dialog */
+                var d = document.createElement("paper-dialog");
+                d.className += "browserDetection";
+                d.noCancelOnOutsideClick = true;
+                d.noCancelOnEscKey = true;
+                d.withBackdrop = true;
+                d.opened = true;
+                var disabled = true;
+                var content = 5;
+                var onclick = function(){this.style.display="block";}.bind(this);
+                /** Link collection */
+                var links = '<a href="https://chrome.google.com/" title="Google Chrome" style="text-decoration: none; color: #1976D2; border-bottom: 1px dotted #1976D2;" target="_blank">Google Chrome</a>, ' +
+                            '<a href="https://www.opera.com/de" title="Opera" style="text-decoration: none; color: #1976D2; border-bottom: 1px dotted #1976D2;" target="_blank">Opera</a>, oder ' +
+                            '<a href="https://www.mozilla.org/de/firefox/new/" title="Mozilla Firefox" style="text-decoration: none; color: #1976D2; border-bottom: 1px dotted #1976D2;" target="_blank">Mozilla Firefox</a>';
+                d.innerHTML = '<h2>Warnung!</h2><p>Der von Ihnen genutzte Browser ist m&ouml;glicherweise nicht ' +
+                              'mit dieser Website kompatibel. Einige Optionen und Elemente funktionieren daher m&ouml;glicherweise ' +
+                              'nicht oder fehlerhaft.</p><p>Um die Raumreservierung fehlerfrei und in vollem Umfang nutzen zu k&ouml;nnen, ' +
+                              'nutzen Sie bitte einen der g&auml;ngigen und modernen Browser, welche WebComponents unterst&uuml;tzen, wie zum Beispiel '+links+'.</p>' +
+                              '<div class="buttons"><paper-button id="bdcb" disabled="'+disabled+'" dialog-confirm onclick="document.querySelector(\'raumreservierung-main\').style.display=\'block\';">'+content+'</paper-button></div>';
+
+                /** Append the Element on top of the DOM */
+                this.style.display = "none";
+                document.body.appendChild(d);
+
+                var button = document.getElementById('bdcb');
+
+                var interval = window.setInterval(function() {
+                    if(content > 1) {
+                        content = content - 1;
+                        button.innerHTML = content;
+                        button.disabled = true;
+                    } else {
+                        button.innerHTML = "Trotzdem fortfahren";
+                        button.disabled = false;
+                        button.style.color = "red";
+                        window.clearInterval(interval);
+                    }
+                }, 1000);
+
+            }
         }
     });
   </script>
