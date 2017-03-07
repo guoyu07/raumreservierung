@@ -1,11 +1,12 @@
-# Raumreservierung v2.5.0-public
+# Raumreservierung v2.5.3-public
 <b>After implementing the teacher-view to the project, it's now time to test all of its functionality.
 <br>
 Everything done from now will be some fixes and improvements, no big changes are planned for the project from now on.</b>
 
 ## Latest Updates
 
---> See CHANGELOG.md
+--> See CHANGELOG.md<br>
+--> Last recorded Update: 07.03.2017 (according to CHANGEME.md)
 
 ### Usage of the public reservation-api:
 **Information:**
