@@ -35,7 +35,8 @@
     ".htaccess",
     ".htpasswd",
     "manifest.json",
-    "LICENSE"
+    "LICENSE",
+    "sw-update.js"
   ],
   "includeDependencies": [
     "bower_components/webcomponentsjs/webcomponents-lite.min.js",
