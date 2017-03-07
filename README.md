@@ -5,8 +5,8 @@ Everything done from now will be some fixes and improvements, no big changes are
 
 ## Latest Updates
 
---> See CHANGELOG.md<br>
---> Last recorded Update: 07.03.2017 (according to CHANGEME.md)
+--> See [CHANGELOG.md](https://github.com/moritzmenzel/raumreservierung/blob/master/CHANGELOG.md)<br>
+--> Last recorded Update: 07.03.2017 (according to [CHANGELOG.md](https://github.com/moritzmenzel/raumreservierung/blob/master/CHANGELOG.md))
 
 ### Usage of the public reservation-api:
 **Information:**
