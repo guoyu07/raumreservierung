@@ -30,7 +30,7 @@
                     if(isset($_POST['oldname']) && isset($_POST['newname']) && isset($_POST['newtype']) && isset($_POST['newstatus'])){
 
                         if($_SESSION['name'] == $_POST['oldname']){
-                            echo json_encode(array("success" => false, "message" => "Sie können sich nicht selbst bearbeiten!"));
+                            echo json_encode(array("success" => false, "message" => "Sie können sich nichtht selbst bearbeiten!"));
                         } else {
                             require_once('../accountsystem/userManagement.class.php');
                             require_once('../db/conf/dbconf.php');

@@ -21,7 +21,7 @@
                 switch($_POST['request']) {
                     case "validateQuery":
                         // Data usually doesnt contain any special characters, checking this to prevent injections & stuff
-                        $name = htmlentities($_POST['name'], ENT_QUOTES);
+                        $name   = preg_replace('/[^\w+|Ö|ö|Ä|ä|Ü|ü|ß]|_|[S+]/', '', $_POST['name']);
                         $code = htmlentities($_POST['code'], ENT_QUOTES);
 
                         if(strlen($name) > 4 && strlen($code) == 64) {
@@ -57,7 +57,7 @@
 
                         if(isset($_POST['password'])) {
                             // Data usually doesnt contain any special characters, checking this to prevent injections & stuff
-                            $name = htmlentities($_POST['name'], ENT_QUOTES);
+                            $name   = preg_replace('/[^\w+|Ö|ö|Ä|ä|Ü|ü|ß]|_|[S+]/', '', $_POST['name']);
                             $code = htmlentities($_POST['code'], ENT_QUOTES);
                             $pw = preg_replace("/::AMP::/", "&", $_POST['password']);
 

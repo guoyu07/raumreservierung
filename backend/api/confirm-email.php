@@ -9,7 +9,7 @@
     if(isset($_POST['name']) && isset($_POST['code'])) {
 
         // Safe Decode Name & Code
-        $name = preg_replace('/[^A-Za-z0-9öüäÖÜÄß]/', '', $_POST['name']);
+        $name   = preg_replace('/[^\w+|Ö|ö|Ä|ä|Ü|ü|ß]|_|[S+]/', '', $_POST['name']);
         $code = preg_replace('/[^a-f0-9]/', '', $_POST['code']);
 
         if(strlen($name) < 4) {
