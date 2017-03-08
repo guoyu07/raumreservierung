@@ -60,6 +60,11 @@
       <paper-button class="toastButton" on-click="closeStatusToast">Schlie&szlig;en</paper-button>
     </paper-toast>
 
+    <paper-toast id="successToast" duration="2500"
+                 always-on-top no-cancel-on-outside-click
+                 no-cancel-on-esc-key>
+    </paper-toast>
+
     <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
       <h2>Inhalte werden geladen...</h2>
       <br>
@@ -186,7 +191,8 @@
             'toastReloadButton.tap': '_reloadPage',
             'toastCloseButton.tap': 'closeNewContentToast',
             'activate-account-session-error': '_onSessionError',
-            'session-error': '_onSessionError'
+            'session-error': '_onSessionError',
+            'showSuccess': '_onActivateSuccess'
         },
 
         ready: function () {
@@ -703,6 +709,10 @@
 
                 }
             }
+        },
+        _onActivateSuccess: function(e) {
+            var text = e.detail;
+            this.$.successToast.show({text: text, duration: 2500});
         }
     });
   </script>
