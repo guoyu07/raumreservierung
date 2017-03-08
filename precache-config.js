@@ -18,6 +18,6 @@ module.exports = {
 
         /** NPM Node Modules */
 
-        "node_modules/sw-offline-google-analytics/build/offline-google-analytics-import.js"
+        "node_modules/sw-offline-google-analytics/build/*"
     ]
 };

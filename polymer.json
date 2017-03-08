@@ -42,7 +42,7 @@
     "mstile-144.png",
     "apple-touch-icon.png",
 
-    "node_modules/sw-offline-google-analytics/build/offline-google-analytics-import.js"
+    "node_modules/sw-offline-google-analytics/build/*"
   ],
   "includeDependencies": [
     "bower_components/webcomponentsjs/webcomponents-lite.min.js",
