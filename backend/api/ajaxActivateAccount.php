@@ -13,7 +13,7 @@
     if(isset($_POST['name']) && isset($_POST['pw']) && isset($_POST['email'])) {
 
         if(isset($_SESSION) && $_SESSION['loggedin'] == true && $_SESSION['accstatus'] == 1) {
-            $name   = htmlentities($_POST['name'], ENT_QUOTES);
+            $name   = preg_replace('/[^\w+|Ö|ö|Ä|ä|Ü|ü|ß]|_|[S+]/', '', $_POST['name']);
             $pw     = htmlentities($_POST['pw'], ENT_QUOTES);
             $email  = htmlentities($_POST['email'], ENT_QUOTES);
 
