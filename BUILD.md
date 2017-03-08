@@ -54,4 +54,4 @@ the line - which should be self-explaining though :D)*
 ## Additional Information
 
 Last tested version containing these functions:<br>
-v2.5.3-public
+v3.0.0-public
