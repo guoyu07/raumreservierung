@@ -2,7 +2,27 @@
 
 ## Latest Changes (08.03.2017)
 
-#### v2.5.5-public --> v2.6.0-public
+#### v2.6.3-public --> v3.0.0-public
+Offline Improvements
+- Added checks for validating the connection status
+- Added custom error messages to show the user that a request failed 
+because of a missing internet connection
+
+#### v2.6.2-public --> v2.6.3-public
+Mobile optimizations
+- Added media queries to privacy-dialog and imprint to "un-justify" the 
+text on mobile devices
+
+#### v2.6.0-public --> v2.6.2-public
+Improvements in user friendliness
+- Increased some important XHR timeouts (e.g. login: 5000ms to 15000ms)
+
+**Bug Fixing**
+- Added a "reload data" - button for the "roomlist" - element
+- "roomlist" - element's own "reload" - property now generates a new request
+as intended
+
+#### v2.5.4-public --> v2.6.0-public
 Service Worker additions
 - Initialized NPM for this directory
 - Added sw-google-offline-analytics (node_modules)
@@ -11,8 +31,7 @@ Service Worker additions
 #### v2.5.4-public --> v2.5.5-public
 Service Worker additions
 - Added images and image directories to service-worker caching 
-sources (for the images of this page to be cached aswell in order to
-reduce network usage)
+sources (for the images of this page to be cached aswell in order to)
 
 #### v2.5.3-public --> v2.5.4-public
 Fixed an encoding bug
