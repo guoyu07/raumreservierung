@@ -57,7 +57,7 @@ Custom property | Description | Default
 
       :host(:not([nodrop])) {
         border: 1px dashed;
-        border-color: var(--divider-color,  #666);
+        border-color: var(--divider-color, #666);
         border-radius: 3px;
         overflow: hidden;
         padding: 16px;
@@ -77,6 +77,7 @@ Custom property | Description | Default
         display: none;
         z-index: 10;
       }
+
       :host([dragover])::before {
         display: block;
       }
@@ -130,7 +131,7 @@ Custom property | Description | Default
         @apply(--paper-font-button);
         padding: .43em .57em;
         background: var(--primary-color, #00B4F0);
-        color: var(--primary-font-color, #FFFFFF);
+        color: var(--primary-font-color, #FFF);
         @apply(--vaadin-upload-button-add);
       }
 
@@ -526,14 +527,14 @@ Custom property | Description | Default
 
     _onDragover: function(event) {
       event.preventDefault();
-      if (!this._dragover) {
+      if (!this.nodrop && !this._dragover) {
         this._dragoverValid = !this._maxFilesAdded();
-      }
-      if (this._dragoverValid && !this._dragover && !this.nodrop) {
-        this._dragRippleAction('down', event);
+        if (this._dragoverValid) {
+          this._dragRippleAction('down', event);
+        }
+        this._dragover = true;
       }
       event.dataTransfer.dropEffect = !this._dragoverValid || this.nodrop ? 'none' : 'copy';
-      this._dragover = true;
     },
 
     _onDragleave: function(event) {
@@ -756,10 +757,18 @@ Custom property | Description | Default
     },
 
     _onAddFilesClick: function() {
-      if (document.createEvent) {
-        this.$.fileInput.value = '';
-        this.$.fileInput.click();
+      if (Polymer.Gestures.resetMouseCanceller) {
+        /*
+          With Polymer v1.7.1, the ghost-click prevention cancels the synthetic
+          file input click in iOS Safari. This prevents the cancelling.
+
+          See also: https://github.com/Polymer/polymer/issues/4242
+        */
+        Polymer.Gestures.resetMouseCanceller();
       }
+
+      this.$.fileInput.value = '';
+      this.$.fileInput.click();
     },
 
     _onFileInputChange: function(event) {
