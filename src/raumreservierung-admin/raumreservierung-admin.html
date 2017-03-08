@@ -101,7 +101,6 @@
       <div id="errorContent">
 
       </div>
-      <p style="text-align: center"><i>Bitte melden Sie diesen Fehler einem Administrator!</i></p>
       <div class="buttons">
         <paper-button dialog-confirm autofocus style="color: #F44336;">OK</paper-button>
       </div>
@@ -249,25 +248,40 @@
             }
 
             this.selectedTab = this.selectedPage;
-            switch (this.selectedTab) {
-                case 0:
-                    this.importHref('src/raumreservierung-admin/src/admin-nutzerverwaltung/admin-nutzerverwaltung.html', this._onLoadStart, this._onPageLoadError, true);
-                    break;
-                case 1:
-                    this.importHref('src/raumreservierung-admin/src/admin-raumverwaltung/admin-raumverwaltung.html', this._onLoadStart, this._onPageLoadError, true);
-                    break;
-                case 2:
-                    this.importHref('src/raumreservierung-admin/src/admin-error-reports/admin-error-reports.html', this._onLoadStart, this._onPageLoadError, true);
-                    break;
-                case 3:
-                    this.importHref('src/raumreservierung-admin/src/admin-cronjobs/admin-cronjobs.html', this._onLoadStart, this._onPageLoadError, true);
-                    break;
-                case 4:
+
+            var _switchPage = function() {
+                switch (this.selectedTab) {
+                    case 0:
+                        this.importHref('src/raumreservierung-admin/src/admin-nutzerverwaltung/admin-nutzerverwaltung.html', this._onLoadStart, this._onPageLoadError, true);
+                        break;
+                    case 1:
+                        this.importHref('src/raumreservierung-admin/src/admin-raumverwaltung/admin-raumverwaltung.html', this._onLoadStart, this._onPageLoadError, true);
+                        break;
+                    case 2:
+                        this.importHref('src/raumreservierung-admin/src/admin-error-reports/admin-error-reports.html', this._onLoadStart, this._onPageLoadError, true);
+                        break;
+                    case 3:
+                        this.importHref('src/raumreservierung-admin/src/admin-cronjobs/admin-cronjobs.html', this._onLoadStart, this._onPageLoadError, true);
+                        break;
+                    case 4:
+                        this._freeTabs();
+                        break;
+                }
+                this.frameLayout = (this.selectedTab == 1);
+            }.bind(this);
+
+            if('onLine' in navigator) {
+                if(navigator.onLine) {
+                    _switchPage();
+                } else {
                     this._freeTabs();
-                    break;
+                    this.$.loadIndicator.close();
+                    this.$.errorContent.innerHTML = '<p style="color: red;">Es konnte keine Verbindung zum Server hergestellt werden.<br>Bitte überprüfen Sie Ihre Internetverbindung!</p>';
+                    this.$.errorDialog.open();
+                }
+            } else {
+                _switchPage();
             }
-            /** Change layout to room reservation frame */
-            this.frameLayout = (this.selectedTab == 1);
         },
         _freeTabs: function() {
             this.$.loadIndicator.close();

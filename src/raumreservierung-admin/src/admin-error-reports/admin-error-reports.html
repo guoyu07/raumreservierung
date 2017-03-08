@@ -189,12 +189,23 @@ Page for managing Error-Reports
       </template>
       <template is="dom-if" if="{{!data.success}}">
         <paper-card heading="Es ist ein Fehler aufgetreten!" class="contentCard" style="padding: 10px;">
-          <p>
-            Der Server hat einen Fehler gemeldet:<br>
-            <span style="color: red;">
+          <template is="dom-if" if="[[data.message]]">
+            <p>
+              Der Server hat einen Fehler gemeldet:<br>
+              <span style="color: red;">
               [[data.message]]
             </span>
-          </p>
+            </p>
+          </template>
+          <template is="dom-if" if="[[!data.message]]">
+            <p>
+              Es ist ein schwerwiegender unbekannter Fehler aufgetreten,<br>
+              bitte &uuml;berpr&uuml;fen Sie ggf. Ihre Internetverbindung!<br>
+            </p>
+            <p style="font-size: 14px;">
+              <i><b>Warnung: </b>[[errorMessage]]</i>
+            </p>
+          </template>
         </paper-card>
       </template>
 
@@ -227,7 +238,8 @@ Page for managing Error-Reports
             type: Boolean,
             value: false,
             observer: '_onExtRefresh'
-        }
+        },
+          errorMessage: String
       },
 
         ready: function() {
@@ -238,6 +250,10 @@ Page for managing Error-Reports
           // this._refreshErrorData();
         },
         _onRequest: function() {
+
+            if('onLine' in navigator && !navigator.onLine) {
+                this.errorMessage = "Keine Internetverbindung!";
+            }
 
           this.$.loadIndicator.center();
           this.$.loadIndicator.open();
@@ -259,7 +275,7 @@ Page for managing Error-Reports
         _onAjaxError: function(e) {
 
           this.$.loadIndicator.close();
-          this.$.errorbox.innerHTML = "Es ist ein Skriptfehler aufgetreten:<br>"+e.detail;
+          console.log(e.detail.error);
 
         },
         _toggleCollapse: function(e) {

@@ -184,10 +184,21 @@
         <template is="dom-if" if="{{!data.success}}">
             <div class="cardCenter">
                 <paper-card heading="Es ist ein Fehler aufgetreten!" class="contentCard" style="padding: 10px;">
-                    <p>
-                        Der Server hat einen Fehler gemeldet:<br>
-                        <span style="color: red;">[[data.message]]</span>
-                    </p>
+                    <template is="dom-if" if="[[data.message]]">
+                        <p>
+                            Der Server hat einen Fehler gemeldet:<br>
+                            <span style="color: red;">[[data.message]]</span>
+                        </p>
+                    </template>
+                    <template is="dom-if" if="[[!data.message]]">
+                        <p>
+                            Es ist schwerwiegender unbekannter Fehler aufgetreten.<br>
+                            Bitte &uuml;berpr&uuml;fen Sie ggf. Ihre Internetverbindung!
+                        </p>
+                        <p style="font-size: 14px; text-align: center;">
+                            <i><b>Warnung: </b>[[errorMessage]]</i>
+                        </p>
+                    </template>
                 </paper-card>
             </div>
         </template>
@@ -201,7 +212,8 @@
                 reload: function() {
                     this.reloadData();
                 },
-                data: Object
+                data: Object,
+                errorMessage: String
             },
 
             listeners: {
@@ -218,6 +230,9 @@
             },
             _onRequest: function() {
 
+                if('onLine' in navigator && !navigator.onLine) {
+                    this.errorMessage = "Keine Internetverbindung!";
+                }
                 this.$.loadIndicator.center();
                 this.$.loadIndicator.open();
                 this.$.errorbox.innerHTML = "";
@@ -246,7 +261,6 @@
             _onAjaxError: function(e) {
 
                 this.$.loadIndicator.close();
-                this.$.errorbox.innerHTML = 'Es ist ein Skriptfehler aufgetreten:<br><p style="color: red;">'+e.detail+'</p>';
 
             },
             reloadData: function() {
