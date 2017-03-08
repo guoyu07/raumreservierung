@@ -277,6 +277,7 @@
             }
         },
         _onLogoutError: function () {
+            this.$.loadIndicator.close();
             this.$.errorContent.innerHTML = '<p style="color: red;">Es ist ein Fehler beim Ausloggen aufgetreten! Bitte versuchen Sie es erneut oder Kontaktieren Sie einen Administrator!</p>';
             this.$.errorDialog.center();
             this.$.errorDialog.open();
