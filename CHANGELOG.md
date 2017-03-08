@@ -2,6 +2,15 @@
 
 ## Latest Changes (08.03.2017)
 
+#### v3.0.0-public --> v3.1.0-public
+Bug fixes
+
+**(YES, THERE WERE)**
+- Replaced old htmlentities() with preg_replace regex, which I wanted to
+do early but forgot to do it
+- Added fallback toast to open in case the hash routing doenst work
+when confirming the account / email address
+
 #### v2.6.3-public --> v3.0.0-public
 Offline Improvements
 - Added checks for validating the connection status
