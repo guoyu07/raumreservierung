@@ -138,6 +138,10 @@
             _onResponse: function() {
                 this.$.loadIndicator.close();
                 this.response = this.$.confirmRequest.lastResponse;
+
+                if(this.response)
+                    if(this.response.success)
+                        this.fire('showError', "Ihr Account wurde erfolgreicht aktiviert!");
             },
             _onError: function() {
                 this.$.loadIndicator.close();
