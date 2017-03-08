@@ -132,7 +132,7 @@
             $subject    = "Gykl Raumreservierung - Anmeldung";
 
             $headers    = "MIME-Version: 1.0" . "\r\n";
-            $headers   .= "Content-type: text/html; charset=iso-8859-1" . "\r\n";
+            $headers   .= "Content-type: text/html; charset=UTF-8" . "\r\n";
             $headers   .= "To: $prename $surname <$email>" . "\r\n";
             $headers   .= "From: activation@lima.zone" . "\r\n";
             $headers   .= "Reply-To: activation@lima.zone" . "\r\n";
@@ -627,7 +627,7 @@ HTML;
             $subject    = "Gykl Raumreservierung - Änderung Ihres Passwortes";
 
             $headers    = "MIME-Version: 1.0" . "\r\n";
-            $headers   .= "Content-type: text/html; charset=iso-8859-1" . "\r\n";
+            $headers   .= "Content-type: text/html; charset=UTF-8" . "\r\n";
             $headers   .= "To: $prename $surname <$email>" . "\r\n";
             $headers   .= "From: activation@lima.zone" . "\r\n";
             $headers   .= "Reply-To: activation@lima.zone" . "\r\n";
