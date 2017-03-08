@@ -2,6 +2,10 @@
 
 ## Latest Changes (07.03.2017)
 
+#### v2.5.3-public --> v2.5.4-public
+Fixed an encoding bug
+- htmlentities didnt allow vowels to be encoded correctly; replaced it with preg_replace regex
+
 #### v2.5.0-public --> v2.5.3-public
 Improved Caching and SW-Functionality:
 - Added request headers to avoid the service-worker(.js) to be cached
