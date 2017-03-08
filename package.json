@@ -1,0 +1,40 @@
+{
+  "name": "raumreservierung",
+  "version": "2.5.4-public",
+  "description": "Project 'raumreservierung' for the Gymnasium Dresden-Klotzsche",
+  "main": "index.html",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "sw-offline-google-analytics": "^0.0.13"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moritzmenzel/raumreservierung.git"
+  },
+  "keywords": [
+    "gymnasium-dresden-klotzsche",
+    "school",
+    "school-project",
+    "education",
+    "school-systems",
+    "backend",
+    "room-booking",
+    "account-management",
+    "accounts",
+    "login-system",
+    "email-confirmation",
+    "polymer"
+  ],
+  "author": "Moritz Menzel",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/moritzmenzel/raumreservierung/issues"
+  },
+  "homepage": "https://github.com/moritzmenzel/raumreservierung#readme"
+}
