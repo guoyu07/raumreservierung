@@ -1,6 +1,18 @@
 # < Changelog >
 
-## Latest Changes (07.03.2017)
+## Latest Changes (08.03.2017)
+
+#### v2.5.5-public --> v2.6.0-public
+Service Worker additions
+- Initialized NPM for this directory
+- Added sw-google-offline-analytics (node_modules)
+- Implemented sw-google-offline-analytics to service worker
+
+#### v2.5.4-public --> v2.5.5-public
+Service Worker additions
+- Added images and image directories to service-worker caching 
+sources (for the images of this page to be cached aswell in order to
+reduce network usage)
 
 #### v2.5.3-public --> v2.5.4-public
 Fixed an encoding bug
