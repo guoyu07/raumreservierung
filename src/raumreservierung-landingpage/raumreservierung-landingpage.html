@@ -34,12 +34,19 @@
                 text-decoration: none;
             }
             #contentCard {
-                margin: 20px auto;
+                margin: 16px auto;
                 @apply(--layout-self-center);
-                width: 95%;
+                width: calc(100% - 32px);
+                max-width: 400px;
                 --paper-card-header-text: {
                     text-align: center;
                 };
+            }
+            @media (max-width: 599px) {
+                #contentCard {
+                    width: 100%;
+                    background-color: var(--paper-grey-100);
+                }
             }
             #content {
                 @apply(--layout-vertical);
@@ -147,7 +154,7 @@
 
                 <div id="content">
 
-                    <paper-card id="contentCard" heading="Anmeldung">
+                    <paper-card id="contentCard" heading="Anmeldung" elevation="[[loginElevation]]" animated-shadow>
                         <div class="card-content">
                             <div class="spinnerWrapper"><paper-spinner id="pageLoadIndicator"></paper-spinner></div>
                         </div>
@@ -172,6 +179,10 @@
                 redirectStamped: {
                     type: Boolean,
                     value: false
+                },
+                loginElevation: {
+                    type: Number,
+                    value: 1
                 }
             },
 
@@ -181,6 +192,8 @@
             ready: function() {
                 this.fire('pageLoad', this.nodeName);
                 this._importLoginPage();
+                this.initElevation();
+                this.listen(window, 'resize', 'initElevation');
             },
             _importLoginPage: function() {
                 this.$.pageLoadIndicator.active = true;
@@ -230,6 +243,12 @@
                 this.$.loadIndicator.close();
                 this.$.errorContent.innerHTML = '<p style="color: red;">Die Datenschutzbestimmungen konnten nicht geladen werden. Bitte versuchen Sie es erneut!</p>';
                 this.$.errorDialog.center(), this.$.errorDialog.open();
+            },
+            initElevation: function() {
+                /** Do not show shadow when the card is in full-screen-layout */
+                this.debounce('resizeDebouncer', function() {
+                    this.loginElevation = window.innerWidth < 599 ? 0 : 1;
+                }, 50);
             }
         });
     </script>
