@@ -9,7 +9,6 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../raumreservierung-privacy/raumreservierung-privacy.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
 <dom-module id="raumreservierung-activate-account">
@@ -193,6 +192,10 @@
           stage: {
               type: Number,
               value: 0
+          },
+          privacyLoaded: {
+              type: Boolean,
+              value: false
           }
       },
 
@@ -249,8 +252,14 @@
           }
       },
       togglePrivacy: function() {
-          this.$.privacy.open();
+          if(!this.privacyLoaded) {
+              this.importHref('../raumreservierung-privacy/raumreservierung-privacy.html', this._onPrivacyLoad, null, true);
+              this.privacyLoaded = true;
+          }
       },
+        _onPrivacyLoad: function() {
+            this.$.privacy.open();
+        },
       nextStage: function() {
           this.stage++;
       },
