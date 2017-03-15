@@ -4,7 +4,8 @@
 
 module.exports = {
     importScripts: [
-        "js/sw-update.js",
+        /** Excluded, cause the function is not needed atm */
+        // "js/sw-update.js",
         "js/offline-analytics.js"
     ],
     staticFileGlobs: [
