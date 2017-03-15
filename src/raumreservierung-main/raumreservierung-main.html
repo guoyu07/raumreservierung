@@ -246,8 +246,11 @@
 
             // Debounce to avoid invalid / empty results || requests
            this.debounce("udr", function() {
-               this.$.userDataRequest.body = "r=getSessionData";
-               this.$.userDataRequest.generateRequest();
+               var v = this.viewData.view;
+               if(v == "main" || v == "userpage" || v == "account") {
+                   this.$.userDataRequest.body = "r=getSessionData";
+                   this.$.userDataRequest.generateRequest();
+               }
            }, 300);
 
             this._loadPages();
