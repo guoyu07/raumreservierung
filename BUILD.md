@@ -1,6 +1,6 @@
 # How to Build
 
-## Last edited in version: v2.5.3-public
+## Last edited in version: v3.2.2-public
 
 ```
 $ polymer build --sw-precache-config precache-config.js
@@ -54,4 +54,4 @@ the line - which should be self-explaining though :D)*
 ## Additional Information
 
 Last tested version containing these functions:<br>
-v3.1.0-public
+v3.2.2-public

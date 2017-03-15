@@ -1,6 +1,18 @@
 # < Changelog >
 
-## Latest Changes (08.03.2017)
+## Latest Changes (15.03.2017)
+
+#### v3.2.1-public --> v3.2.2-public
+Changed E-Mail - Templates
+- changed email - template - URLs to match the new URL-Routing-System
+
+#### v3.1.0-public --> v3.2.1-public
+Reworked Page Routing
+- Completely redesigned the Page routing
+- removed hash routing
+- added URL routing
+- added 404 fallbacks in SW as well has HTACCESS for URL routing
+to work properly
 
 #### v3.0.0-public --> v3.1.0-public
 Bug fixes

@@ -1,6 +1,6 @@
 {
   "name": "raumreservierung",
-  "version": "3.1.0-public",
+  "version": "v3.2.2-public",
   "description": "Project 'raumreservierung' for the Gymnasium Dresden-Klotzsche",
   "main": "index.html",
   "directories": {
