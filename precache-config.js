@@ -19,5 +19,7 @@ module.exports = {
         /** NPM Node Modules */
 
         "node_modules/sw-offline-google-analytics/build/*"
-    ]
+    ],
+    /** Fallback as replace for the .htaccess 404 redirect */
+    navigateFallback: 'index.html'
 };
