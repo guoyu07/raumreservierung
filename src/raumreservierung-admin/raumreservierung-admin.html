@@ -13,6 +13,8 @@
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-item/paper-icon-item.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item-body.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
 
 <dom-module id="raumreservierung-admin">
   <template>
@@ -89,6 +91,13 @@
       }
     </style>
 
+    <app-location route="{{route}}" use-hash-as-path></app-location>
+    <app-route
+        route="{{route}}"
+        pattern=":view"
+        data="{{viewData}}"
+        tail="{{viewTail}}"></app-route>
+
     <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
       <h2>Inhalte werden geladen...</h2>
       <br>
@@ -116,7 +125,7 @@
         </paper-toolbar>
 
         <paper-menu>
-          <a href="#account" target="_self" class="paper-item-link">
+          <a href="../../account" target="_self" class="paper-item-link">
             <paper-icon-item>
               <iron-icon icon="account-circle" item-icon></iron-icon>
               <paper-item-body two-line>
@@ -132,7 +141,7 @@
                 <div secondary>Abmelden und zur Startseite</div>
               </paper-item-body>
             </paper-icon-item>
-          <a href="#imprint" target="_self" class="paper-item-link">
+          <a href="../../imprint" target="_self" class="paper-item-link">
             <paper-icon-item>
               <iron-icon icon="gavel" item-icon></iron-icon>
               <paper-item-body two-line>
@@ -157,34 +166,34 @@
               <div class="right"><img src="../../img/gykl-logo.gif" width="78px"></div>
             </a>
             <div class="bottom fit">
-              <paper-tabs fit-container no-slide selected="{{selectedTab}}" scrollable id="tabs">
-                <paper-tab>Nutzerverwaltung</paper-tab>
-                <paper-tab>Raumverwaltung</paper-tab>
-                <paper-tab>Fehlermeldungen</paper-tab>
-                <paper-tab>Cronjob-Logs</paper-tab>
+              <paper-tabs fit-container no-slide selected="{{viewData.view}}" scrollable id="tabs" attr-for-selected="name">
+                <paper-tab name="usermanagement">Nutzerverwaltung</paper-tab>
+                <paper-tab name="roommanagement">Raumverwaltung</paper-tab>
+                <paper-tab name="error-reports">Fehlermeldungen</paper-tab>
+                <paper-tab name="cronjobs">Cronjob-Logs</paper-tab>
               </paper-tabs>
             </div>
           </paper-toolbar>
 
           <!-- dynamic fragment-content for admins only -->
-          <iron-pages id="adminPages" selected="{{selectedPage}}">
+          <iron-pages id="adminPages" selected="{{viewData.view}}" attr-for-selected="name" fallback-selection="welcome">
 
-            <div id="page1" class="layout vertical center">
+            <div id="page1" class="layout vertical center" name="usermanagement">
               <admin-nutzerverwaltung id="nutzerverwaltung-origin"></admin-nutzerverwaltung>
             </div>
-            <div id="page2" class="layout vertical center">
+            <div id="page2" class="layout vertical center" name="roommanagement">
               <admin-raumverwaltung></admin-raumverwaltung>
             </div>
-            <div id="page3" class="layout vertical center">
+            <div id="page3" class="layout vertical center" name="error-reports">
               <admin-error-reports id="errorreport-origin"></admin-error-reports>
             </div>
 
-            <div id="page4" class="layout vertical center">
+            <div id="page4" class="layout vertical center" name="cronjobs">
               <admin-cronjobs></admin-cronjobs>
             </div>
 
             <!-- Welcome Page -->
-            <div id="page5" class="welcome">
+            <div id="page5" class="welcome" name="welcome">
               <h1>Willkommen!</h1>
               <p>
                 Um Gebrauch von den Administratorwerkzeugen zu machen, klicken Sie einfach auf den Namen des Tools, das
@@ -208,23 +217,32 @@
       is: 'raumreservierung-admin',
 
       properties: {
-          selectedTab: {
-              type: Number,
-              value: 4,
-              observer: '_onTabChanged'
-          },
-          selectedPage: {
-              type: Number,
-              value: "page5",
-              observer: '_onPageChanged'
-          },
           frameLayout: {
               type: Boolean,
               value: function() {
-                  return this.selectedTab == 1;
+                  if(this.viewData)
+                      return this.viewData.view == "roommanagement";
+                  else
+                      return false;
+              }
+          },
+          urlPrefix: {
+              type: String,
+              value: function() {
+                  var path = window.location.pathname;
+                  var list = path.split('/');
+
+                  /** Remove last Part of the string until the next "/" */
+                  list.pop();
+
+                  return list.join('/');
               }
           }
       },
+
+      observers: [
+          '_onPageChanged(viewData.view)'
+      ],
 
       listeners: {
           'pageLoaded':'_onPageLoad', // Custom event fired by Elements when ready :)
@@ -236,9 +254,7 @@
 
         ready: function() {
           this.fire('pageLoad', this.nodeName);
-        },
-        _onTabChanged: function(){
-            this.selectedPage = this.selectedTab;
+          window.location.hash = this.viewData.view;
         },
         _onPageChanged: function(){
             this.$.loadIndicator.open();
@@ -247,27 +263,26 @@
                 this.$.tabs.items[i].disabled = true;
             }
 
-            this.selectedTab = this.selectedPage;
-
             var _switchPage = function() {
-                switch (this.selectedTab) {
-                    case 0:
+                switch (this.viewData.view) {
+                    case "usermanagement":
                         this.importHref('src/raumreservierung-admin/src/admin-nutzerverwaltung/admin-nutzerverwaltung.html', this._onLoadStart, this._onPageLoadError, true);
                         break;
-                    case 1:
+                    case "roommanagement":
                         this.importHref('src/raumreservierung-admin/src/admin-raumverwaltung/admin-raumverwaltung.html', this._onLoadStart, this._onPageLoadError, true);
                         break;
-                    case 2:
+                    case "error-reports":
                         this.importHref('src/raumreservierung-admin/src/admin-error-reports/admin-error-reports.html', this._onLoadStart, this._onPageLoadError, true);
                         break;
-                    case 3:
+                    case "cronjobs":
                         this.importHref('src/raumreservierung-admin/src/admin-cronjobs/admin-cronjobs.html', this._onLoadStart, this._onPageLoadError, true);
                         break;
-                    case 4:
+                    case "welcome":
                         this._freeTabs();
                         break;
                 }
-                this.frameLayout = (this.selectedTab == 1);
+                this.frameLayout = (this.viewData.view == "roommanagement");
+                console.log(this.frameLayout, this.viewData.view);
             }.bind(this);
 
             if('onLine' in navigator) {
@@ -292,23 +307,23 @@
         _onLoadStart: function() {
             this._freeTabs();
             var e;
-            switch(this.selectedTab){
-                case 0:
+            switch(this.viewData.view){
+                case "usermanagement":
                     // Trigger Data Reload on Tab Change if error on initial load
                     e = this.$$('admin-nutzerverwaltung');
                     if(e)
                         e.reloadData = true;
                     break;
-                case 1:
+                case "roommanagement":
                     // Room reservation not implemented yet
                     break;
-                case 2:
+                case "error-reports":
                     // Trigger Data Reload on Tab Change if error on initial load
                     e = this.$$('admin-error-reports');
                     if(e)
                         e.reloadData = true;
                     break;
-                case 3:
+                case "cronjobs":
                     e = this.$$('admin-cronjobs');
                     if(e)
                         e.reloadData();
@@ -321,28 +336,22 @@
         _onPageLoadError: function(){
             this._freeTabs();
 
-            var errorObj = Object();
-            errorObj.selectedPage = this.selectedPage;
-            errorObj.selectedTab = this.selectedTab;
-
-            this.fire('push', ['error loading page '+errorObj.pageName, JSON.stringify(errorObj)]);
-
-            var errorPlain = JSON.stringify(errorObj);
+            this.fire('push', 'Fehler beim Laden der Seite "'+this.viewData.view+'"');
 
             var errorText = '<p style="color: red;">Das angeforderte Element konnte nicht geladen werden oder wurde nicht gefunden.<br>Bitte &uuml;berpr&uuml;fen Sie den Pfad zu Seite '+(this.selectedPage+1)+'</b>!</p>';
-            errorText += '<p style="word-wrap: break-word;">'+errorPlain+'</p>';
+            errorText += '<p style="word-wrap: break-word;">"'+this.viewData.view+'"</p>';
 
-            switch (errorObj.selectedPage) {
-                case 0:
+            switch (this.viewData.view) {
+                case "usermanagement":
                     this.$.errorContent.innerHTML = errorText;
                     break;
-                case 1:
+                case "roommanagement":
                     this.$.errorContent.innerHTML = errorText;
                     break;
-                case 2:
+                case "error-reports":
                     this.$.errorContent.innerHTML = errorText;
                     break;
-                case 3:
+                case "cronjobs":
                     this.$.errorContent.innerHTML = errorText;
                     break;
             }
@@ -351,18 +360,27 @@
 
         },
         _onLogoutRequest: function() {
-            //console.clear();
-
             this.fire('push', [this.nodeName, "logout triggered"]);
             this.$$('#nutzerverwaltung-origin').reset = true;
             this.$$('#errorreport-origin').reset = true;
-            this.selectedPage = 3;
-            this.selectedTab = 3;
+            this.viewData.view = "welcome";
             this.$.drawerPanel.closeDrawer();
-            location.hash = "logout";
+
+            /**
+             * Reset Hash, because the main page doesn't
+             * use it and it is very disattracting :)
+             */
+            window.location.hash =  "";
+
+            this.fire('logout');
         },
         customResetPages: function() {
-            this.selectedPage = 4;
+            this.viewData.view = "welcome";
+            /**
+             * We unfortunately have to reset the url here, because it doesn't get
+             * set when just changing or selecting another page via native Script
+             */
+            window.location.hash = "welcome";
         },
         _onLayoutClose: function() {
             this.frameLayout = false;

@@ -157,13 +157,13 @@
                 </paper-toolbar>
                 <div style="padding-bottom: 110px;"> <!-- Wrapping the Menu with bottompadding 110px for the copyright box -->
                     <paper-menu>
-                        <a href="#account" target="_self">
+                        <a href="../../account" target="_self">
                             <paper-icon-item>
                                 <iron-icon icon="account-circle" item-icon></iron-icon>
                                 Ihr Account
                             </paper-icon-item>
                         </a>
-                        <a href="#logout" target="_self">
+                        <a href="../../main" target="_self">
                             <paper-icon-item>
                                 <iron-icon icon="power-settings-new" item-icon></iron-icon>
                                 Ausloggen
@@ -177,7 +177,7 @@
                             <iron-icon icon="lock" item-icon></iron-icon>
                             Datenschutz
                         </paper-icon-item>
-                        <a onclick="location.hash='imprint'">
+                        <a href="../../imprint">
                             <paper-icon-item>
                                 <iron-icon icon="gavel" item-icon></iron-icon>
                                 Impressum
@@ -247,7 +247,7 @@
                                         </div>
                                         <div class="card-actions">
                                             <div class="right">
-                                                <paper-button class="cardButton" onclick="location.hash='logout';">Ausloggen</paper-button>
+                                                <paper-button class="cardButton" on-click="logout">Ausloggen</paper-button>
                                                 <paper-button class="cardButton" on-click="reloadData">Daten neu laden</paper-button>
                                             </div>
                                         </div>
@@ -446,6 +446,9 @@
             },
             redirectToReservation: function() {
                 this.selected = 0;
+            },
+            logout: function() {
+                this.fire('logout');
             }
 
         });

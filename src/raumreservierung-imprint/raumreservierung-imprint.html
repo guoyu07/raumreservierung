@@ -181,7 +181,7 @@
                 </paper-toolbar>
                 <div style="padding-bottom: 110px;"> <!-- Wrapping the Menu with bottompadding 110px for the copyright box -->
                     <paper-menu>
-                        <a href="#index" target="_self">
+                        <a href="../../main" target="_self">
                             <paper-icon-item>
                                 <iron-icon icon="home" item-icon></iron-icon>
                                 Startseite
@@ -219,8 +219,6 @@
 
             ready: function() {
                 this.fire('pageLoad', this.nodeName);
-                // Relies on #imprint and changing this won't affect auto-page-switch on manual reload
-                location.hash = "imprint";
             },
             openPrivacy: function() {
                 this.importHref('src/raumreservierung-privacy/raumreservierung-privacy.html', this._onPrivacyLoad, this._onPrivacyLoadError, true);

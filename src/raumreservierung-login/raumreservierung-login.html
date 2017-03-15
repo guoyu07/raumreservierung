@@ -223,11 +223,11 @@
                                     this._loadUserPage(type);
                                     break;
                                 default:
-                                    location.hash = "logout";
+                                    this.fire('logout');
                                     break;
                             }
                         } else {
-                            location.hash = "logout";
+                            this.fire('logout');
                         }
                     }
                 } else {

@@ -1,9 +1,29 @@
-#06.01.2017
-#HTACCESS GLOBAL SCOPE
+# HTACCESS @ GLOBAL SCOPE
+# CREATED  @ VERSION v3.1.0-public
+#
+# For more info, see the project on Git:
+# https://github.com/moritzmenzel/raumreservierung
+
+# Disable Directory Browsing
 Options All -Indexes
 
+# Disable cache to avoid the "service-worker.js" to be stored
+# on the viewing device (the service worker will handly caching
+# of everything - images, HTML and so on)
 <IfModule mod_headers.c>
     Header set Cache-Control "no-cache, no-store, must-revalidate"
     Header set Pragma "no-cache"
     Header set Expires 0
 </IfModule>
+
+# Redirect on 404 for URL-Routing,
+# added in v3.2.0-public
+# -- index.html not global because of local deployment
+ErrorDocument 404 /raumreservierung/project/index.html
+
+# Rewrite Rule for all requests returning a 404 error
+RewriteEngine On
+RewriteBase /
+
+RewriteCond %{REWRITE_URI} ^/404/$
+RewriteRule ^ index.html [L]

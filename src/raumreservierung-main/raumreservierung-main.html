@@ -1,5 +1,4 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/iron-location/iron-location.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
@@ -7,6 +6,8 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/paper-toast/paper-toast.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
 
 <dom-module id="raumreservierung-main">
   <template>
@@ -42,7 +43,17 @@
       }
     </style>
 
-    <iron-location hash="{{hash}}" id="locator"></iron-location>
+    <!--
+      APP ROUTING
+      - Implemented in version v3.2.0-public
+    -->
+    <app-location route="{{route}}"></app-location>
+    <app-route
+        id="route"
+        route="{{route}}"
+        pattern="{{urlPrefix}}/:view"
+        data="{{viewData}}"
+        tail="{{viewRoute}}"></app-route>
 
     <!-- Toast if new content is available -->
     <paper-toast id="newContentToast"
@@ -108,22 +119,22 @@
                debounce-duration="300"
                last-response="{{logoutResponse}}"></iron-ajax>
 
-    <iron-pages id="pages" selected="{{selected}}">
+    <iron-pages id="pages" selected="{{viewData.view}}" attr-for-selected="name">
 
       <!-- Main Start Page -->
-      <raumreservierung-landingpage response="{{response}}"></raumreservierung-landingpage>
+      <raumreservierung-landingpage name="main" response="{{response}}"></raumreservierung-landingpage>
       <!-- E-Mail Confirmation -->
-      <raumreservierung-email-confirmation></raumreservierung-email-confirmation>
+      <raumreservierung-email-confirmation name="confirm-email"></raumreservierung-email-confirmation>
       <!-- User Page -->
-      <div id="userpage"></div>
+      <div id="userpage" name="userpage"></div>
       <!-- Account - Aktivierung -->
-      <raumreservierung-activate-account></raumreservierung-activate-account>
+      <raumreservierung-activate-account name="activate-account"></raumreservierung-activate-account>
       <!-- Impressum -->
-      <raumreservierung-imprint></raumreservierung-imprint>
+      <raumreservierung-imprint name="imprint"></raumreservierung-imprint>
       <!-- Password reset page -->
-      <raumreservierung-reset-password></raumreservierung-reset-password>
+      <raumreservierung-reset-password name="reset-password"></raumreservierung-reset-password>
       <!-- Account Page -->
-      <raumreservierung-account-page></raumreservierung-account-page>
+      <raumreservierung-account-page name="account"></raumreservierung-account-page>
 
     </iron-pages>
 
@@ -135,14 +146,6 @@
         is: 'raumreservierung-main',
 
         properties: {
-            hash: {
-                type: String,
-                observer: '_onHashChange'
-            },
-            selected: {
-                type: Number,
-                observer: '_onSelectedChanged'
-            },
             response: Object,
             landingPageLoaded: {
                 type: Boolean,
@@ -174,8 +177,24 @@
                 observer: '_onNewContentAvailable'
             },
             query: String,
-            online: Boolean
+            online: Boolean,
+            urlPrefix: {
+                type: String,
+                value: function() {
+                    var path = window.location.pathname;
+                    var list = path.split('/');
+
+                    /** Remove last Part of the string until the next "/" */
+                    list.pop();
+
+                    return list.join('/');
+                }
+            }
         },
+
+        observers: [
+            '_onViewChange(viewData.data)'
+        ],
 
         listeners: {
             'push': '_pushToLog',
@@ -183,6 +202,7 @@
             'userDataRequest.request': '_onRequest',
             'userDataRequest.response': '_onResponse',
             'userDataRequest.error': '_onError',
+            'logout': '_triggerLogout',
             'logoutRequest.request': '_onLogoutRequest',
             'logoutRequest.response': '_onLogoutResponse',
             'logoutRequest.error': '_onLogoutError',
@@ -196,6 +216,7 @@
         },
 
         ready: function () {
+
             this.fire('pageLoad', this.nodeName);
 
             this.$.userDataRequest.body = "r=getSessionData";
@@ -217,32 +238,42 @@
 
             this.validateBrowser();
 
+            /** Load Pages */
+            this._loadPages();
+
         },
-        _onSelectedChanged: function () {
+        _onViewChange: function () {
+
+            // Debounce to avoid invalid / empty results || requests
+           this.debounce("udr", function() {
+               this.$.userDataRequest.body = "r=getSessionData";
+               this.$.userDataRequest.generateRequest();
+           }, 300);
+
             this._loadPages();
 
             // Set Theme Colors
             var color = "#689F38";
-            switch (this.selected) {
-                case 0:
+            switch (this.viewData.view) {
+                case "main":
                     color = "#689F38";
                     break;
-                case 1:
+                case "confirm-email":
                     color = "#689F38";
                     break;
-                case 2:
+                case "userpage":
                     color = "#3F51B5";
                     break;
-                case 3:
+                case "activate-account":
                     color = "#689F38";
                     break;
-                case 4:
+                case "imprint":
                     color = "#03A9F4";
                     break;
-                case 5:
+                case "reset-password":
                     color = "#F44336";
                     break;
-                case 6:
+                case "account":
                     color = "#FFC107";
                     break;
                 default:
@@ -258,7 +289,7 @@
             this.$.loadIndicator.close();
             this.response = this.$.userDataRequest.lastResponse;
             this.loggedin = (this.response.data) ? this.response.data.loggedin : false;
-            if (this.loggedin === true && this.hash == "")
+            if (this.loggedin === true && (this.viewData.view == "" || this.viewData.view == "main"))
                 this._redirect();
             else
                 this._loadPages();
@@ -274,8 +305,7 @@
             this.$.logoutDialog.close();
             var res = this.$.logoutRequest.lastResponse;
             if (res.success) {
-                this.$.pages.select(0);
-                this.hash = "";
+                this.$.pages.select("main");
             } else {
                 this.$.errorContent.innerHTML = '<p style="color: red;">Es ist ein Fehler beim Ausloggen aufgetreten! Bitte versuchen Sie es erneut oder Kontaktieren Sie einen Administrator!</p><p><i>(' + res.message + ')</i></p>';
                 this.$.errorDialog.center();
@@ -287,35 +317,6 @@
             this.$.errorContent.innerHTML = '<p style="color: red;">Es ist ein Fehler beim Ausloggen aufgetreten! Bitte versuchen Sie es erneut oder Kontaktieren Sie einen Administrator!</p>';
             this.$.errorDialog.center();
             this.$.errorDialog.open();
-        },
-        _onHashChange: function () {
-            switch (this.hash) {
-                case "index":
-                    this.hash = "";
-                    /** TESTING **/
-                    this.$.pages.select(0);
-                    this.$.userDataRequest.body = "r=getSessionData";
-                    this.$.userDataRequest.generateRequest();
-                    break;
-                case "confirm-email":
-                    this.loadEmailPage();
-                    break;
-                case "logout":
-                    this._triggerLogout();
-                    break;
-                case "imprint":
-                    this._loadImprint();
-                    break;
-                case "reset-password":
-                    this._loadResetPage();
-                    break;
-                case "account":
-                    this._loadAccountPage();
-                    break;
-                default:
-                    this._loadPages();
-                    break;
-            }
         },
         _pushToLog: function (e) {
             /**
@@ -342,52 +343,72 @@
             this.$.errorDialog.open();
         },
         _loadPages: function () {
-            switch (Number(this.selected)) {
-                case 0:
+
+            switch (this.viewData.view) {
+                case "":
+                    this.viewData.view = "main";
+                    if(!this.landingPageLoaded)
+                        this.loadMainPage();
+                    this.$.pages.select("main");
+                    break;
+                case "main":
                     if (!this.landingPageLoaded)
                         this.loadMainPage();
-                    this.$.pages.select(0);
+                    this.$.pages.select("main");
                     break;
-                case 1:
-                    if (this.hash == "confirm-email") {
+                case "confirm-email":
+                    if (this.viewData.view == "confirm-email") {
                         if (!this.emailPageLoaded)
                             this.loadEmailPage();
-                        this.$.pages.select(1);
+                        this.$.pages.select("confirm-email");
                     } else {
                         if (!this.landingPageLoaded)
                             this.loadMainPage();
-                        this.$.pages.select(0);
+                        this.$.pages.select("main");
                     }
                     break;
-                case 2:
-                    if (!this.userPageLoaded)
-                        this.loadUserPage();
-                    this.$.pages.select(2);
+                case "userpage":
+                    if (!this.userPageLoaded) {
+                        if(this.type == "teacher" || this.type == "admin") {
+                            this.loadUserPage();
+                            this.$.pages.select("userpage");
+                        } else {
+                            this.$.pages.select("main");
+                        }
+                    } else {
+                        this.$.pages.select("userpage");
+                    }
                     break;
-                case 3:
+                case "activate-account":
                     if (!this.activationPageLoaded) {
                         this.loadActivationPage();
                     } else {
                         this.$$('raumreservierung-activate-account').reload = true;
-                        this.$.pages.select(3);
+                        this.$.pages.select("activate-account");
                     }
                     break;
-                case 4:
-                    this._loadImprint();
+                case "imprint":
+                    if(!this.imprintPageLoaded)
+                        this._loadImprint();
+                    this.$.pages.select("imprint");
                     break;
-                case 5:
+                case "reset-password":
                     // Password reset page
                     this._loadResetPage();
+                    this.$.pages.select("reset-password");
                     break;
-                case 6:
+                case "account":
                     // Account Page
-                    this._loadAccountPage();
+                    if(!this.accountPageLoaded)
+                        this._loadAccountPage();
+                    this.$.pages.select("account");
                     break;
                 default:
-                    this.hash = "";
+                    if(this.viewData)
+                        this.viewData.view = "main";
                     if (!this.landingPageLoaded)
                         this.loadMainPage();
-                    this.$.pages.select(0);
+                    this.$.pages.select("main");
                     break;
             }
         },
@@ -404,7 +425,7 @@
         _onEmailLoaded: function () {
             this.emailPageLoaded = true;
             this.$.loadIndicator.close();
-            this.$.pages.select(1);
+            this.$.pages.select("confirm-email");
         },
         _onComponentLoaded: function (e) {
             /**
@@ -416,7 +437,7 @@
             //console.log("[" + e.detail + "] component loaded and ready");
         },
         _redirect: function () {
-            if(this.hash == "") {
+            if(this.viewData.view == "" || this.viewData.view == "main") {
                 if (this.response.data.type != "" && Number(this.response.data.type) >= 0 && Number(this.response.data.status) >= 0) {
                     switch (Number(this.response.data.status)) {
                         case 1:
@@ -459,8 +480,8 @@
             }
         },
         loadUserPage: function () {
-            this.$.loadIndicator.open();
             var type = this.type;
+            this.$.loadIndicator.open();
             this.importHref('src/raumreservierung-' + type + '/raumreservierung-' + type + '.html', this._onUserPageLoad, this._onUserPageLoadError, true);
         },
         _onUserPageRedirect: function (e) {
@@ -483,7 +504,7 @@
                         } else if (!this.activationPageLoaded && this.landingPageLoaded) {
                             this.loadActivationPage();
                         } else {
-                            this.$.pages.select(3);
+                            this.$.pages.select("activate-account");
                         }
                         break;
                     case "temporary-account":
@@ -500,21 +521,21 @@
             this.$.errorDialog.center();
             this.$.errorDialog.open();
             this.loadMainPage();
-            this.$.pages.select(0);
+            this.$.pages.select("main");
         },
         _onUserPageLoad: function () {
             this.$.userpage.innerHTML = "<raumreservierung-" + this.type + "></raumreservierung-" + this.type + ">";
             this.userPageLoaded = true;
             this.$.loadIndicator.close();
             // UserPage is always Numero Dos :D
-            this.$.pages.select(2);
+            this.$.pages.select("userpage");
         },
         _onUserPageLoadError: function () {
             this.$.loadIndicator.close();
             this.$.errorContent.innerHTML = '<p style="color:red;">Die Nutzerseite konnte nicht geladen werden!</p>';
             this.$.errorDialog.center();
             this.$.errorDialog.open();
-            this.$.pages.select(0);
+            this.$.pages.select("main");
             this.loadMainPage();
 
             // Temporary solution while userPages not implemented yet
@@ -555,44 +576,35 @@
         _onActivationPageLoad: function () {
             this.$.loadIndicator.close();
             this.activationPageLoaded = true;
-            this.$.pages.select(3);
+            this.$.pages.select("activate-account");
         },
         _onActivationPageLoadError: function () {
             this.$.loadIndicator.close();
             this.$.errorContent.innerHTML = '<p style="color: red;">Es ist ein Fehler beim Laden der Aktivierungsseite aufgetreten!</p>';
             this.$.errorDialog.open();
-            this.$.pages.select(0);
+            this.$.pages.select("main");
         },
         _onSessionError: function () {
             this.selected = 0;
         },
         _loadImprint: function() {
             if(!this.imprintPageLoaded){
-                if(!this.landingPageLoaded){
-                    window.addEventListener('pageLoad', function(e){
-                        if(e.detail == "raumreservierung-landingpage".toUpperCase()) {
-                            this.$.loadIndicator.open();
-                            this.importHref('src/raumreservierung-imprint/raumreservierung-imprint.html', this._onImprintLoad, this._onImprintLoadError, true);
-                        }
-                    }.bind(this));
-                } else {
-                    this.$.loadIndicator.open();
-                    this.importHref('src/raumreservierung-imprint/raumreservierung-imprint.html', this._onImprintLoad, this._onImprintLoadError, true);
-                }
+                this.$.loadIndicator.open();
+                this.importHref('src/raumreservierung-imprint/raumreservierung-imprint.html', this._onImprintLoad, this._onImprintLoadError, true);
             } else {
-                this.$.pages.select(4)
+                this.$.pages.select("imprint")
             }
         },
         _onImprintLoad: function() {
             this.imprintPageLoaded = true;
             this.$.loadIndicator.close();
-            this.$.pages.select(4);
+            this.$.pages.select("imprint");
         },
         _onImprintLoadError: function() {
             this.$.loadIndicator.close();
             this.$.errorContent.innerHTML = '<p style="color: red;">Es ist ein Fehler beim Laden des Impressums aufgetreten!</p>';
             this.$.errorDialog.center(), this.$.errorDialog.open();
-            this.$.pages.select(0);
+            this.$.pages.select("main");
         },
         _loadResetPage: function() {
             this.$.loadIndicator.open();
@@ -600,7 +612,7 @@
         },
         _onResetPageLoad: function() {
             this.$.loadIndicator.close();
-            this.$.pages.select(5);
+            this.$.pages.select("reset-password");
         },
         _onResetPageLoadError: function() {
             this.$.loadIndicator.close();
@@ -609,26 +621,19 @@
         },
         _loadAccountPage: function() {
             if(!this.accountPageLoaded) {
-                if(!this.landingPageLoaded) {
-                    window.addEventListener('pageLoad', function(e){
-                        if(e.detail == "raumreservierung-landingpage".toUpperCase()) {
-                            this.$.loadIndicator.open();
-                            this.importHref('src/raumreservierung-account-page/raumreservierung-account-page.html', this._onAccPageLoad, this._onAccPageLoadError, true);
-                        }
-                    }.bind(this));
-                } else {
-                    this.$.loadIndicator.open();
-                    this.importHref('src/raumreservierung-account-page/raumreservierung-account-page.html', this._onAccPageLoad, this._onAccPageLoadError, true);
-                }
+                this.$.loadIndicator.open();
+                this.importHref('src/raumreservierung-account-page/raumreservierung-account-page.html', this._onAccPageLoad, this._onAccPageLoadError, true);
+                this.$$('raumreservierung-account-page').reload = true;
+                this.$.pages.select("account");
             } else {
                 this.$$('raumreservierung-account-page').reload = true;
-                this.$.pages.select(6);
+                this.$.pages.select("account");
             }
         },
         _onAccPageLoad: function() {
             this.$.loadIndicator.close();
             this.accountPageLoaded = true;
-            this.$.pages.select(6);
+            this.$.pages.select("account");
         },
         _onAccPageLoadError: function() {
             this.$.loadIndicator.close();

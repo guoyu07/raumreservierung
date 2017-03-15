@@ -92,7 +92,7 @@
 
     <paper-header-panel mode="standard">
         <paper-toolbar style="color: #212121;">
-          <paper-icon-button style="margin-right: 12px;" icon="arrow-back" onclick="location.hash='logout';" title="Zur&uuml;ck zur Startseite"></paper-icon-button>
+          <paper-icon-button style="margin-right: 12px;" icon="arrow-back" on-click="fireLogout" title="Zur&uuml;ck zur Startseite"></paper-icon-button>
           <div class="title" style="padding-bottom: 1px;">Account - Aktivierung</div>
         </paper-toolbar>
     </paper-header-panel>
@@ -115,7 +115,7 @@
                 </i>
               </p>
               <div class="card-actions" style="float: right;">
-                <paper-button class="cardButton" onclick="location.hash='logout'">Abbrechen</paper-button>
+                <paper-button class="cardButton" on-click="fireLogout">Abbrechen</paper-button>
                 <paper-button class="cardButton" on-click="nextStage">Weiter</paper-button>
               </div>
             </paper-card>
@@ -150,7 +150,7 @@
                 Ihr Team der Raumreservierung :-)
               </p>
               <div class="card-actions" style="float: right;">
-                <paper-button class="cardButton" onclick="location.hash='logout'">Zur Startseite</paper-button>
+                <paper-button class="cardButton" on-click="fireLogout">Zur Startseite</paper-button>
               </div>
             </paper-card>
           </div>
@@ -166,7 +166,7 @@
             </div>
             <div class="buttons" style="float: right;">
               <paper-button style="color: #3F51B5;" onclick="location.reload()">Zur&uuml;ck</paper-button>
-              <paper-button style="color: #3F51B5;" onclick="location.hash='logout'">Ausloggen</paper-button>
+              <paper-button style="color: #3F51B5;" on-click="fireLogout">Ausloggen</paper-button>
             </div>
           </paper-card>
         </div>
@@ -278,7 +278,10 @@
               pw1.value = "", pw1.invalid = true;
               pw2.value = "", pw2.invalid = true;
           }
-      }
+      },
+        fireLogout: function() {
+          this.fire('logout');
+        }
     });
   </script>
 </dom-module>

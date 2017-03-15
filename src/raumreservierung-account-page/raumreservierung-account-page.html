@@ -155,13 +155,13 @@
                 </paper-toolbar>
                 <div style="padding-bottom: 110px;"> <!-- Wrapping the Menu with bottompadding 110px for the copyright box -->
                     <paper-menu>
-                        <a href="#index" target="_self">
+                        <a href="../../main" target="_self">
                             <paper-icon-item>
                                 <iron-icon icon="home" item-icon></iron-icon>
                                 Startseite
                             </paper-icon-item>
                         </a>
-                        <a href="#logout" target="_self">
+                        <a on-click="fireLogout" target="_self">
                             <paper-icon-item>
                                 <iron-icon icon="power-settings-new" item-icon></iron-icon>
                                 Ausloggen
@@ -175,7 +175,7 @@
                             <iron-icon icon="lock" item-icon></iron-icon>
                             Datenschutz
                         </paper-icon-item>
-                        <a onclick="location.hash='imprint'">
+                        <a href="../../imprint">
                             <paper-icon-item>
                                 <iron-icon icon="gavel" item-icon></iron-icon>
                                 Impressum
@@ -279,7 +279,7 @@
                                         </p>
                                     </div>
                                     <div class="card-actions">
-                                        <paper-button onclick="location.hash='index'">Zur Startseite</paper-button>
+                                        <a href="../../main"><paper-button>Zur Startseite</paper-button></a>
                                     </div>
                                 </paper-card>
                             </template>
@@ -330,7 +330,6 @@
 
             ready: function() {
                 this.fire('pageLoad', this.nodeName);
-                location.hash = 'account';
                 // Data Request will be called from outside :)
             },
             _onRequest: function() {
@@ -440,6 +439,9 @@
                 } else {
                     box.innerHTML = '<p style="color: red;">Es ist ein Fehler bei der Serveranfrage aufgetreten!</p>';
                 }
+            },
+            fireLogout: function() {
+                this.fire('logout');
             }
         })
     </script>

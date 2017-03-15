@@ -23,6 +23,13 @@
             paper-tabs {
                 --paper-tabs-selection-bar-color: white;
             }
+            #reservationLoader, #reservationsLoader, #controlLoader {
+                text-align: center;
+                margin-top: calc(50vh - 64px);
+            }
+            .secondary {
+                color: var(--secondary-text-color);
+            }
         </style>
 
         <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
@@ -60,9 +67,27 @@
                 </paper-toolbar>
 
                 <iron-pages selected="{{selected}}">
-                    <teacher-raumreservierung></teacher-raumreservierung>
-                    <teacher-reservations></teacher-reservations>
-                    <admin-reservation-control></admin-reservation-control>
+                    <div id="reservation">
+                        <div id="reservationLoader">
+                            <paper-spinner active></paper-spinner>
+                            <br><br>
+                            <span class="secondary">Raumreservierung wird geladen...</span>
+                        </div>
+                    </div>
+                    <div id="reservations">
+                        <div id="reservationsLoader">
+                            <paper-spinner active></paper-spinner>
+                            <br><br>
+                            <span class="secondary">Ihre Reservierungen werden geladen...</span>
+                        </div>
+                    </div>
+                    <div id="control">
+                        <div id="controlLoader">
+                            <paper-spinner active></paper-spinner>
+                            <br><br>
+                            <span class="secondary">Die Reservierungsverwaltung wird geladen...</span>
+                        </div>
+                    </div>
                 </iron-pages>
 
             </paper-header-panel>
@@ -78,7 +103,20 @@
                     type: Number,
                     observer: 'selectedChange',
                     value: 1
+                },
+                reservationPageLoaded: {
+                    type: Boolean,
+                    value: false
+                },
+                reservationsPageLoaded: {
+                    type: Boolean,
+                    value: false
+                },
+                controlPageLoaded: {
+                    type: Boolean,
+                    value: false
                 }
+
             },
 
             listeners: {
@@ -92,18 +130,22 @@
                 this.fire('pageLoad', this.nodeName);   // Trigger-Event for raumreservierung-main
             },
             selectedChange: function() {
+                this._lockTabs();
                 switch(this.selected) {
                     case 0:
                         // reserve new room
-                        this.importHref('src/raumreservierung-teacher/teacher-raumreservierung.html', this._onLoadStart, this._onPageLoadError, true);
+                        this.importHref('src/raumreservierung-teacher/teacher-raumreservierung.html', this._onReservationLoad, this._onPageLoadError, true);
                         break;
                     case 1:
                         // my reservations
-                        this.importHref('src/raumreservierung-teacher/teacher-reservations.html', this._onLoadStart, this._onPageLoadError, true);
+                        this.importHref('src/raumreservierung-teacher/teacher-reservations.html', this._onReservationsLoad, this._onPageLoadError, true);
                         break;
                     case 2:
                         // administration of all reservations
-                        this.importHref('src/raumreservierung-admin/src/admin-raumverwaltung/admin-reservation-control.html', this._onLoadStart, this._onPageLoadError, true);
+                        this.importHref('src/raumreservierung-admin/src/admin-raumverwaltung/admin-reservation-control.html', this._onControlLoad, this._onPageLoadError, true);
+                        break;
+                    default:
+                        this._freeTabs();
                         break;
                 }
             },
@@ -113,21 +155,34 @@
                     this.$.tabs.items[i].disabled = false;
                 }
             },
-            _onLoadStart: function() {
+            _lockTabs: function() {
+                this.$.loadIndicator.close();
+                for(var i=0; i < this.$.tabs.items.length; i++) {
+                    this.$.tabs.items[i].disabled = true;
+                }
+            },
+            _onReservationLoad: function() {
                 this._freeTabs();
-                switch(this.selected){
-                    case 0:
-                        if(this.$$('teacher-raumreservierung'))
-                            this.$$('teacher-raumreservierung').reload = true;
-                        break;
-                    case 1:
-                        if(this.$$('teacher-reservations'))
-                            this.$$('teacher-reservations').reloadData();
-                        break;
-                    case 2:
-                        if(this.$$('admin-reservation-control'))
-                            this.$$('admin-reservation-control').reloadData();
-                        break;
+                if(!this.reservationPageLoaded) {
+                    var e = document.createElement('teacher-raumreservierung');
+                    this.$.reservation.replaceChild(e, this.$.reservationLoader);
+                    this.reservationPageLoaded = true;
+                }
+            },
+            _onReservationsLoad: function() {
+                this._freeTabs();
+                if(!this.reservationsPageLoaded) {
+                    var e = document.createElement('teacher-reservations');
+                    this.$.reservations.replaceChild(e, this.$.reservationsLoader);
+                    this.reservationsPageLoaded = true;
+                }
+            },
+            _onControlLoad: function() {
+                this._freeTabs();
+                if(!this.controlPageLoaded) {
+                    var e = document.createElement('admin-reservation-control');
+                    this.$.control.replaceChild(e, this.$.controlLoader);
+                    this.controlPageLoaded = true;
                 }
             },
             _onPageLoad: function() {

@@ -37,6 +37,10 @@
             .card-button{
                 color: #1976D2;
             }
+            a {
+                text-decoration: none;
+                color: #212121;
+            }
         </style>
 
         <iron-location id="locator" query="{{query}}" dwell-time="2"></iron-location>
@@ -66,7 +70,7 @@
 
         <paper-header-panel mode="standard">
             <paper-toolbar style="color: #212121;">
-                <paper-icon-button onclick="location.hash='index'" icon="arrow-back" style="margin-right: 12px;" title="Zur&uuml;ck zur Startseite"></paper-icon-button>
+                <a href="../../main" target="_self"><paper-icon-button icon="arrow-back" style="margin-right: 12px;" title="Zur&uuml;ck zur Startseite"></paper-icon-button></a>
                 <div class="title" style="padding-bottom: 1px;">Account - Aktivierung</div>
             </paper-toolbar>
         </paper-header-panel>
@@ -82,7 +86,7 @@
                         </p>
                     </div>
                     <div class="card-actions">
-                        <paper-button onclick="location.hash='index'" class="card-button">Jetzt einloggen!</paper-button>
+                        <a href="../../main" target="_self"><paper-button class="card-button">Jetzt einloggen!</paper-button></a>
                     </div>
                 </paper-card>
               </div>
@@ -98,7 +102,7 @@
                         </p>
                     </div>
                     <div class="card-actions">
-                        <paper-button onclick="location.hash='index'" class="card-button">Zur Startseite</paper-button>
+                        <a href="../../main" target="_self"><paper-button class="card-button">Zur Startseite</paper-button></a>
                     </div>
                 </paper-card>
               </div>
@@ -128,7 +132,6 @@
 
             ready: function() {
                 this.fire('pageLoad', this.nodeName);
-                location.hash = "confirm-email";
                 this.$.locator.query = this.$.locator.query.toLowerCase();
                 this.$.confirmRequest.generateRequest();
             },

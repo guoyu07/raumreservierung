@@ -195,27 +195,29 @@
                     this.$.loadIndicator.close();
                     this.users = this.$.dataRequest.lastResponse;
 
-                    if(this.users.success){
+                    if(this.users) {
+                        if(this.users.success){
 
-                        this.userAmount = this.users.data.length;
-                        this.$.errorbox.innerHTML = "";
-                        this.$.usertable.style.display = "block";
-                        this.$.addUserButton.style.display = "block";
+                            this.userAmount = this.users.data.length;
+                            this.$.errorbox.innerHTML = "";
+                            this.$.usertable.style.display = "block";
+                            this.$.addUserButton.style.display = "block";
 
-                        for (var i = 0; i < this.users.data.length; i++) {
-                            origUsers[i] = this.users.data[i].name;
+                            for (var i = 0; i < this.users.data.length; i++) {
+                                origUsers[i] = this.users.data[i].name;
+                            }
+
+                        } else {
+                            this.$.errorbox.innerHTML = "Es ist ein Fehler beim Abrufen der Daten aufgetreten:<br>"+this.users.message;
+                            this.$.usertable.style.display = "none";
+                            this.$.addUserButton.style.display = "none";
+
+                            if(this.users.sessionError){
+                                // Fire Session Error to host page
+                                this.fire('admin-page-session-error');
+                            }
+
                         }
-
-                    } else {
-                        this.$.errorbox.innerHTML = "Es ist ein Fehler beim Abrufen der Daten aufgetreten:<br>"+this.users.message;
-                        this.$.usertable.style.display = "none";
-                        this.$.addUserButton.style.display = "none";
-
-                        if(this.users.sessionError){
-                            // Fire Session Error to host page
-                            this.fire('admin-page-session-error');
-                        }
-
                     }
 
                 },

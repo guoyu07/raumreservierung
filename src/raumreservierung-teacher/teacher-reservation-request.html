@@ -14,6 +14,10 @@
             .secondary {
                 color: var(--secondary-text-color);
             }
+            a {
+                text-decoration: none;
+                color: #212121;
+            }
         </style>
 
         <iron-ajax url="../../backend/api/teacher-main.php"
@@ -55,7 +59,7 @@
                     </i>
                 </paper-dialog-scrollable>
                 <div class="buttons">
-                    <paper-button onclick="location.hash='index';">Schlie&szlig;en</paper-button>
+                    <a href="../../main" target="_self"><paper-button>Schlie&szlig;en</paper-button></a>
                 </div>
             </paper-dialog>
         </template>
