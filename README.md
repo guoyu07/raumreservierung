@@ -1,4 +1,4 @@
-# Raumreservierung v3.2.2-public
+# Raumreservierung v3.2.3-public
 <b>After implementing the teacher-view to the project, it's now time to test all of its functionality.
 <br>
 Everything done from now will be some fixes and improvements, no big changes are planned for the project from now on.</b>
@@ -21,7 +21,7 @@ If anyone reading this is interested in this project or is willing to help with 
 If someone needs an example database for doing so, feel free to contact me.
 
 ## Demo
-A demo-version of this project in its current state (v3.2.2-public) is available at [gykl-rr.lima.zone](https://gykl-rr.lima.zone).
+A demo-version of this project in its current state (v3.2.3-public) is available at [gykl-rr.lima.zone](https://gykl-rr.lima.zone).
 According to the german privacy-law, not everyone is allowed to view the contents of the database I used for this demo. This is why only chosen persons have access to the backend & views.
 <br>Thanks for your understanding.
 

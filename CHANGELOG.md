@@ -2,6 +2,12 @@
 
 ## Latest Changes (15.03.2017)
 
+#### v3.2.2-public --> v3.2.3-public
+Various bug fixes
+- Only reload session data when necessary and not on every view change
+- Fixed a bug where the privacy element was registered a second time
+because it wasn't loaded asynchronously in the account-page
+
 #### v3.2.1-public --> v3.2.2-public
 Changed E-Mail - Templates
 - changed email - template - URLs to match the new URL-Routing-System
