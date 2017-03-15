@@ -75,7 +75,6 @@
                 position: fixed;
                 right: 32px;
                 top: 32px;
-                z-index: 1;
                 color: white;
             }
             @media (max-width: 600px) {
@@ -173,6 +172,10 @@
                         </paper-card>
                     </div>
                 </paper-header-panel>
+                <paper-fab id="gitFab" icon="code" onclick="window.open('https://github.com/moritzmenzel/raumreservierung/', '_blank');"></paper-fab>
+                <paper-tooltip for="gitFab" position="bottom">
+                    Den Quellcode auf GitHub anschauen
+                </paper-tooltip>
             </div>
             <div drawer style="overflow: auto;">
                 <paper-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
@@ -198,11 +201,6 @@
                 </div>
             </div>
         </paper-drawer-panel>
-
-        <paper-fab id="gitFab" icon="code" onclick="window.open('https://github.com/moritzmenzel/raumreservierung/', '_blank');"></paper-fab>
-        <paper-tooltip for="gitFab" position="bottom">
-            Den Quellcode auf GitHub anschauen
-        </paper-tooltip>
 
     </template>
     <script>
