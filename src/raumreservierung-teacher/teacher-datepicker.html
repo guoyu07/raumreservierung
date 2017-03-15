@@ -118,8 +118,7 @@
 
             ready: function () {
                 this.fire('pageLoad', this.nodeName);
-                var d = new Date(new Date().setHours(0, 0, 0, 0));
-                this.selectedValue = d.getFullYear()+"-"+this.checkZero(d.getMonth())+"-"+this.checkZero(d.getDate());
+                this.selectedValue = this.tomorrow;
                 this.$.datepicker.i18n = Object({
                     // An array with the full names of months starting
                     // with January.
