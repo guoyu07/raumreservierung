@@ -38,7 +38,6 @@
 
                 try{
                     $r->execute(array(":accname" => $this->username));
-                    $r2->execute(array(":accname" => $this->username));
                     $res = $r->fetchAll();
 
                     if(!empty($res)){
@@ -71,6 +70,8 @@
                                     $_SESSION['last_status_change'] = $res['last_status_change'];
                                     $_SESSION['email'] = $res['email'];
 
+                                    $r2->execute(array(":accname" => $this->username));
+
                                     return array("login" => true);
                                 }
                             } else {
@@ -80,6 +81,8 @@
                                 $_SESSION['accstatus'] = $res['status'];
                                 $_SESSION['last_status_change'] = $res['last_status_change'];
                                 $_SESSION['email'] = $res['email'];
+
+                                $r2->execute(array(":accname" => $this->username));
 
                                 return array("login" => true);
                             }
