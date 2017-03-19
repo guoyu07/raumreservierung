@@ -1,6 +1,12 @@
 # < Changelog >
 
-## Latest Changes (15.03.2017)
+## Latest Changes (19.03.2017)
+
+#### v3.2.3-public --> v3.2.4-public
+Bug fixes and Service Worker Improvements
+- Changed Service Worker File Paths to supper absolute routing
+- Fixed user not getting logged out when clicking the logout button when logged
+in as teacher on the teacher page
 
 #### v3.2.2-public --> v3.2.3-public
 Various bug fixes
