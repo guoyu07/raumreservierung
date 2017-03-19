@@ -35,7 +35,7 @@
     ".htaccess",
     ".htpasswd",
     "manifest.json",
-    "LICENSE",
+    "LICENSE.txt",
     "js/*",
     "favicon.ico",
     "favicon.png",
