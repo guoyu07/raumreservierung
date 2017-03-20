@@ -4,7 +4,7 @@
 
 #### v3.2.3-public --> v3.2.4-public
 Bug fixes and Service Worker Improvements
-- Changed Service Worker File Paths to supper absolute routing
+- Changed Service Worker File Paths to support absolute routing
 - Fixed user not getting logged out when clicking the logout button when logged
 in as teacher on the teacher page
 
