@@ -8,8 +8,8 @@
 Options All -Indexes
 
 # Disable cache to avoid the "service-worker.js" to be stored
-# on the viewing device (the service worker will handly caching
-# of everything - images, HTML and so on)
+# on the viewing device (the service worker will handle the
+# caching of everything but itself which is intended :] )
 <IfModule mod_headers.c>
     Header set Cache-Control "no-cache, no-store, must-revalidate"
     Header set Pragma "no-cache"
