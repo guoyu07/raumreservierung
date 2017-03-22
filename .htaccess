@@ -20,10 +20,3 @@ Options All -Indexes
 # added in v3.2.0-public
 # -- index.html not global because of local deployment
 ErrorDocument 404 /raumreservierung/project/index.html
-
-# Rewrite Rule for all requests returning a 404 error
-RewriteEngine On
-RewriteBase /
-
-RewriteCond %{REWRITE_URI} ^/404/$
-RewriteRule ^ index.html [L]
