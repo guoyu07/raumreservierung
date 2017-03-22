@@ -1,6 +1,16 @@
 # < Changelog >
 
-## Latest Changes (19.03.2017)
+## Latest Changes (22.03.2017)
+
+#### v3.2.4-public --> v3.3.0-public
+Bug fixes and functionality improvements
+- Increased XHR-Timeouts for Admin-Pages
+- Deactivated annoying loading dialogs to show up whenever the selected view
+changes due to JavaScript / XHR loading the users's session info (loading
+it in the background now :^] )
+- Added checks to indicater whether an admin view has already been loaded. If
+so, the dialog indicating the loading of the element won't show up everytime
+the views change (which was damn fking annoying)
 
 #### v3.2.3-public --> v3.2.4-public
 Bug fixes and Service Worker Improvements
