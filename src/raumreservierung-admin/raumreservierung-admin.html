@@ -99,11 +99,11 @@
         tail="{{viewTail}}"></app-route>
 
     <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
-      <h2>Inhalte werden geladen...</h2>
+      <h2>Inhalt wird geladen...</h2>
       <br>
       <div class="spinnerWrapper"><paper-spinner active></paper-spinner></div>
       <br>
-      <p><i>Der erste Ladevorgang kann bei schlechten Internetverbindungen eine Weile dauern. Bitte haben Sie einen Moment Geduld.</i></p>
+      <p style="color:#757575;"><i>Bitte haben Sie einen Moment Geduld...</i></p>
     </paper-dialog>
 
     <paper-dialog id="errorDialog" with-backdrop>
@@ -237,6 +237,22 @@
 
                   return list.join('/');
               }
+          },
+          usermanagementLoaded: {
+              type: Boolean,
+              value: false
+          },
+          roommanagementLoaded: {
+              type: Boolean,
+              value: false
+          },
+          errorReportsLoaded: {
+              type: Boolean,
+              value: false
+          },
+          cronjobsLoaded: {
+              type: Boolean,
+              value: false
           }
       },
 
@@ -257,7 +273,6 @@
           window.location.hash = this.viewData.view;
         },
         _onPageChanged: function(){
-            this.$.loadIndicator.open();
             // Lock Tabs
             for(var i=0; i < this.$.tabs.items.length; i++) {
                 this.$.tabs.items[i].disabled = true;
@@ -267,15 +282,23 @@
                 switch (this.viewData.view) {
                     case "usermanagement":
                         this.importHref('src/raumreservierung-admin/src/admin-nutzerverwaltung/admin-nutzerverwaltung.html', this._onLoadStart, this._onPageLoadError, true);
+                        if(!this.usermanagementLoaded)
+                            this.usermanagementLoaded = true, this.$.loadIndicator.open();
                         break;
                     case "roommanagement":
                         this.importHref('src/raumreservierung-admin/src/admin-raumverwaltung/admin-raumverwaltung.html', this._onLoadStart, this._onPageLoadError, true);
+                        if(!this.roommanagementLoaded)
+                            this.roommanagementLoaded = true, this.$.loadIndicator.open();
                         break;
                     case "error-reports":
                         this.importHref('src/raumreservierung-admin/src/admin-error-reports/admin-error-reports.html', this._onLoadStart, this._onPageLoadError, true);
+                        if(!this.errorReportsLoaded)
+                            this.errorReportsLoaded = true, this.$.loadIndicator.open();
                         break;
                     case "cronjobs":
                         this.importHref('src/raumreservierung-admin/src/admin-cronjobs/admin-cronjobs.html', this._onLoadStart, this._onPageLoadError, true);
+                        if(!this.cronjobsLoaded)
+                            this.cronjobsLoaded = true, this.$.loadIndicator.open();
                         break;
                     case "welcome":
                         this._freeTabs();
