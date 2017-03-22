@@ -30,7 +30,7 @@
                    content-type="application/x-www-form-urlencoded"
                    handle-as="json"
                    debounce-duration="300"
-                   timeout="15000"
+                   timeout="25000"
                    last-response="{{users}}"></iron-ajax>
 
         <div id="content">
@@ -365,8 +365,9 @@
                     }
                 },
                 handleError: function(e) {
+                    this.$.loadIndicator.close();
                     var error = (e.detail.error.message) ? e.detail.error.message : (e.detail.error.type) ? e.detail.error.type : "";
-                    this.$.errorBox.innerHTML = "Es ist ein Fehler bei der Abfrage aufgetreten!<br>(" + error + ")";
+                    this.$.errorbox.innerHTML = "Es ist ein Fehler bei der Abfrage aufgetreten!<br>(" + error + ")";
                 },
                 _onResetChange: function() {
                     if(this.reset == true) {
