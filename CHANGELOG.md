@@ -4,7 +4,7 @@
 
 #### v3.2.3-public --> v3.2.4-public
 Bug fixes and Service Worker Improvements
-- Changed Service Worker File Paths to supper absolute routing
+- Changed Service Worker File Paths to support absolute routing
 - Fixed user not getting logged out when clicking the logout button when logged
 in as teacher on the teacher page
 
@@ -27,11 +27,9 @@ Reworked Page Routing
 to work properly
 
 #### v3.0.0-public --> v3.1.0-public
-Bug fixes
-
-**(YES, THERE WERE)**
+Bug fixes (YES, THERE WERE !!!)
 - Replaced old htmlentities() with preg_replace regex, which I wanted to
-do early but forgot to do it
+do earlier but forgot to do it
 - Added fallback toast to open in case the hash routing doenst work
 when confirming the account / email address
 
@@ -95,7 +93,7 @@ and service-worker - options)
 #### v2.2 --> v2.3.1-public
 - Added /backend/public/
 - Added "reservation-api.php" to /backend/public/
-- Implemented an API which returns the reservations by teacher name (all possible variations) and just all reservations (independant from teacher names)
+- Implemented an API which returns the reservations by teacher name (all possible variations) and just all reservations (independent from teacher names)
 - Added a max-entry-value $max so you can limit the returned datarows
 
 #### v2.1 --> v2.2
