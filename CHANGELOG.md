@@ -1,6 +1,12 @@
 # < Changelog >
 
-## Latest Changes (22.03.2017)
+## Latest Changes (26.03.2017)
+
+#### v3.3.0-public --> v3.3.1-public
+Some visual approvements
+- Card proportions / width for imprint
+- Replaced ugly buttons in admin-usermanagement with dynamic Floating
+Action Buttons
 
 #### v3.2.4-public --> v3.3.0-public
 Bug fixes and functionality improvements
