@@ -16,7 +16,6 @@ module.exports = {
         "./mstile-144.png",
         "./apple-touch-icon.png",
         "./img/*",
-        "./src/raumreservierung-admin/img/*",
         "./js/*",
         "./LICENSE.txt",
 
@@ -29,9 +28,9 @@ module.exports = {
         "./index.html",
         // FRAGMENTS
         "./src/raumreservierung-admin/raumreservierung-admin.html",
-        "./src/raumreservierung-admin/src/admin-error-reports/admin-error-reports.html",
-        "./src/raumreservierung-admin/src/admin-nutzerverwaltung/admin-nutzerverwaltung.html",
-        "./src/raumreservierung-admin/src/admin-raumverwaltung/admin-raumverwaltung.html",
+        "./src/raumreservierung-admin/admin-error-reports.html",
+        "./src/raumreservierung-admin/admin-nutzerverwaltung.html",
+        "./src/raumreservierung-admin/admin-raumverwaltung.html",
         "./src/raumreservierung-email-confirmation/raumreservierung-email-confirmation.html",
         "./src/raumreservierung-landingpage/raumreservierung-landingpage.html",
         "./src/raumreservierung-login/raumreservierung-login.html",
@@ -41,7 +40,7 @@ module.exports = {
         "./src/raumreservierung-imprint/raumreservierung-imprint.html",
         "./src/raumreservierung-reset-password/raumreservierung-reset-password.html",
         "./src/raumreservierung-account-page/raumreservierung-account-page.html",
-        "./src/raumreservierung-admin/src/admin-cronjobs/admin-cronjobs.html",
+        "./src/raumreservierung-admin/admin-cronjobs.html",
         "./src/raumreservierung-teacher/raumreservierung-teacher.html",
         "./src/raumreservierung-teacher/teacher-datepicker.html",
         "./src/raumreservierung-teacher/teacher-raumreservierung.html",
@@ -49,7 +48,7 @@ module.exports = {
         "./src/raumreservierung-teacher/teacher-reservation-request.html",
         "./src/raumreservierung-teacher/teacher-reservations.html",
         "./src/raumreservierung-teacher/teacher-timelist.html",
-        "./src/raumreservierung-admin/src/admin-raumverwaltung/admin-reservation-control.html",
+        "./src/raumreservierung-admin/admin-reservation-control.html",
         // APP SHELL
         "./src/raumreservierung-main/raumreservierung-main.html"
     ],
