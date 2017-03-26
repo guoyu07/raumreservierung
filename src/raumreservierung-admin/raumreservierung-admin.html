@@ -221,7 +221,7 @@
               type: Boolean,
               value: function() {
                   if(this.viewData)
-                      return this.viewData.view == "roommanagement";
+                      return this.viewData.view === "roommanagement";
                   else
                       return false;
               }
@@ -281,22 +281,22 @@
             var _switchPage = function() {
                 switch (this.viewData.view) {
                     case "usermanagement":
-                        this.importHref('src/raumreservierung-admin/src/admin-nutzerverwaltung/admin-nutzerverwaltung.html', this._onLoadStart, this._onPageLoadError, true);
+                        this.importHref('src/raumreservierung-admin/admin-nutzerverwaltung.html', this._onLoadStart, this._onPageLoadError, true);
                         if(!this.usermanagementLoaded)
                             this.usermanagementLoaded = true, this.$.loadIndicator.open();
                         break;
                     case "roommanagement":
-                        this.importHref('src/raumreservierung-admin/src/admin-raumverwaltung/admin-raumverwaltung.html', this._onLoadStart, this._onPageLoadError, true);
+                        this.importHref('src/raumreservierung-admin/admin-raumverwaltung.html', this._onLoadStart, this._onPageLoadError, true);
                         if(!this.roommanagementLoaded)
                             this.roommanagementLoaded = true, this.$.loadIndicator.open();
                         break;
                     case "error-reports":
-                        this.importHref('src/raumreservierung-admin/src/admin-error-reports/admin-error-reports.html', this._onLoadStart, this._onPageLoadError, true);
+                        this.importHref('src/raumreservierung-admin/admin-error-reports.html', this._onLoadStart, this._onPageLoadError, true);
                         if(!this.errorReportsLoaded)
                             this.errorReportsLoaded = true, this.$.loadIndicator.open();
                         break;
                     case "cronjobs":
-                        this.importHref('src/raumreservierung-admin/src/admin-cronjobs/admin-cronjobs.html', this._onLoadStart, this._onPageLoadError, true);
+                        this.importHref('src/raumreservierung-admin/admin-cronjobs.html', this._onLoadStart, this._onPageLoadError, true);
                         if(!this.cronjobsLoaded)
                             this.cronjobsLoaded = true, this.$.loadIndicator.open();
                         break;
@@ -304,12 +304,14 @@
                         this._freeTabs();
                         break;
                 }
-                this.frameLayout = (this.viewData.view == "roommanagement");
+                this.frameLayout = (this.viewData.view === "roommanagement");
             }.bind(this);
 
             if('onLine' in navigator) {
                 if(navigator.onLine) {
-                    _switchPage();
+                    this.debounce('pageSwitch', function() {
+                        _switchPage();
+                    }, 50);
                 } else {
                     this._freeTabs();
                     this.$.loadIndicator.close();
@@ -329,6 +331,7 @@
         _onLoadStart: function() {
             this._freeTabs();
             var e;
+            console.log("Triggered");
             switch(this.viewData.view){
                 case "usermanagement":
                     // Trigger Data Reload on Tab Change if error on initial load
@@ -337,7 +340,7 @@
                         e.reloadData = true;
                     break;
                 case "roommanagement":
-                    // Room reservation not implemented yet
+                    // Doesnt need reload
                     break;
                 case "error-reports":
                     // Trigger Data Reload on Tab Change if error on initial load

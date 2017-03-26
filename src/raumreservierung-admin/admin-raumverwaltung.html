@@ -1,11 +1,11 @@
-<link rel="import" href="../../../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../../../bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../../../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../../../bower_components/paper-header-panel/paper-header-panel.html">
-<link rel="import" href="../../../../bower_components/paper-toolbar/paper-toolbar.html">
-<link rel="import" href="../../../../bower_components/paper-tabs/paper-tabs.html">
-<link rel="import" href="../../../../bower_components/paper-tabs/paper-tab.html">
-<link rel="import" href="../../../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 
 <dom-module id="admin-raumverwaltung">
     <template>
@@ -142,7 +142,7 @@
                         break;
                     case 2:
                         // administration of all reservations
-                        this.importHref('src/raumreservierung-admin/src/admin-raumverwaltung/admin-reservation-control.html', this._onControlLoad, this._onPageLoadError, true);
+                        this.importHref('src/raumreservierung-admin/admin-reservation-control.html', this._onControlLoad, this._onPageLoadError, true);
                         break;
                     default:
                         this._freeTabs();
