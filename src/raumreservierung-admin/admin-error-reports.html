@@ -116,7 +116,6 @@ Page for managing Error-Reports
         position: fixed;
         bottom: 20px;
         right: 20px;
-        z-index: 999;
       }
     </style>
 
@@ -137,8 +136,6 @@ Page for managing Error-Reports
         <paper-spinner active></paper-spinner>
       </paper-dialog>
       <paper-card id="errorbox" class="errorCard"></paper-card>
-
-      <paper-fab icon="refresh" id="reloadErrors" title="Fehlerberichte neu laden"></paper-fab>
 
       <template is="dom-if" if="{{data.success}}">
           <template is="dom-if" if="{{data.errors}}">
@@ -210,6 +207,8 @@ Page for managing Error-Reports
       </template>
 
     </div>
+
+    <paper-fab icon="refresh" id="reloadErrors" title="Fehlerberichte neu laden"></paper-fab>
 
   </template>
 

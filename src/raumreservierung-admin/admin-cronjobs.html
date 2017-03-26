@@ -92,14 +92,12 @@
                 position: fixed;
                 right: 20px;
                 bottom: 20px;
-                z-index: 999;
             }
             #deleteAllFab {
                 --paper-fab-background: var(--accent-color);
                 position: fixed;
                 right: 20px;
                 bottom: 90px;
-                z-index: 999;
             }
             .cardCenter {
                 @apply(--layout-vertical);
@@ -137,9 +135,6 @@
         </paper-dialog>
 
         <paper-card id="errorbox" class="errorCard"></paper-card>
-
-        <paper-fab icon="refresh" id="reloadDataFab"></paper-fab>
-        <paper-fab icon="delete" id="deleteAllFab"></paper-fab>
 
         <template is="dom-if" if="{{data.success}}">
             <template is="dom-if" if="{{data.logs}}">
@@ -202,6 +197,9 @@
                 </paper-card>
             </div>
         </template>
+
+        <paper-fab icon="refresh" id="reloadDataFab"></paper-fab>
+        <paper-fab icon="delete" id="deleteAllFab"></paper-fab>
 
     </template>
     <script>
