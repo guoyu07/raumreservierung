@@ -8,6 +8,7 @@
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-badge/paper-badge.html">
 
 <dom-module id="admin-nutzerverwaltung">
 
@@ -20,6 +21,43 @@
             }
             .spinnerWrapper {
                 text-align: center;
+            }
+            #addUserButton {
+                background-color: #E91E63;
+                color: white;
+                position: fixed;
+                right: 20px;
+                bottom: -44px;
+                opacity: 0;
+                display: none;
+
+                transform: none;
+
+                transition: opacity 0.2s ease-in-out, bottom 0.2s ease-in-out, transform 0.2s ease-in-out;
+            }
+            #addUserButton[visible] {
+                opacity: 1;
+                bottom: 20px;
+                -webkit-transform: rotate(90deg);
+                -moz-transform: rotate(90deg);
+                -ms-transform: rotate(90deg);
+                -o-transform: rotate(90deg);
+                transform: rotate(90deg);
+            }
+            #deletionButton, #resetButton {
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                opacity: 0;
+                transition: bottom 0.2s ease-in-out, opacity 0.2s ease-in-out;
+            }
+            #deletionButton[visible] {
+                bottom: 20px;
+                opacity: 1;
+            }
+            #resetButton[visible] {
+                bottom: calc(20px + 64px);
+                opacity: 1;
             }
         </style>
 
@@ -37,16 +75,10 @@
 
             <div id="headbar" style="height:auto;border-radius: 5px; margin: 15px auto;color:#212121;">
                 <h3 id="headtext" style="padding: 10px;font-size:20px;">Benutzer in der Datenbank (Aktuell {{userAmount}}):</h3>
-                <paper-icon-button title="Tabelle neu laden" icon="autorenew" id="reloadButton" style="float: right;background-color: #E91E63;color:white; border-radius: 100px;"></paper-icon-button>
+                <paper-fab mini title="Tabelle neu laden" icon="autorenew" id="reloadButton" style="float: right;background-color: #E91E63;color:white; border-radius: 100px;"></paper-fab>
                 <paper-input id="nameSearchInput" on-input="applyFilter" maxlength="32" label="Nach Namen suchen" style="width: 200px; margin-top: -40px; padding: 10px;">
                     <div prefix><iron-icon icon="account-box" style="margin-right: 10px;"></iron-icon></div>
                 </paper-input>
-
-                <div id="deleteButtonWrapper" style="width: 310px; margin-top: -10px; padding: 10px; display: none;">
-                    <paper-button id="deletionButton" style="background-color: #E91E63;margin-bottom: 10px; color: white;"></paper-button>
-                    <paper-button id="resetButton" style="background-color: #E91E63; margin-top: 10px; color: white;"></paper-button>
-                </div>
-
             </div>
 
             <paper-datatable id="usertable" data="{{users.data}}" selectable multi-selection style="border-top: 1px solid #BDBDBD">
@@ -78,11 +110,6 @@
                     <template><span>[[value]]</span></template>
                 </paper-datatable-column>
             </paper-datatable>
-
-
-            <!-- Bottom Right of the Screen -->
-            <paper-fab icon="add" id="addUserButton" title="Neuen Account hinzuf&uuml;gen" style="background-color: #E91E63; color: white; position: fixed; right: 20px;bottom: 20px;"></paper-fab>
-
 
             <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
                 <h2>&Auml;nderungen werden best&auml;tigt...</h2>
@@ -131,6 +158,11 @@
                 </div>
             </paper-dialog>
 
+            <!-- Delete & Reset Buttons -->
+            <paper-fab icon="delete" id="deletionButton" visible$="[[selectedLayout]]"></paper-fab>
+            <paper-fab icon="restore" id="resetButton" visible$="[[selectedLayout]]"></paper-fab>
+            <paper-fab visible$="[[!selectedLayout]]" icon="add" id="addUserButton" title="Neuen Account hinzuf&uuml;gen"></paper-fab>
+
             <div id="errorbox" style="margin: 20px auto;color:red;font-size:16px;width: 70%;height:auto;text-align:center;"></div>
 
         </div>
@@ -159,6 +191,14 @@
                         type: Boolean,
                         value: false,
                         observer: '_onExtRefresh'
+                    },
+                    selectedLayout: {
+                        type: Boolean,
+                        value: false
+                    },
+                    selectedUsers: {
+                        type: Number,
+                        value: 0
                     }
                 },
 
@@ -253,26 +293,17 @@
                 },
                 checkSelection: function(){
                     this.$.selectedRows = this.$.usertable.selectedKeys;
-                    var deleteBox = this.$.deleteButtonWrapper;
-                    var button = this.$.deletionButton;
-                    var button2 = this.$.resetButton;
 
                     if (this.$.selectedRows.length != 0) {
                         var length = this.$.selectedRows.length;
                         this.$.headtext.innerHTML = "Ausgew&auml;hlte Nutzer: " + length;
-                        this.$.nameSearchInput.style.display = "none";
 
-                        deleteBox.style.display = "block";
-                        button.innerHTML = '<iron-icon icon="delete" style="margin-right: 10px;"></iron-icon>'+length+" Nutzer l&ouml;schen!";
-                        button2.innerHTML = '<iron-icon icon="restore" style="margin-right: 10px;"></iron-icon>'+length+" Nutzer<br>zur&uuml;cksetzen!";
+                        this.selectedLayout = true;
+                        this.selectedUsers = length;
 
                     } else {
                         this.$.headtext.innerHTML = "Benutzer in der Datenbank (Aktuell "+this.userAmount+"):";
-                        this.$.nameSearchInput.style.display = "block";
-
-                        deleteBox.style.display = "none";
-                        button.innerHTML = "";
-                        button2.innerHTML = "";
+                        this.selectedLayout = false;
                     }
                 },
                 applyFilter: function(){
