@@ -80,12 +80,6 @@
                 margin: 0 auto;
                 @apply(--layout-vertical);
             }
-            .autoSize {
-                --paper-card: {
-                    @apply(--layout-vertical);
-                    @apply(--layout-self-center);
-                }
-            }
             .right {
                 float: right;
             }
@@ -98,6 +92,12 @@
             paper-card.centerCard{
                 @apply(--layout-self-center);
                 @apply(--layout-vertical);
+                width: 100%;
+                margin-top: 8px;
+                max-width: calc(100% - 16px);
+            }
+            paper-tabs {
+                --paper-tabs-selection-bar-color: white;
             }
         </style>
 
@@ -213,7 +213,7 @@
                             <teacher-reservations></teacher-reservations>
                             <div class="centerCardWrapper">
                                 <!-- Welcome Page / Card -->
-                                <paper-card heading="Willkommen!" class="centerCard" style="margin-top: 20px;">
+                                <paper-card heading="Willkommen!" class="centerCard" style="margin-top: 8px;">
                                     <div class="card-content">
                                         <p>
                                             Willkommen zur&uuml;ck bei der Raumreservierung.<br>
@@ -230,7 +230,7 @@
                         <div class="outer">
                             <div class="middle">
                                 <div class="inner">
-                                    <paper-card heading="Es ist ein Fehler aufgetreten!" class="autoSize">
+                                    <paper-card heading="Es ist ein Fehler aufgetreten!" class="centerCard">
                                         <div class="card-content">
                                             <p>
                                                 Es ist ein schwerwiegender Fehler bei der Datenabfrage aufgetreten!
