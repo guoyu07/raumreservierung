@@ -1,9 +1,20 @@
 # < Changelog >
 
-## Latest Changes (26.03.2017)
+## Latest Changes (29.03.2017)
+
+#### v3.3.1-public --> v3.4.0
+Very much visual improvements
+- Rebuilt all pages / views using app-layout instead of paper-elements
+(Except userpages e.g. teacher & admin because of the known problems
+with iron-overlay layers :D)
+- Fixed a lot of bugs queueing unnecessarily many AJAX requests
+- reworked grid for Account page in order to fix some bugs appearing
+on iPhone - Devices where the grid could not be displayed accordingly
+- removed the "-public" ending, because it was just for the visuals but
+is redundant
 
 #### v3.3.0-public --> v3.3.1-public
-Some visual approvements
+Some visual improvements
 - Card proportions / width for imprint
 - Replaced ugly buttons in admin-usermanagement with dynamic Floating
 Action Buttons
