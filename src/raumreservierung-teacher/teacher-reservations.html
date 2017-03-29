@@ -286,6 +286,7 @@
             finalDelete: function() {
                 this.$.dataRequest.body = "request=deleteReservation&rid="+String(this.selectedId).replace(/&/g, '');
                 this.$.dataRequest.generateRequest();
+                this.$.deleteDialog.close();
             },
             fireRedirectToReservation: function() {
                 this.fire('teacher-redirect-to-reservation');
