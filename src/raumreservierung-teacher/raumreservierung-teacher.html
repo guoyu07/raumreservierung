@@ -202,12 +202,12 @@
             </app-drawer>
             <app-header-layout style="z-index: 1;">
                 <app-header fixed condenses effects="waterfall">
-                    <app-toolbar condenses effects="waterfall" id="mainTB">
+                    <app-toolbar id="mainTB">
                         <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
                         <div main-title style="padding: 0 0 1px 8px;">[[response.fullname]] ([[response.lehrer_kurz]])</div>
                     </app-toolbar>
                     <template is="dom-if" if="[[response.success]]">
-                        <app-toolbar fixed sticky effects="waterfall" id="secTB">
+                        <app-toolbar id="secTB">
                             <paper-tabs scrollable no-slide fit-container bottom-item selected="{{selected}}">
                                 <paper-tab>Raumreservierung</paper-tab>
                                 <paper-tab>Meine Reservierungen</paper-tab>
