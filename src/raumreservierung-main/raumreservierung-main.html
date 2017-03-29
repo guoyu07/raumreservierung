@@ -440,47 +440,55 @@
             //console.log("[" + e.detail + "] component loaded and ready");
         },
         _redirect: function () {
-            if(this.viewData.view == "" || this.viewData.view == "main") {
-                if (this.response.data.type != "" && Number(this.response.data.type) >= 0 && Number(this.response.data.status) >= 0) {
-                    switch (Number(this.response.data.status)) {
-                        case 1:
-                            // Decativated
-                            this.fire('goToPage', "deactivated-account");
-                            break;
-                        case 2:
-                            // Show account page
-                            this._loadAccountPage();
-                            break;
-                        case 3:
-                            // Activated
-                            var type;
-                            switch (Number(this.response.data.type)) {
-                                case 1:
-                                    type = "admin";
-                                    break;
-                                case 2:
-                                    type = "management";
-                                    break;
-                                case 3:
-                                    type = "teacher";
-                                    break;
-                                default:
-                                    type = "teacher";
-                                    break;
-                            }
+            /**
+             * v3.4.0-public
+             * Added debounce to prevent element-reload - functions to be triggered before
+             * they have been loaded.
+             * Added debounce also to prevent element-reload to be triggered way too often than needed
+             */
+            this.debounce("redirect", function() {
+                if(this.viewData.view == "" || this.viewData.view == "main") {
+                    if (this.response.data.type != "" && Number(this.response.data.type) >= 0 && Number(this.response.data.status) >= 0) {
+                        switch (Number(this.response.data.status)) {
+                            case 1:
+                                // Decativated
+                                this.fire('goToPage', "deactivated-account");
+                                break;
+                            case 2:
+                                // Show account page
+                                this._loadAccountPage();
+                                break;
+                            case 3:
+                                // Activated
+                                var type;
+                                switch (Number(this.response.data.type)) {
+                                    case 1:
+                                        type = "admin";
+                                        break;
+                                    case 2:
+                                        type = "management";
+                                        break;
+                                    case 3:
+                                        type = "teacher";
+                                        break;
+                                    default:
+                                        type = "teacher";
+                                        break;
+                                }
 
-                            this.type = type;
-                            this.fire('goToPage', type);
+                                this.type = type;
+                                this.fire('goToPage', type);
+                        }
+
+                    } else {
+                        this.$.loadIndicator.close();
+                        this.$.errorContent.innerHTML = '<p style="color:red;">Der Typ Ihres Accounts konnte nicht ermittelt werden!</p>';
+                        this.$.errorDialog.center();
+                        this.$.errorDialog.open();
+                        this._loadPages();
                     }
-
-                } else {
-                    this.$.loadIndicator.close();
-                    this.$.errorContent.innerHTML = '<p style="color:red;">Der Typ Ihres Accounts konnte nicht ermittelt werden!</p>';
-                    this.$.errorDialog.center();
-                    this.$.errorDialog.open();
-                    this._loadPages();
                 }
-            }
+            }, 100);
         },
         loadUserPage: function () {
             var type = this.type;
