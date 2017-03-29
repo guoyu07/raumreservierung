@@ -1,6 +1,11 @@
 # < Changelog >
 
-## Latest Changes (29.03.2017)
+## Latest Changes (30.03.2017)
+
+#### v3.4.0 --> 3.4.2
+Reworked admin page
+- Rebuilt admin page which is now based on app-layout instead of paper-elements
+- Rebuild teacher page which is now based on app-layout instead of paper-elements
 
 #### v3.3.1-public --> v3.4.0
 Very much visual improvements
