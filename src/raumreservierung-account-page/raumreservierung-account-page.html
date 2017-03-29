@@ -15,6 +15,9 @@
 <link rel="import" href="../../bower_components/app-layout/app-grid/app-grid-style.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
+<link rel="import" href="../../bower_components/neon-animation/animations/scale-down-animation.html">
 
 <dom-module id="raumreservierung-account-page">
     <template>
@@ -30,8 +33,8 @@
                 --primary-text-color: #212121;
                 --secondary-text-color: #757575;
                 --divider-color: #BDBDBD;
-                --app-grid-gutter: 10px;
-                --app-grid-columns: auto;
+                --app-grid-gutter: 8px;
+                --app-grid-columns: 1;
                 --app-grid-expandible-item-columns: auto;
             }
             ul {
@@ -84,7 +87,11 @@
             }
             .normalCard {
                 @apply(--layout-self-center);
-                margin-top: 20px;
+                margin-top: 8px;
+            }
+            .errorCard {
+                @apply(--layout-self-center);
+                margin: 8px 8px 0 8px;
             }
             .userCard {
                 @apply(--layout-flex-auto);
@@ -93,6 +100,9 @@
             }
             tr > td:first-of-type {
                 padding-right: 10px;
+            }
+            .app-grid {
+                margin: 0;
             }
         </style>
 
@@ -117,7 +127,6 @@
             <div id="errorContent">
 
             </div>
-            <p style="text-align: center"><i>Melden Sie diesen Fehler bitte ggf. einem Administrator!</i></p>
             <div class="buttons">
                 <paper-button dialog-confirm autofocus style="color: #F44336;">OK</paper-button>
             </div>
@@ -188,7 +197,7 @@
                 </div>
             </div>
             <div main>
-                <paper-header-panel mode="standard">
+                <paper-header-panel mode="waterfall">
                     <paper-toolbar>
                         <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
                         <div class="title" style="padding-bottom: 1px;">[[fullname]]</div>
@@ -243,30 +252,18 @@
                                         </paper-card>
                                     </li>
                                     <li>
-                                        <paper-card heading="Passwort &Auml;ndern" class="userCard" style="min-width: 300px;">
-                                            <div class="card-content">
-                                                <p>
-                                                    Hier k&ouml;nnen Sie Ihr pers&ouml;nliches Passwort &auml;ndern.
-                                                    (Wir werden Ihnen eine Informationsmail an Ihre E-Mail - Adresse senden)
-                                                </p>
-                                                <div style="margin: 0 auto; text-align: center">
-                                                    <paper-button on-click="togglePWForm" id="pwFormToggle">Formular &ouml;ffnen</paper-button>
+                                        <paper-card class="userCard" style="min-width: 300px;">
+                                            <div class="card-actions">
+                                                <div style="text-align: center; margin: 0 auto;">
+                                                    <paper-button style="width: 100%;" on-click="togglePWForm" id="pwFormToggle">Passwort &auml;ndern</paper-button>
                                                 </div>
-                                                <iron-collapse id="changePWForm">
-                                                    <paper-input type="password" id="oldPW" minlength="6" maxlength="64" auto-validate required label="Altes Passwort eingeben"></paper-input>
-                                                    <paper-input type="password" id="newPW1" minlength="6" maxlength="64" auto-validate required label="Neues Passwort eingeben"></paper-input>
-                                                    <paper-input type="password" id="newPW2" minlength="6" on-keyup="validateInput" maxlength="64" auto-validate required label="Neues Passwort wiederholen"></paper-input>
-                                                    <br>
-                                                    <div id="changePWStatus"></div>
-                                                    <paper-button on-click="changePW" style="float: right;">Passwort &auml;ndern</paper-button>
-                                                </iron-collapse>
                                             </div>
                                         </paper-card>
                                     </li>
                                 </ul>
                             </template>
                             <template is="dom-if" if="{{!response.loggedin}}">
-                                <paper-card heading="Nicht eingeloggt!" class="normalCard">
+                                <paper-card heading="Nicht eingeloggt!" class="errorCard">
                                     <div class="card-content">
                                         <p>
                                             Hallo!<br>
@@ -285,7 +282,7 @@
                             </template>
                         </template>
                         <template is="dom-if" if="{{!response.success}}">
-                            <paper-card heading="Fehler!" class="normalCard">
+                            <paper-card heading="Fehler!" class="errorCard">
                                 <div class="card-content">
                                     <p>
                                         Leider ist ein Fehler bei der Abfrage Ihrer Nutzerdaten aufgetreten.<br>
@@ -303,6 +300,24 @@
                 </paper-header-panel>
             </div>
         </paper-drawer-panel>
+
+        <paper-dialog id="passwordForm" with-backdrop>
+            <h2>Passwort &auml;ndern</h2>
+            <div id="changePWStatus"></div>
+            <paper-dialog-scrollable>
+                <span>
+                    Hier k&ouml;nnen Sie Ihr pers&ouml;nliches Passwort &auml;ndern.
+                    (Wir werden Ihnen eine Informationsmail an Ihre E-Mail - Adresse senden)
+                </span>
+                <paper-input type="password" id="oldPW" minlength="6" maxlength="64" auto-validate required label="Altes Passwort eingeben"></paper-input>
+                <paper-input type="password" id="newPW1" minlength="6" maxlength="64" auto-validate required label="Neues Passwort eingeben"></paper-input>
+                <paper-input type="password" id="newPW2" minlength="6" on-keyup="validateInput" maxlength="64" auto-validate required label="Neues Passwort wiederholen"></paper-input>
+            </paper-dialog-scrollable>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Schlie&szlig;en</paper-button>
+                <paper-button on-click="changePW" id="changePWButton">Passwort &auml;ndern</paper-button>
+            </div>
+        </paper-dialog>
 
     </template>
     <script>
@@ -325,7 +340,8 @@
                 'dataRequest.error':'_onError',
                 'passwordRequest.request':'_onRequest',
                 'passwordRequest.response':'_onPWResponse',
-                'passwordRequest.error':'_onError'
+                'passwordRequest.error':'_onError',
+                'passwordForm.iron-overlay-closed': 'resetPWForm'
             },
 
             ready: function() {
@@ -390,9 +406,7 @@
                 this.$.dataRequest.generateRequest();
             },
             togglePWForm: function() {
-                var form = this.$$('#changePWForm');
-                form.toggle();
-                this.$$('#pwFormToggle').textContent = (form.opened) ? "Formular schließen" : "Formular öffnen";
+                this.$.passwordForm.open();
             },
             changePW: function() {
                 var old = this.$$('#oldPW');
@@ -409,7 +423,15 @@
                     old.value = "";
                     new1.value = "";
                     new2.value = "";
+                    this.$.changePWStatus.innerHTML = '<p style="color: red;">Bitte &uuml;berpr&uuml;fen Sie Ihre Eingaben!</p>';
+                    this.$.passwordForm.center();
                 }
+            },
+            resetPWForm: function() {
+                this.$$('#oldPW').value = "", this.$$('#oldPW').invalid = false;
+                this.$$('#newPW1').value = "", this.$$('#newPW1').invalid = false;
+                this.$$('#newPW2').value = "", this.$$('#newPW2').invalid = false;
+                this.$.changePWStatus.innerHTML = "";
             },
             validateInput: function() {
                 var new1 = this.$$('#newPW1');
@@ -439,6 +461,8 @@
                 } else {
                     box.innerHTML = '<p style="color: red;">Es ist ein Fehler bei der Serveranfrage aufgetreten!</p>';
                 }
+
+                this.$.passwordForm.center();
             },
             fireLogout: function() {
                 this.fire('logout');
