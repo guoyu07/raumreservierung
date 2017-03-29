@@ -169,8 +169,8 @@
         </template>
 
         <template is="dom-if" if="[[!response.success]]">
-            <div class="cardWrapper" style="margin-top: 20px;">
-                <paper-card heading="Es ist ein Fehler aufgetreten!">
+            <div class="cardWrapper" style="margin-top: 8px;">
+                <paper-card heading="Es ist ein Fehler aufgetreten!" style="max-width: calc(100% - 16px);">
                     <div class="card-content">
                         <p style="color: red;">
                             [[response.message]]
