@@ -555,7 +555,11 @@
             var metas = document.getElementsByTagName('meta');
             for (var i = 0; i < metas.length; i++) {
                 if (metas[i].name == "theme-color") {
-                    metas[i].content = e.detail;
+                    if (String(e.detail.substr(0, 1)) === "#") {
+                        metas[i].content = e.detail;
+                    } else {
+                        metas[i].content = "#" + e.detail;
+                    }
                 }
             }
         },
