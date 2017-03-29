@@ -238,10 +238,8 @@
 
             this.validateBrowser();
 
-            if(typeof this.viewData.view === "undefined") {
-                /** Load Pages */
-                this._loadPages();
-            }
+            /** Load Pages */
+            this._loadPages();
 
         },
         _onViewChange: function () {
@@ -253,7 +251,10 @@
                    this.$.userDataRequest.body = "r=getSessionData";
                    this.$.userDataRequest.generateRequest();
                }
-           }, 300);
+           }, 50);
+
+            /** Load Pages */
+            this._loadPages();
 
             // Set Theme Colors
             var color = "#689F38";
@@ -390,7 +391,6 @@
                     break;
                 case "imprint":
                     this._loadImprint();
-                    this.$.pages.select("imprint");
                     break;
                 case "reset-password":
                     // Password reset page
@@ -590,12 +590,8 @@
             this.selected = 0;
         },
         _loadImprint: function() {
-            if(!this.imprintPageLoaded){
-                this.$.loadIndicator.open();
-                this.importHref('src/raumreservierung-imprint/raumreservierung-imprint.html', this._onImprintLoad, this._onImprintLoadError, true);
-            } else {
-                this.$.pages.select("imprint")
-            }
+            this.$.loadIndicator.open();
+            this.importHref('src/raumreservierung-imprint/raumreservierung-imprint.html', this._onImprintLoad, this._onImprintLoadError, true);
         },
         _onImprintLoad: function() {
             this.imprintPageLoaded = true;
