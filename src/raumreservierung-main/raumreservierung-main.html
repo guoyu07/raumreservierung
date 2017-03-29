@@ -238,8 +238,10 @@
 
             this.validateBrowser();
 
-            /** Load Pages */
-            this._loadPages();
+            if(typeof this.viewData.view === "undefined") {
+                /** Load Pages */
+                this._loadPages();
+            }
 
         },
         _onViewChange: function () {
@@ -252,8 +254,6 @@
                    this.$.userDataRequest.generateRequest();
                }
            }, 300);
-
-            this._loadPages();
 
             // Set Theme Colors
             var color = "#689F38";
@@ -346,7 +346,6 @@
             this.$.errorDialog.open();
         },
         _loadPages: function () {
-
             switch (this.viewData.view) {
                 case "":
                     this.viewData.view = "main";
@@ -363,7 +362,6 @@
                     if (this.viewData.view == "confirm-email") {
                         if (!this.emailPageLoaded)
                             this.loadEmailPage();
-                        this.$.pages.select("confirm-email");
                     } else {
                         if (!this.landingPageLoaded)
                             this.loadMainPage();
@@ -391,8 +389,7 @@
                     }
                     break;
                 case "imprint":
-                    if(!this.imprintPageLoaded)
-                        this._loadImprint();
+                    this._loadImprint();
                     this.$.pages.select("imprint");
                     break;
                 case "reset-password":
@@ -402,9 +399,7 @@
                     break;
                 case "account":
                     // Account Page
-                    if(!this.accountPageLoaded)
-                        this._loadAccountPage();
-                    this.$.pages.select("account");
+                    this._loadAccountPage();
                     break;
                 default:
                     if(this.viewData)
@@ -440,55 +435,47 @@
             //console.log("[" + e.detail + "] component loaded and ready");
         },
         _redirect: function () {
-            /**
-             * v3.4.0-public
-             * Added debounce to prevent element-reload - functions to be triggered before
-             * they have been loaded.
-             * Added debounce also to prevent element-reload to be triggered way too often than needed
-             */
-            this.debounce("redirect", function() {
-                if(this.viewData.view == "" || this.viewData.view == "main") {
-                    if (this.response.data.type != "" && Number(this.response.data.type) >= 0 && Number(this.response.data.status) >= 0) {
-                        switch (Number(this.response.data.status)) {
-                            case 1:
-                                // Decativated
-                                this.fire('goToPage', "deactivated-account");
-                                break;
-                            case 2:
-                                // Show account page
-                                this._loadAccountPage();
-                                break;
-                            case 3:
-                                // Activated
-                                var type;
-                                switch (Number(this.response.data.type)) {
-                                    case 1:
-                                        type = "admin";
-                                        break;
-                                    case 2:
-                                        type = "management";
-                                        break;
-                                    case 3:
-                                        type = "teacher";
-                                        break;
-                                    default:
-                                        type = "teacher";
-                                        break;
-                                }
+            if(this.viewData.view == "" || this.viewData.view == "main") {
+                if (this.response.data.type != "" && Number(this.response.data.type) >= 0 && Number(this.response.data.status) >= 0) {
+                    switch (Number(this.response.data.status)) {
+                        case 1:
+                            // Decativated
+                            this.fire('goToPage', "deactivated-account");
+                            break;
+                        case 2:
+                            // Show account page
+                            this._loadAccountPage();
+                            break;
+                        case 3:
+                            // Activated
+                            var type;
+                            switch (Number(this.response.data.type)) {
+                                case 1:
+                                    type = "admin";
+                                    break;
+                                case 2:
+                                    type = "management";
+                                    break;
+                                case 3:
+                                    type = "teacher";
+                                    break;
+                                default:
+                                    type = "teacher";
+                                    break;
+                            }
 
-                                this.type = type;
-                                this.fire('goToPage', type);
-                        }
-
-                    } else {
-                        this.$.loadIndicator.close();
-                        this.$.errorContent.innerHTML = '<p style="color:red;">Der Typ Ihres Accounts konnte nicht ermittelt werden!</p>';
-                        this.$.errorDialog.center();
-                        this.$.errorDialog.open();
-                        this._loadPages();
+                            this.type = type;
+                            this.fire('goToPage', type);
                     }
+
+                } else {
+                    this.$.loadIndicator.close();
+                    this.$.errorContent.innerHTML = '<p style="color:red;">Der Typ Ihres Accounts konnte nicht ermittelt werden!</p>';
+                    this.$.errorDialog.center();
+                    this.$.errorDialog.open();
+                    this._loadPages();
                 }
-            }, 100);
+            }
         },
         loadUserPage: function () {
             var type = this.type;
@@ -639,7 +626,6 @@
                 this.$.loadIndicator.open();
                 this.importHref('src/raumreservierung-account-page/raumreservierung-account-page.html', this._onAccPageLoad, this._onAccPageLoadError, true);
                 this.$$('raumreservierung-account-page').reload = true;
-                this.$.pages.select("account");
             } else {
                 this.$$('raumreservierung-account-page').reload = true;
                 this.$.pages.select("account");
@@ -648,7 +634,7 @@
         _onAccPageLoad: function() {
             this.$.loadIndicator.close();
             this.accountPageLoaded = true;
-            this.$.pages.select("account");
+            //this.$.pages.select("account");
         },
         _onAccPageLoadError: function() {
             this.$.loadIndicator.close();
