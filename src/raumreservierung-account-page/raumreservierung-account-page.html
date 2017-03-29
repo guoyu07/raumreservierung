@@ -1,7 +1,4 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
-<link rel="import" href="../../bower_components/paper-drawer-panel/paper-drawer-panel.html">
-<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
@@ -12,12 +9,11 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
-<link rel="import" href="../../bower_components/app-layout/app-grid/app-grid-style.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
-<link rel="import" href="../../bower_components/neon-animation/animations/scale-up-animation.html">
-<link rel="import" href="../../bower_components/neon-animation/animations/scale-down-animation.html">
 
 <dom-module id="raumreservierung-account-page">
     <template>
@@ -41,7 +37,7 @@
                 padding: 0;
                 list-style: none;
             }
-            .title {
+            div[main-title] {
                 color: var(--primary-text-color);
             }
             paper-icon-button {
@@ -49,7 +45,7 @@
             }
             .navHeader {
                 color: #212121;
-                font-size: 22px;
+                font-size: 20px;
                 margin: 0 auto;
                 text-align: center;
                 padding: 5px 0;
@@ -104,6 +100,9 @@
             .app-grid {
                 margin: 0;
             }
+            #mainBar {
+                background-color: var(--primary-color);
+            }
         </style>
 
         <iron-ajax id="dataRequest"
@@ -156,150 +155,149 @@
             <div class="spinnerWrapper"><paper-spinner active></paper-spinner></div>
         </paper-dialog>
 
-        <paper-drawer-panel disable-edge-swipe disable-swipe>
-            <div drawer style="overflow: auto;">
-                <paper-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
-                    <paper-icon-button icon="arrow-back" paper-drawer-toggle style="color: #212121;"></paper-icon-button>
-                    <div class="title navHeader">Navigation</div>
-                </paper-toolbar>
-                <div style="padding-bottom: 110px;"> <!-- Wrapping the Menu with bottompadding 110px for the copyright box -->
-                    <paper-menu>
-                        <a href="../../main" target="_self">
-                            <paper-icon-item>
-                                <iron-icon icon="home" item-icon></iron-icon>
-                                Startseite
+        <app-drawer-layout>
+            <app-drawer swipe-open>
+                <div style="height: 100%; overflow: auto;">
+                    <app-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
+                        <div main-title class="navHeader">Navigation</div>
+                    </app-toolbar>
+                    <div style="padding-bottom: 120px;"> <!-- Wrapping the Menu with bottompadding 110px for the copyright box -->
+                        <paper-menu>
+                            <a href="../../main" target="_self">
+                                <paper-icon-item>
+                                    <iron-icon icon="home" item-icon></iron-icon>
+                                    Startseite
+                                </paper-icon-item>
+                            </a>
+                            <a on-click="fireLogout" target="_self" hidden$="[[!response.loggedin]]">
+                                <paper-icon-item>
+                                    <iron-icon icon="power-settings-new" item-icon></iron-icon>
+                                    Ausloggen
+                                </paper-icon-item>
+                            </a>
+                            <paper-icon-item id="reportErrorItem" on-click="_openReportForm">
+                                <iron-icon icon="report" item-icon></iron-icon>
+                                Einen Fehler melden
                             </paper-icon-item>
-                        </a>
-                        <a on-click="fireLogout" target="_self">
-                            <paper-icon-item>
-                                <iron-icon icon="power-settings-new" item-icon></iron-icon>
-                                Ausloggen
+                            <paper-icon-item on-click="openPrivacy">
+                                <iron-icon icon="lock" item-icon></iron-icon>
+                                Datenschutz
                             </paper-icon-item>
-                        </a>
-                        <paper-icon-item id="reportErrorItem" on-click="_openReportForm">
-                            <iron-icon icon="report" item-icon></iron-icon>
-                            Einen Fehler melden
-                        </paper-icon-item>
-                        <paper-icon-item on-click="openPrivacy">
-                            <iron-icon icon="lock" item-icon></iron-icon>
-                            Datenschutz
-                        </paper-icon-item>
-                        <a href="../../imprint">
-                            <paper-icon-item>
-                                <iron-icon icon="gavel" item-icon></iron-icon>
-                                Impressum
-                            </paper-icon-item>
-                        </a>
-                    </paper-menu>
+                            <a href="../../imprint">
+                                <paper-icon-item>
+                                    <iron-icon icon="gavel" item-icon></iron-icon>
+                                    Impressum
+                                </paper-icon-item>
+                            </a>
+                        </paper-menu>
+                    </div>
+                    <div style="position: absolute; bottom: 120px; width: 100%; border-top: 1px solid #E0E0E0; background-color: #F5F5F5; height: 110px;">
+                        <p style="text-align: center; font-size: 12px;"><b>Raumreservierung 2017</b><br>Moritz Menzel,<br>Benjamin Kirchhoff,<br>Maximilian Seiler<br><br>Published under GNU GPL v3.0</p>
+                    </div>
                 </div>
-                <div style="position: absolute; bottom: 0; width: 100%; border-top: 1px solid #E0E0E0; background-color: #F5F5F5; height: 110px;">
-                    <p style="text-align: center; font-size: 12px;"><b>Raumreservierung 2017</b><br>Moritz Menzel,<br>Benjamin Kirchhoff,<br>Maximilian Seiler<br><br>Published under GNU GPL v3.0</p>
-                </div>
-            </div>
-            <div main>
-                <paper-header-panel mode="waterfall">
-                    <paper-toolbar>
-                        <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
-                        <div class="title" style="padding-bottom: 1px;">[[fullname]]</div>
-                    </paper-toolbar>
-
-                    <div id="content-wrapper">
-                        <template is="dom-if" if="{{response.success}}">
-                            <template is="dom-if" if="{{response.loggedin}}">
-                                <ul class="app-grid">
-                                    <li>
-                                        <paper-card heading="Pers&ouml;nliche Daten" class="userCard">
-                                            <div class="card-content">
-                                                <table>
-                                                    <tr>
-                                                        <td>Vorname:</td>
-                                                        <td>[[response.prename]]</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Nachname:</td>
-                                                        <td>[[response.surname]]</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>K&uuml;rzel</td>
-                                                        <td>[[response.lehrer_kurz]]</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>E-Mail:</td>
-                                                        <td style="word-break: break-all;">[[response.email]]</td>
-                                                    </tr>
-                                                </table>
+            </app-drawer>
+            <app-header-layout>
+                <app-header fixed condenses effects="waterfall">
+                    <app-toolbar id="mainBar">
+                        <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+                        <div main-title style="padding: 0 0 1px 8px;">[[fullname]]</div>
+                    </app-toolbar>
+                </app-header>
+                <div id="content-wrapper">
+                    <template is="dom-if" if="{{response.success}}">
+                        <template is="dom-if" if="{{response.loggedin}}">
+                            <ul class="app-grid">
+                                <li>
+                                    <paper-card heading="Pers&ouml;nliche Daten" class="userCard">
+                                        <div class="card-content">
+                                            <table>
+                                                <tr>
+                                                    <td>Vorname:</td>
+                                                    <td>[[response.prename]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Nachname:</td>
+                                                    <td>[[response.surname]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>K&uuml;rzel</td>
+                                                    <td>[[response.lehrer_kurz]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>E-Mail:</td>
+                                                    <td style="word-break: break-all;">[[response.email]]</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </paper-card>
+                                </li>
+                                <li>
+                                    <paper-card class="userCard" heading="Accountdaten">
+                                        <div class="card-content">
+                                            <table>
+                                                <tr>
+                                                    <td>Accountname:</td>
+                                                    <td>[[response.name]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Account-Typ:</td>
+                                                    <td>[[response.type]]</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Account-Status:</td>
+                                                    <td>[[response.status]]</td>
+                                                </tr>
+                                            </table>
+                                        </div>
+                                    </paper-card>
+                                </li>
+                                <li>
+                                    <paper-card class="userCard" style="min-width: 300px;">
+                                        <div class="card-actions">
+                                            <div style="text-align: center; margin: 0 auto;">
+                                                <paper-button style="width: 100%;" on-click="togglePWForm" id="pwFormToggle">Passwort &auml;ndern</paper-button>
                                             </div>
-                                        </paper-card>
-                                    </li>
-                                    <li>
-                                        <paper-card class="userCard" heading="Accountdaten">
-                                            <div class="card-content">
-                                                <table>
-                                                    <tr>
-                                                        <td>Accountname:</td>
-                                                        <td>[[response.name]]</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Account-Typ:</td>
-                                                        <td>[[response.type]]</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>Account-Status:</td>
-                                                        <td>[[response.status]]</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </paper-card>
-                                    </li>
-                                    <li>
-                                        <paper-card class="userCard" style="min-width: 300px;">
-                                            <div class="card-actions">
-                                                <div style="text-align: center; margin: 0 auto;">
-                                                    <paper-button style="width: 100%;" on-click="togglePWForm" id="pwFormToggle">Passwort &auml;ndern</paper-button>
-                                                </div>
-                                            </div>
-                                        </paper-card>
-                                    </li>
-                                </ul>
-                            </template>
-                            <template is="dom-if" if="{{!response.loggedin}}">
-                                <paper-card heading="Nicht eingeloggt!" class="errorCard">
-                                    <div class="card-content">
-                                        <p>
-                                            Hallo!<br>
-                                            Es scheint, als w&auml;ren Sie momentan nicht eingeloggt. Um auf Ihr Nutzerprofil zugreifen zu k&ouml;nnen, m&uuml;ssen Sie eingeloggt sein!<br>
-                                            <br>
-                                            <i>
-                                                Wenn Sie den Knopf unten dr&uuml;cken, werden Sie auf die Startseite
-                                                geleitet, auf der Sie sich anmelden k&ouml;nnen.
-                                            </i>
-                                        </p>
-                                    </div>
-                                    <div class="card-actions">
-                                        <a href="../../main"><paper-button>Zur Startseite</paper-button></a>
-                                    </div>
-                                </paper-card>
-                            </template>
+                                        </div>
+                                    </paper-card>
+                                </li>
+                            </ul>
                         </template>
-                        <template is="dom-if" if="{{!response.success}}">
-                            <paper-card heading="Fehler!" class="errorCard">
+                        <template is="dom-if" if="{{!response.loggedin}}">
+                            <paper-card heading="Nicht eingeloggt!" class="errorCard">
                                 <div class="card-content">
                                     <p>
-                                        Leider ist ein Fehler bei der Abfrage Ihrer Nutzerdaten aufgetreten.<br>
-                                        Bitte versuchen Sie es erneut oder &uuml;berpr&uuml;fen Sie ggf. Ihre Internetverbindung!
+                                        Hallo!<br>
+                                        Es scheint, als w&auml;ren Sie momentan nicht eingeloggt. Um auf Ihr Nutzerprofil zugreifen zu k&ouml;nnen, m&uuml;ssen Sie eingeloggt sein!<br>
+                                        <br>
+                                        <i>
+                                            Wenn Sie den Knopf unten dr&uuml;cken, werden Sie auf die Startseite
+                                            geleitet, auf der Sie sich anmelden k&ouml;nnen.
+                                        </i>
                                     </p>
-                                    <p style="color: red;">[[response.message]]</p>
                                 </div>
                                 <div class="card-actions">
-                                    <paper-button on-click="reloadData">Erneut versuchen</paper-button>
+                                    <a href="../../main"><paper-button>Zur Startseite</paper-button></a>
                                 </div>
                             </paper-card>
                         </template>
-                    </div>
-
-                </paper-header-panel>
-            </div>
-        </paper-drawer-panel>
+                    </template>
+                    <template is="dom-if" if="{{!response.success}}">
+                        <paper-card heading="Fehler!" class="errorCard">
+                            <div class="card-content">
+                                <p>
+                                    Leider ist ein Fehler bei der Abfrage Ihrer Nutzerdaten aufgetreten.<br>
+                                    Bitte versuchen Sie es erneut oder &uuml;berpr&uuml;fen Sie ggf. Ihre Internetverbindung!
+                                </p>
+                                <p style="color: red;">[[response.message]]</p>
+                            </div>
+                            <div class="card-actions">
+                                <paper-button on-click="reloadData">Erneut versuchen</paper-button>
+                            </div>
+                        </paper-card>
+                    </template>
+                </div>
+            </app-header-layout>
+        </app-drawer-layout>
 
         <paper-dialog id="passwordForm" with-backdrop>
             <h2>Passwort &auml;ndern</h2>
@@ -439,10 +437,12 @@
                 new2.invalid = !(new1.value == new2.value);
             },
             _onReload: function() {
-                if(this.reload == true) {
-                    this.$.dataRequest.body = "request=getUserData";
-                    this.$.dataRequest.generateRequest();
-                    this.reload = false;
+                if(this.reload === true) {
+                    this.debounce('reload', function() {
+                        this.$.dataRequest.body = "request=getUserData";
+                        this.$.dataRequest.generateRequest();
+                        this.reload = false;
+                    }, 100);
                 }
             },
             _onPWResponse: function() {
