@@ -31,7 +31,7 @@ Page for managing Error-Reports
 
       #content {
         margin: 0 auto;
-        padding: 10px 5%;
+        padding: 0;
       }
 
       .errorCard {
@@ -89,8 +89,9 @@ Page for managing Error-Reports
         background-image: url('../../img/checkmark_icon.png');
         background-repeat: no-repeat;
         background-position: 50% 60%;
-        @apply(--layout-fit);
         background-color: var(--google-grey-300);
+        height: calc(100vh - 64px - 64px);
+        width: calc(100%);
       }
       .noErrorHead {
         text-align: center;

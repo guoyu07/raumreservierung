@@ -1,11 +1,11 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
-<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tab.html">
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 
 <dom-module id="admin-raumverwaltung">
     <template>
@@ -16,6 +16,7 @@
             }
             #content {
                 @apply(--layout-fit);
+                z-index: 2;
             }
             paper-toolbar > paper-icon-button:first-of-type {
                 margin-right: 16px;
@@ -51,46 +52,43 @@
         </paper-dialog>
 
         <div id="content">
-            <paper-header-panel mode="waterfall">
 
-                <paper-toolbar class="medium-tall paper-header" style="background-color: #673AB7;">
-                    <paper-icon-button icon="arrow-back" onclick="this.fire('close-frame');" title="Zur&uuml;ck" alt="Zur&uuml;ck"></paper-icon-button>
-                    <div class="title" style="padding-bottom: 1px;">Raumreservierung</div>
-                    <a href="https://gymnasium-klotzsche.de/" target="_self">
-                        <div class="right"><img src="../../img/gykl-logo.gif" width="78px"></div>
-                    </a>
-                    <paper-tabs id="tabs" scrollable no-slide fit-container selected="{{selected}}" class="bottom fit">
-                        <paper-tab>Raum reservieren</paper-tab>
-                        <paper-tab>Meine Reservierungen</paper-tab>
-                        <paper-tab>Alle Reservierungen verwalten</paper-tab>
-                    </paper-tabs>
-                </paper-toolbar>
+            <app-toolbar style="background-color: #673AB7; color: white;">
+                <paper-icon-button icon="arrow-back" onclick="this.fire('close-frame');" title="Zur&uuml;ck" alt="Zur&uuml;ck"></paper-icon-button>
+                <div main-title style="padding: 0 0 1px 8px;">Raumreservierung</div>
+                <img src="../../img/gykl-logo.gif" width="78px">
+            </app-toolbar>
+            <app-toolbar style="background-color: #673AB7; color: white;">
+                <paper-tabs id="tabs" bottom-item scrollable no-slide fit-container selected="{{selected}}" class="bottom fit">
+                    <paper-tab>Raum reservieren</paper-tab>
+                    <paper-tab>Meine Reservierungen</paper-tab>
+                    <paper-tab>Alle Reservierungen verwalten</paper-tab>
+                </paper-tabs>
+            </app-toolbar>
+            <iron-pages selected="{{selected}}">
+                <div id="reservation">
+                    <div id="reservationLoader">
+                        <paper-spinner active></paper-spinner>
+                        <br><br>
+                        <span class="secondary">Raumreservierung wird geladen...</span>
+                    </div>
+                </div>
+                <div id="reservations">
+                    <div id="reservationsLoader">
+                        <paper-spinner active></paper-spinner>
+                        <br><br>
+                        <span class="secondary">Ihre Reservierungen werden geladen...</span>
+                    </div>
+                </div>
+                <div id="control">
+                    <div id="controlLoader">
+                        <paper-spinner active></paper-spinner>
+                        <br><br>
+                        <span class="secondary">Die Reservierungsverwaltung wird geladen...</span>
+                    </div>
+                </div>
+            </iron-pages>
 
-                <iron-pages selected="{{selected}}">
-                    <div id="reservation">
-                        <div id="reservationLoader">
-                            <paper-spinner active></paper-spinner>
-                            <br><br>
-                            <span class="secondary">Raumreservierung wird geladen...</span>
-                        </div>
-                    </div>
-                    <div id="reservations">
-                        <div id="reservationsLoader">
-                            <paper-spinner active></paper-spinner>
-                            <br><br>
-                            <span class="secondary">Ihre Reservierungen werden geladen...</span>
-                        </div>
-                    </div>
-                    <div id="control">
-                        <div id="controlLoader">
-                            <paper-spinner active></paper-spinner>
-                            <br><br>
-                            <span class="secondary">Die Reservierungsverwaltung wird geladen...</span>
-                        </div>
-                    </div>
-                </iron-pages>
-
-            </paper-header-panel>
         </div>
 
     </template>
