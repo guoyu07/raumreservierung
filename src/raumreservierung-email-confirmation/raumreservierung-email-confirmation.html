@@ -44,6 +44,11 @@
             app-toolbar {
                 background-color: var(--primary-color);
             }
+            div[main-title] {
+                overflow: hidden;
+                -ms-text-overflow: ellipsis;
+                text-overflow: ellipsis;
+            }
         </style>
 
         <iron-location id="locator" query="{{query}}" dwell-time="2"></iron-location>

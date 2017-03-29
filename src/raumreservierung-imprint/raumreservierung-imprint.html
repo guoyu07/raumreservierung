@@ -84,6 +84,11 @@
             #mainBar {
                 background-color: var(--primary-color);
             }
+            div[main-title] {
+                overflow: hidden;
+                -ms-text-overflow: ellipsis;
+                text-overflow: ellipsis;
+            }
         </style>
 
         <div id="privacyContainer"></div>
@@ -117,7 +122,7 @@
                 <app-header fixed condenses effects="waterfall" id="mainBar">
                     <app-toolbar>
                         <paper-icon-button drawer-toggle icon="menu"></paper-icon-button>
-                        <div main-title>Impressum</div>
+                        <div main-title style="margin-left: 8px;">Impressum</div>
                     </app-toolbar>
                 </app-header>
                 <div class="fit" id="cardWrapper">
