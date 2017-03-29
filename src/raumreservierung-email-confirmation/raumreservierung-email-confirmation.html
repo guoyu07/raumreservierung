@@ -6,10 +6,10 @@
 <link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
-<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <dom-module id="raumreservierung-email-confirmation">
 
     <template>
@@ -41,6 +41,9 @@
                 text-decoration: none;
                 color: #212121;
             }
+            app-toolbar {
+                background-color: var(--primary-color);
+            }
         </style>
 
         <iron-location id="locator" query="{{query}}" dwell-time="2"></iron-location>
@@ -68,45 +71,47 @@
         </paper-dialog>
 
 
-        <paper-header-panel mode="standard">
-            <paper-toolbar style="color: #212121;">
-                <a href="../../main" target="_self"><paper-icon-button icon="arrow-back" style="margin-right: 12px;" title="Zur&uuml;ck zur Startseite"></paper-icon-button></a>
-                <div class="title" style="padding-bottom: 1px;">Account - Aktivierung</div>
-            </paper-toolbar>
-        </paper-header-panel>
-            <!-- DNYAMIC CONTENT -->
+        <app-header-layout>
+            <app-header fixed condenses effects="waterfall">
+                <app-toolbar style="color: #212121;">
+                    <a href="../../main" target="_self"><paper-icon-button icon="arrow-back" style="margin-right: 12px;" title="Zur&uuml;ck zur Startseite"></paper-icon-button></a>
+                    <div main-title style="padding-bottom: 1px;">Account - Aktivierung</div>
+                </app-toolbar>
+            </app-header>
 
             <template is="dom-if" if="{{response.success}}">
-              <div class="cardWrapper">
-                <paper-card>
-                    <div class="card-content">
-                        <h2>Aktivierung erfolgreich!</h2>
-                        <p style="color: #33691E;">
-                            [[response.message]]
-                        </p>
-                    </div>
-                    <div class="card-actions">
-                        <a href="../../main" target="_self"><paper-button class="card-button">Jetzt einloggen!</paper-button></a>
-                    </div>
-                </paper-card>
-              </div>
+                <div class="cardWrapper">
+                    <paper-card>
+                        <div class="card-content">
+                            <h2>Aktivierung erfolgreich!</h2>
+                            <p style="color: #33691E;">
+                                [[response.message]]
+                            </p>
+                        </div>
+                        <div class="card-actions">
+                            <a href="../../main" target="_self"><paper-button class="card-button">Jetzt einloggen!</paper-button></a>
+                        </div>
+                    </paper-card>
+                </div>
             </template>
 
             <template is="dom-if" if="{{!response.success}}">
-              <div class="cardWrapper">
-                <paper-card>
-                    <div class="card-content">
-                        <h2>Es ist ein Fehler bei der Aktivierung aufgetreten:</h2>
-                        <p style="color: red;">
-                            [[response.message]]
-                        </p>
-                    </div>
-                    <div class="card-actions">
-                        <a href="../../main" target="_self"><paper-button class="card-button">Zur Startseite</paper-button></a>
-                    </div>
-                </paper-card>
-              </div>
+                <div class="cardWrapper">
+                    <paper-card>
+                        <div class="card-content">
+                            <h2>Es ist ein Fehler bei der Aktivierung aufgetreten:</h2>
+                            <p style="color: red;">
+                                [[response.message]]
+                            </p>
+                        </div>
+                        <div class="card-actions">
+                            <a href="../../main" target="_self"><paper-button class="card-button">Zur Startseite</paper-button></a>
+                        </div>
+                    </paper-card>
+                </div>
             </template>
+
+        </app-header-layout>
 
     </template>
 
