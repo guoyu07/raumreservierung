@@ -1,7 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-drawer-panel/paper-drawer-panel.html">
-<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
-<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
@@ -42,7 +41,7 @@
             }
             .navHeader {
                 color: #212121;
-                font-size: 22px;
+                font-size: 20px;
                 margin: 0 auto;
                 text-align: center;
                 padding: 5px 0;
@@ -82,125 +81,126 @@
                     top: 28px;
                 }
             }
+            #mainBar {
+                background-color: var(--primary-color);
+            }
         </style>
 
         <div id="privacyContainer"></div>
 
-        <paper-drawer-panel disable-edge-swipe disable-swipe>
-            <div main>
-                <paper-header-panel mode="waterfall">
-                    <paper-toolbar>
-                        <paper-icon-button paper-drawer-toggle icon="menu"></paper-icon-button>
-                        <div class="title">Impressum</div>
-                    </paper-toolbar>
-                    <div class="fit" id="cardWrapper">
-                        <paper-card heading="Impressum">
-                            <div class="card-content">
-                                <h3>Angaben gem&auml;&szlig; &sect; 5 TMG:</h3>
-                                <p>
-                                    Moritz Menzel<br>
-                                    (Angabe des Wohnortes nicht notwendig, da kein gewerblicher Betrieb gef&uuml;hrt wird)
-                                </p>
-                                <hr>
-                                <h3>Kontakt:</h3>
-                                <p>
-                                    E-Mail: <a href="mailto:bossmode2337@googlemail.com">bossmode2337&commat;googlemail.com</a><br>
-                                </p>
-                            </div>
-                        </paper-card>
-                        <paper-card heading="Haftungsausschluss">
-                            <div class="card-content">
-                                <h3>Haftung f&uuml;r Inhalte</h3>
-                                <p>
-                                    Als Diensteanbieter sind wir gem&auml;&szlig; &sect; 7 Abs.1 TMG f&uuml;r eigene Inhalte auf diesen Seiten
-                                    nach den allgemeinen Gesetzen verantwortlich. Nach &sect;&sect; 8 bis 10 TMG sind wir als
-                                    Diensteanbieter jedoch nicht verpflichtet, &uuml;bermittelte oder gespeicherte fremde
-                                    Informationen zu &uuml;berwachen oder nach Umst&auml;nden zu forschen, die auf eine rechtswidrige
-                                    T&auml;tigkeit hinweisen.<br><br>
-                                    Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den
-                                    allgemeinen Gesetzen bleiben hiervon unber&uuml;hrt. Eine diesbez&uuml;gliche Haftung ist jedoch
-                                    erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung m&ouml;glich. Bei
-                                    Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend
-                                    entfernen.
-                                </p>
-                                <hr>
-                                <h3>Haftung f&uuml;r Links</h3>
-                                <p>
-                                    Unser Angebot enth&auml;lt Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen
-                                    Einfluss haben. Deshalb k&ouml;nnen wir f&uuml;r diese fremden Inhalte auch keine Gew&auml;hr &uuml;bernehmen.
-                                    F&uuml;r die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber
-                                    der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung
-                                    auf m&ouml;gliche Rechtsverst&ouml;&szlig;e &uuml;berpr&uuml;ft. Rechtswidrige Inhalte waren zum Zeitpunkt der
-                                    Verlinkung nicht erkennbar.<br><br>
-                                    Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete
-                                    Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von
-                                    Rechtsverletzungen werden wir derartige Links umgehend entfernen.
-                                </p>
-                                <hr>
-                                <h3>Urheberrecht</h3>
-                                <p>
-                                    Die Seiten und Inhalte auf diesen Seiten unterliegen dem deutschen Urheberrecht.<br>
-                                    Wir haben uns dazu entschlossen, das gesamte Projekt "Raumreservierung Gymnasium
-                                    Dresden-Klotzsche" unter der <a href="http://www.gnu.de/documents/gpl-3.0.de.html">GNU GPL v3.0</a> - Lizens zu ver&ouml;ffentlichen.<br>
-                                    <br>
-                                    Sie d&uuml;rfen alle von uns - Moritz Menzel, Benjamin Kirchhoff, Maximilian Seiler -
-                                    erstellten Dateien und Inhalte dieser Seite:
-                                </p>
-                                <ul>
-                                    <li>uneingeschr&auml;nkt erzeugen (vervielf&auml;ltigen)</li>
-                                    <li>ausf&uuml;hren</li>
-                                    <li>nach eigenen Belieben ver&auml;ndern und Ihre (abge&auml;nderte Version) anderen zur Verf&uuml;gung stellen,</li>
-                                </ul>
-                                <p>
-                                    Wenn Sie im Rahmen der genannten Punkte folgende Richtlinien einhalten:<br>
-                                    Bei Verwendung unseres Codes in beliebiger Hinsicht...
-                                </p>
-                                <ul>
-                                    <li>...<b>muss</b> ein Copyrightvermerk an jedem Vervielf&auml;ltigungsst&uuml;ck deutlich angebracht werden (&copy; 2017 - Moritz Menzel, Benjamin Kirchhoff, Maximilian Seiler)</li>
-                                    <li>...<b>muss</b> der Quellcode des Projektes in dem unser Code oder Teile davon verwendet wird/werden unter einer open-source - Lizens stehen und &ouml;ffentlich zug&auml;nglich sein</li>
-                                    <li>...<b>muss</b> das Projekt in dem unser Code oder Teile davon verwendet wird/werden unter derselben Lizens verbreitet werden</li>
-                                </ul>
-                                <hr>
-                                <p style="color: #616161;">
-                                    Die "Raumreservierung" ist ein Sch&uuml;lerprojekt im Rahmen des Oberstufenunterrichts des
-                                    <a href="https://gymnasium-klotzsche.de">Gymnasiums Dresden-Klotzsche</a>.<br>
-                                    <br>
-                                    Den Quellcode dieses Projektes finden Sie auf Github:<br>
-                                    <a href="https://github.com/moritzmenzel/raumreservierung">Raumreservierung auf Github</a>
-                                </p>
-                            </div>
-                        </paper-card>
-                    </div>
-                </paper-header-panel>
-                <paper-fab id="gitFab" icon="code" onclick="window.open('https://github.com/moritzmenzel/raumreservierung/', '_blank');"></paper-fab>
-                <paper-tooltip for="gitFab" position="bottom">
-                    Den Quellcode auf GitHub anschauen
-                </paper-tooltip>
-            </div>
-            <div drawer style="overflow: auto;">
-                <paper-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
-                    <paper-icon-button icon="arrow-back" paper-drawer-toggle style="color: #212121;"></paper-icon-button>
-                    <div class="title navHeader">Navigation</div>
-                </paper-toolbar>
-                <div style="padding-bottom: 110px;"> <!-- Wrapping the Menu with bottompadding 110px for the copyright box -->
-                    <paper-menu>
-                        <a href="../../main" target="_self">
-                            <paper-icon-item>
-                                <iron-icon icon="home" item-icon></iron-icon>
-                                Startseite
+        <app-drawer-layout>
+            <app-drawer swipe-open>
+                <div style="height: 100%; overflow: auto;">
+                    <app-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
+                        <div main-title class="navHeader">Navigation</div>
+                    </app-toolbar>
+                    <div style="padding-bottom: 110px;"> <!-- Wrapping the Menu with bottompadding 110px for the copyright box -->
+                        <paper-menu>
+                            <a href="../../main" target="_self">
+                                <paper-icon-item>
+                                    <iron-icon icon="home" item-icon></iron-icon>
+                                    Startseite
+                                </paper-icon-item>
+                            </a>
+                            <paper-icon-item on-click="openPrivacy">
+                                <iron-icon icon="lock" item-icon></iron-icon>
+                                Datenschutz
                             </paper-icon-item>
-                        </a>
-                        <paper-icon-item on-click="openPrivacy">
-                            <iron-icon icon="lock" item-icon></iron-icon>
-                            Datenschutz
-                        </paper-icon-item>
-                    </paper-menu>
+                        </paper-menu>
+                    </div>
+                    <div style="position: absolute; bottom: 120px; width: 100%; border-top: 1px solid #E0E0E0; background-color: #F5F5F5; height: 110px;">
+                        <p style="text-align: center; font-size: 12px;"><b>Raumreservierung 2017</b><br>Moritz Menzel,<br>Benjamin Kirchhoff,<br>Maximilian Seiler<br><br>Published under GNU GPL v3.0</p>
+                    </div>
                 </div>
-                <div style="position: absolute; bottom: 0; width: 100%; border-top: 1px solid #E0E0E0; background-color: #F5F5F5; height: 110px;">
-                    <p style="text-align: center; font-size: 12px;"><b>Raumreservierung 2017</b><br>Moritz Menzel,<br>Benjamin Kirchhoff,<br>Maximilian Seiler<br><br>Published under GNU GPL v3.0</p>
+            </app-drawer>
+            <app-header-layout>
+                <app-header fixed condenses effects="waterfall" id="mainBar">
+                    <app-toolbar>
+                        <paper-icon-button drawer-toggle icon="menu"></paper-icon-button>
+                        <div main-title>Impressum</div>
+                    </app-toolbar>
+                </app-header>
+                <div class="fit" id="cardWrapper">
+                    <paper-card>
+                        <div class="card-content">
+                            <h3>Pers&ouml;nliche Angaben gem&auml;&szlig; &sect; 5 TMG:</h3>
+                            <p>
+                                Seitenbetreiber: Moritz Menzel<br>
+                                (Angabe des Wohnortes nicht notwendig, da kein gewerblicher Betrieb gef&uuml;hrt wird)
+                            </p>
+                            <hr>
+                            <h3>Kontakt:</h3>
+                            <p>
+                                E-Mail: <a href="mailto:bossmode2337@googlemail.com">bossmode2337&commat;googlemail.com</a><br>
+                            </p>
+                        </div>
+                    </paper-card>
+                    <paper-card heading="Haftungsausschluss">
+                        <div class="card-content">
+                            <h3>Haftung f&uuml;r Inhalte</h3>
+                            <p>
+                                Als Diensteanbieter sind wir gem&auml;&szlig; &sect; 7 Abs.1 TMG f&uuml;r eigene Inhalte auf diesen Seiten
+                                nach den allgemeinen Gesetzen verantwortlich. Nach &sect;&sect; 8 bis 10 TMG sind wir als
+                                Diensteanbieter jedoch nicht verpflichtet, &uuml;bermittelte oder gespeicherte fremde
+                                Informationen zu &uuml;berwachen oder nach Umst&auml;nden zu forschen, die auf eine rechtswidrige
+                                T&auml;tigkeit hinweisen.<br><br>
+                                Verpflichtungen zur Entfernung oder Sperrung der Nutzung von Informationen nach den
+                                allgemeinen Gesetzen bleiben hiervon unber&uuml;hrt. Eine diesbez&uuml;gliche Haftung ist jedoch
+                                erst ab dem Zeitpunkt der Kenntnis einer konkreten Rechtsverletzung m&ouml;glich. Bei
+                                Bekanntwerden von entsprechenden Rechtsverletzungen werden wir diese Inhalte umgehend
+                                entfernen.
+                            </p>
+                            <hr>
+                            <h3>Haftung f&uuml;r Links</h3>
+                            <p>
+                                Unser Angebot enth&auml;lt Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen
+                                Einfluss haben. Deshalb k&ouml;nnen wir f&uuml;r diese fremden Inhalte auch keine Gew&auml;hr &uuml;bernehmen.
+                                F&uuml;r die Inhalte der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber
+                                der Seiten verantwortlich. Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung
+                                auf m&ouml;gliche Rechtsverst&ouml;&szlig;e &uuml;berpr&uuml;ft. Rechtswidrige Inhalte waren zum Zeitpunkt der
+                                Verlinkung nicht erkennbar.<br><br>
+                                Eine permanente inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete
+                                Anhaltspunkte einer Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von
+                                Rechtsverletzungen werden wir derartige Links umgehend entfernen.
+                            </p>
+                        </div>
+                    </paper-card>
+                    <paper-card heading="Urheberrecht">
+                        <div class="card-content">
+                            <p>
+                                Die Seiten und Inhalte auf diesen Seiten unterliegen dem deutschen Urheberrecht.<br>
+                                Wir haben uns dazu entschlossen, das gesamte Projekt "Raumreservierung Gymnasium
+                                Dresden-Klotzsche" unter der <a href="http://www.gnu.de/documents/gpl-3.0.de.html">GNU GPL v3.0</a> - Lizens zu ver&ouml;ffentlichen.<br>
+                                <br>
+                                Sie d&uuml;rfen alle von uns - Moritz Menzel, Benjamin Kirchhoff, Maximilian Seiler -
+                                erstellten Dateien und Inhalte dieser Seite:
+                            </p>
+                            <ul>
+                                <li>uneingeschr&auml;nkt erzeugen (vervielf&auml;ltigen)</li>
+                                <li>ausf&uuml;hren</li>
+                                <li>nach eigenen Belieben ver&auml;ndern und Ihre (abge&auml;nderte Version) anderen zur Verf&uuml;gung stellen,</li>
+                            </ul>
+                            <p>
+                                Wenn Sie im Rahmen der genannten Punkte die Richtlinien der zugeh&ouml;rigen Lizens
+                                (<a href="http://www.gnu.de/documents/gpl-3.0.de.html">GNU GPL v3.0</a>) einhalten.
+                            </p>
+                        </div>
+                    </paper-card>
+                    <paper-card>
+                        <div class="card-content">
+                            <p style="color: #616161;">
+                                Die "Raumreservierung" ist ein Sch&uuml;lerprojekt im Rahmen des Oberstufenunterrichts des
+                                <a href="https://gymnasium-klotzsche.de">Gymnasiums Dresden-Klotzsche</a>.<br>
+                                <br>
+                                Den Quellcode dieses Projektes finden Sie auf GitHub:<br>
+                                <a href="https://github.com/moritzmenzel/raumreservierung">Raumreservierung auf Github</a>
+                            </p>
+                        </div>
+                    </paper-card>
                 </div>
-            </div>
-        </paper-drawer-panel>
+            </app-header-layout>
+            <paper-fab id="gitFab" icon="code" onclick="window.open('https://github.com/moritzmenzel/raumreservierung/', '_blank');" elevation="1"></paper-fab>
+        </app-drawer-layout>
 
     </template>
     <script>
