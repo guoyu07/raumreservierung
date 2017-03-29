@@ -31,7 +31,6 @@
                 @apply(--layout-self-center);
             }
             .actionFab {
-                z-index: 999;
                 position: fixed;
                 bottom: 18px;
                 right: 18px;
@@ -48,12 +47,13 @@
                 margin: 20px 0 -20px 20px;
             }
             #emptyContent {
-                @apply(--layout-fit);
                 background-image: url('../../img/error_icon.png');
                 background-repeat: no-repeat;
                 background-position: 50% 60%;
                 background-color: var(--google-grey-300);
                 min-height: 400px;
+                height: calc(100vh - 64px - 64px);
+                padding-top: calc(64px - 48px);
             }
             @media (min-width: 800px) {
                 #emptyContent {
@@ -120,10 +120,9 @@
         </paper-dialog>
 
         <template is="dom-if" if="[[response.success]]">
-            <paper-fab on-click="reloadData" icon="refresh" class="actionFab"></paper-fab>
             <template is="dom-if" if="[[response.empty]]">
                 <div id="emptyContent" style="text-align: center;">
-                    <h2 style="color: #616161;">Sie haben keine R&auml;me reserviert!</h2>
+                    <h2 style="color: #616161; margin: auto 16px;">Sie haben keine R&auml;me reserviert!</h2>
                     <p class="pseudoLink" on-click="fireRedirectToReservation">Jetzt einen neuen Raum reservieren!</p>
                 </div>
             </template>
@@ -184,6 +183,10 @@
                     </div>
                 </paper-card>
             </div>
+        </template>
+
+        <template is="dom-if" if="[[response.success]]">
+            <paper-fab on-click="reloadData" icon="refresh" class="actionFab"></paper-fab>
         </template>
 
     </template>

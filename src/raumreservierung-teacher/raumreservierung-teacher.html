@@ -1,6 +1,4 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-header-panel/paper-header-panel.html">
-<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
 <link rel="import" href="../../bower_components/paper-dialog/paper-dialog.html">
 <link rel="import" href="../../bower_components/paper-dialog-scrollable/paper-dialog-scrollable.html">
 <link rel="import" href="../../bower_components/paper-card/paper-card.html">
@@ -13,7 +11,8 @@
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
-<link rel="import" href="../../bower_components/paper-drawer-panel/paper-drawer-panel.html">
+<link rel="import" href="../../bower_components/app-layout/app-layout.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 
 <dom-module id="raumreservierung-teacher">
     <template>
@@ -38,7 +37,7 @@
             }
             .navHeader {
                 color: #212121;
-                font-size: 22px;
+                font-size: 20px;
                 margin: 0 auto;
                 text-align: center;
                 padding: 5px 0;
@@ -98,6 +97,18 @@
             paper-tabs {
                 --paper-tabs-selection-bar-color: white;
             }
+            #secTB, #mainTB {
+                background-color: var(--primary-color);
+                color: white;
+            }
+            #secTB {
+                height: 48px;
+            }
+            div[main-title] {
+                overflow: hidden;
+                -ms-text-overflow: ellipsis;
+                text-overflow: ellipsis;
+            }
         </style>
 
         <iron-ajax id="dataRequest"
@@ -148,119 +159,117 @@
         <div id="privacy"><!-- Lazy Loaded <privacy></privacy> --></div>
 
         <!-- Page Wrapper -->
-        <paper-drawer-panel disable-swipe disable-edge-swipe>
-            <div drawer style="overflow: auto;">
-                <paper-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
-                    <paper-icon-button icon="arrow-back" paper-drawer-toggle style="color: #212121;"></paper-icon-button>
-                    <div class="title navHeader">Navigation</div>
-                </paper-toolbar>
-                <div style="padding-bottom: 110px;"> <!-- Wrapping the Menu with bottompadding 110px for the copyright box -->
-                    <paper-menu>
-                        <a href="../../account" target="_self">
-                            <paper-icon-item>
-                                <iron-icon icon="account-circle" item-icon></iron-icon>
-                                Ihr Account
+        <app-drawer-layout>
+            <app-drawer swipe-open style="z-index: 2;">
+                <div style="height: 100%; overflow: auto;">
+                    <app-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
+                        <div main-title class="navHeader">Navigation</div>
+                    </app-toolbar>
+                    <div style="padding-bottom: 110px;"> <!-- Wrapping the Menu with bottompadding 110px for the copyright box -->
+                        <paper-menu>
+                            <a href="../../account" target="_self">
+                                <paper-icon-item>
+                                    <iron-icon icon="account-circle" item-icon></iron-icon>
+                                    Ihr Account
+                                </paper-icon-item>
+                            </a>
+                            <a on-click="logout" target="_self">
+                                <paper-icon-item>
+                                    <iron-icon icon="power-settings-new" item-icon></iron-icon>
+                                    Ausloggen
+                                </paper-icon-item>
+                            </a>
+                            <paper-icon-item id="reportErrorItem" on-click="_openReportForm">
+                                <iron-icon icon="report" item-icon></iron-icon>
+                                Einen Fehler melden
                             </paper-icon-item>
-                        </a>
-                        <a on-click="logout" target="_self">
-                            <paper-icon-item>
-                                <iron-icon icon="power-settings-new" item-icon></iron-icon>
-                                Ausloggen
+                            <paper-icon-item on-click="openPrivacy">
+                                <iron-icon icon="lock" item-icon></iron-icon>
+                                Datenschutz
                             </paper-icon-item>
-                        </a>
-                        <paper-icon-item id="reportErrorItem" on-click="_openReportForm">
-                            <iron-icon icon="report" item-icon></iron-icon>
-                            Einen Fehler melden
-                        </paper-icon-item>
-                        <paper-icon-item on-click="openPrivacy">
-                            <iron-icon icon="lock" item-icon></iron-icon>
-                            Datenschutz
-                        </paper-icon-item>
-                        <a href="../../imprint">
-                            <paper-icon-item>
-                                <iron-icon icon="gavel" item-icon></iron-icon>
-                                Impressum
-                            </paper-icon-item>
-                        </a>
-                    </paper-menu>
+                            <a href="../../imprint">
+                                <paper-icon-item>
+                                    <iron-icon icon="gavel" item-icon></iron-icon>
+                                    Impressum
+                                </paper-icon-item>
+                            </a>
+                        </paper-menu>
+                    </div>
+                    <div style="position: absolute; bottom: 120px; width: 100%; border-top: 1px solid #E0E0E0; background-color: #F5F5F5; height: 110px;">
+                        <p style="text-align: center; font-size: 12px;"><b>Raumreservierung 2017</b><br>Moritz Menzel,<br>Benjamin Kirchhoff,<br>Maximilian Seiler<br><br>Published under GNU GPL v3.0</p>
+                    </div>
                 </div>
-                <div style="position: absolute; bottom: 0; width: 100%; border-top: 1px solid #E0E0E0; background-color: #F5F5F5; height: 110px;">
-                    <p style="text-align: center; font-size: 12px;"><b>Raumreservierung 2017</b><br>Moritz Menzel,<br>Benjamin Kirchhoff,<br>Maximilian Seiler<br><br>Published under GNU GPL v3.0</p>
-                </div>
-            </div>
-            <div main>
-                <paper-header-panel mode="standard">
-                    <paper-toolbar class="medium-tall" id="mainTB">
-                        <paper-icon-button icon="menu" paper-drawer-toggle></paper-icon-button>
-                        <div class="title" style="padding-bottom: 1px;">[[response.fullname]] ([[response.lehrer_kurz]])</div>
-                        <div id="bottomBarContent" class="bottom fit">
-                            <!-- This content is only shown if the response is positive (if loggedin) -->
-                            <template is="dom-if" if="{{response.success}}">
-                                <paper-tabs scrollable no-slide fit-container selected="{{selected}}">
-                                    <paper-tab>Raumreservierung</paper-tab>
-                                    <paper-tab>Meine Reservierungen</paper-tab>
-                                </paper-tabs>
-                            </template>
-                        </div>
-                    </paper-toolbar>
-
-                    <!-- CONDITIONAL / DYNAMIC PAGE -->
-
-                    <template is="dom-if" if="{{response.success}}">
-                        <iron-pages selected="{{selected}}">
-                            <teacher-raumreservierung></teacher-raumreservierung>
-                            <teacher-reservations></teacher-reservations>
-                            <div class="centerCardWrapper">
-                                <!-- Welcome Page / Card -->
-                                <paper-card heading="Willkommen!" class="centerCard" style="margin-top: 8px;">
-                                    <div class="card-content">
-                                        <p>
-                                            Willkommen zur&uuml;ck bei der Raumreservierung.<br>
-                                            Um einen Raum auf Ihren Namen zu reservieren, w&auml;hlen Sie oben bitte
-                                            "Raumreservierung" aus. Andernfalls k&ouml;nnen Sie unter "Meine Reservierungen"
-                                            Ihre bereits reservierten R&auml;ume einsehen und verwalten.<br>
-                                        </p>
-                                    </div>
-                                </paper-card>
-                            </div>
-                        </iron-pages>
+            </app-drawer>
+            <app-header-layout style="z-index: 1;">
+                <app-header fixed condenses effects="waterfall">
+                    <app-toolbar condenses effects="waterfall" id="mainTB">
+                        <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+                        <div main-title style="padding: 0 0 1px 8px;">[[response.fullname]] ([[response.lehrer_kurz]])</div>
+                    </app-toolbar>
+                    <template is="dom-if" if="[[response.success]]">
+                        <app-toolbar fixed sticky effects="waterfall" id="secTB">
+                            <paper-tabs scrollable no-slide fit-container bottom-item selected="{{selected}}">
+                                <paper-tab>Raumreservierung</paper-tab>
+                                <paper-tab>Meine Reservierungen</paper-tab>
+                            </paper-tabs>
+                        </app-toolbar>
                     </template>
-                    <template is="dom-if" if="{{!response.success}}">
-                        <div class="outer">
-                            <div class="middle">
-                                <div class="inner">
-                                    <paper-card heading="Es ist ein Fehler aufgetreten!" class="centerCard">
-                                        <div class="card-content">
-                                            <p>
-                                                Es ist ein schwerwiegender Fehler bei der Datenabfrage aufgetreten!
-                                                <br>
-                                                Der Server meldete folgenden Fehler:
-                                                <br><br>
-                                                <span style="color: red;">
+                </app-header>
+            </app-header-layout>
+            <!-- CONDITIONAL / DYNAMIC PAGE -->
+
+            <template is="dom-if" if="{{response.success}}">
+                <iron-pages selected="{{selected}}">
+                    <teacher-raumreservierung></teacher-raumreservierung>
+                    <teacher-reservations></teacher-reservations>
+                    <div class="centerCardWrapper">
+                        <!-- Welcome Page / Card -->
+                        <paper-card heading="Willkommen!" class="centerCard" style="margin-top: 8px;">
+                            <div class="card-content">
+                                <p>
+                                    Willkommen zur&uuml;ck bei der Raumreservierung.<br>
+                                    Um einen Raum auf Ihren Namen zu reservieren, w&auml;hlen Sie oben bitte
+                                    "Raumreservierung" aus. Andernfalls k&ouml;nnen Sie unter "Meine Reservierungen"
+                                    Ihre bereits reservierten R&auml;ume einsehen und verwalten.<br>
+                                </p>
+                            </div>
+                        </paper-card>
+                    </div>
+                </iron-pages>
+            </template>
+            <template is="dom-if" if="{{!response.success}}">
+                <div class="outer">
+                    <div class="middle">
+                        <div class="inner">
+                            <paper-card heading="Es ist ein Fehler aufgetreten!" class="centerCard">
+                                <div class="card-content">
+                                    <p>
+                                        Es ist ein schwerwiegender Fehler bei der Datenabfrage aufgetreten!
+                                        <br>
+                                        Der Server meldete folgenden Fehler:
+                                        <br><br>
+                                        <span style="color: red;">
                                                     [[response.message]]
                                                 </span>
-                                                <br>
-                                                <br>
-                                                <i>Sollte dieses Problem h&auml;figer auftreten, melden Sie es bitte ggf. einem Administrator!</i>
-                                            </p>
-                                        </div>
-                                        <div class="card-actions">
-                                            <div class="right">
-                                                <paper-button class="cardButton" on-click="logout">Ausloggen</paper-button>
-                                                <paper-button class="cardButton" on-click="reloadData">Daten neu laden</paper-button>
-                                            </div>
-                                        </div>
-                                    </paper-card>
+                                        <br>
+                                        <br>
+                                        <i>Sollte dieses Problem h&auml;figer auftreten, melden Sie es bitte ggf. einem Administrator!</i>
+                                    </p>
                                 </div>
-                            </div>
+                                <div class="card-actions">
+                                    <div class="right">
+                                        <paper-button class="cardButton" on-click="logout">Ausloggen</paper-button>
+                                        <paper-button class="cardButton" on-click="reloadData">Daten neu laden</paper-button>
+                                    </div>
+                                </div>
+                            </paper-card>
                         </div>
-                    </template>
+                    </div>
+                </div>
+            </template>
 
-                    <!-- END CONDITIONAL PAGE -->
-
-                </paper-header-panel>
-            </div>
-        </paper-drawer-panel>
+            <!-- END CONDITIONAL PAGE -->
+        </app-drawer-layout>
 
     </template>
     <script>
@@ -297,6 +306,9 @@
             _onResponse: function() {
                 this.$.loadIndicator.close();
                 this.response = this.$.dataRequest.lastResponse;
+
+                // Simulate resize event for the elements to render themselves accordingly :D
+                window.dispatchEvent(new Event('resize'));
 
                 var cn = this.$.mainTB.className.split(' ');
 
