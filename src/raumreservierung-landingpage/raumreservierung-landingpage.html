@@ -173,21 +173,21 @@
                         </a>
                     </app-toolbar>
                 </app-header>
-                <div id="content">
-
-                    <div class="full" hidden$="[[!response.data.loggedin]]">
-                        <paper-spinner active></paper-spinner>
-                        <br>
-                        <p class="secondary">Sie werden in K&uuml;rze weitergeleitet...</p>
-                    </div>
-                    <paper-card id="contentCard" hidden$="[[response.data.loggedin]]" heading="Anmeldung" elevation="[[loginElevation]]" animated-shadow>
-                        <div class="card-content">
-                            <div class="spinnerWrapper"><paper-spinner id="pageLoadIndicator"></paper-spinner></div>
-                        </div>
-                    </paper-card>
-
-                </div>
             </app-header-layout>
+            <div id="content">
+
+                <div class="full" hidden$="[[!response.data.loggedin]]">
+                    <paper-spinner active></paper-spinner>
+                    <br>
+                    <p class="secondary">Sie werden in K&uuml;rze weitergeleitet...</p>
+                </div>
+                <paper-card id="contentCard" hidden$="[[response.data.loggedin]]" heading="Anmeldung" elevation="[[loginElevation]]" animated-shadow>
+                    <div class="card-content">
+                        <div class="spinnerWrapper"><paper-spinner id="pageLoadIndicator"></paper-spinner></div>
+                    </div>
+                </paper-card>
+
+            </div>
         </app-drawer-layout>
 
     </template>
