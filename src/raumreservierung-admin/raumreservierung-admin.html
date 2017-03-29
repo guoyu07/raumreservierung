@@ -148,7 +148,7 @@
 
       <div main>
 
-        <paper-header-panel mode="standard">
+        <paper-header-panel mode="waterfall">
 
           <paper-toolbar class="medium-tall paper-header" hidden$="[[frameLayout]]">
             <paper-icon-button icon="menu" paper-drawer-toggle title="Men&uuml; &ouml;ffnen" alt="Men&uuml; &ouml;ffnen"></paper-icon-button>
@@ -215,7 +215,8 @@
                       return this.viewData.view === "roommanagement";
                   else
                       return false;
-              }
+              },
+              observer: '_onLayoutChange'
           },
           urlPrefix: {
               type: String,
@@ -400,6 +401,10 @@
         _onLayoutClose: function() {
             this.frameLayout = false;
             this.customResetPages();
+        },
+        _onLayoutChange: function() {
+            var color = this.frameLayout ? "673AB7" : '3F51B5';
+            this.fire('change-theme-color', color);
         }
     });
   </script>
