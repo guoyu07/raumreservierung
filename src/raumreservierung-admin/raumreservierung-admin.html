@@ -117,7 +117,7 @@
     </paper-dialog>
 
     <app-drawer-layout>
-      <app-drawer swipe-open style="z-index: 3;" id="drawerPanel">
+      <app-drawer swipe-open id="drawerPanel">
         <div style="height: 100%; overflow: auto;">
           <app-toolbar style="background-color: white; border-bottom: 1px solid #E0E0E0;">
             <div main-title class="navHeader">Navigation</div>
@@ -147,7 +147,7 @@
           </div>
         </div>
       </app-drawer>
-      <app-header-layout style="z-index: 1;">
+      <app-header-layout>
         <app-header condenses fixed effects="waterfall">
           <app-toolbar hidden$="[[frameLayout]]" id="mainBar">
             <paper-icon-button icon="menu" drawer-toggle title="Men&uuml; &ouml;ffnen" alt="Men&uuml; &ouml;ffnen"></paper-icon-button>
@@ -202,6 +202,10 @@
     Polymer({
 
       is: 'raumreservierung-admin',
+
+      listener: {
+          'iron-overlay-opened':'patchOverlay'
+      },
 
       properties: {
           frameLayout: {
@@ -259,6 +263,14 @@
         ready: function() {
           this.fire('pageLoad', this.nodeName);
           window.location.hash = this.viewData.view;
+        },
+        patchOverlay: function(e) {
+          // https://github.com/PolymerElements/paper-dialog/issues/7
+          if(e.nodeName === "PAPER-DIALOG") {
+              if (e.target.withBackdrop) {
+                  e.target.parentNode.insertBefore(e.target._backdrop, e.target);
+              }
+          }
         },
         _onPageChanged: function(){
             // Lock Tabs

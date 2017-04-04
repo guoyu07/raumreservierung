@@ -16,7 +16,6 @@
             }
             #content {
                 @apply(--layout-fit);
-                z-index: 2;
             }
             paper-toolbar > paper-icon-button:first-of-type {
                 margin-right: 16px;
@@ -120,12 +119,21 @@
             listeners: {
                 'teacher-cancel-reservation': 'resetPages',
                 'teacher-cancel': 'customCancel',
-                'teacher-redirect-to-reservation': 'redirectToReservation'
+                'teacher-redirect-to-reservation': 'redirectToReservation',
+                'iron-overlay-opened':'patchOverlay'
             },
 
             ready: function() {
                 this.fire('pageLoaded');                // Trigger-Event for raumreservierung-admin
                 this.fire('pageLoad', this.nodeName);   // Trigger-Event for raumreservierung-main
+            },
+            patchOverlay: function(e) {
+                // https://github.com/PolymerElements/paper-dialog/issues/7
+                if(e.nodeName === "PAPER-DIALOG") {
+                    if (e.target.withBackdrop) {
+                        e.target.parentNode.insertBefore(e.target._backdrop, e.target);
+                    }
+                }
             },
             selectedChange: function() {
                 this._lockTabs();
