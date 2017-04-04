@@ -2,6 +2,13 @@
 
 ## Latest Changes (04.04.2017)
 
+#### v3.4.3 --> v3.5.0
+Elementary visual bug fixes
+- fixed a well known bug causing paper-dialogs to appear behind their
+backdrops when used nested with app-drawer
+- corrected app-drawer-backdrop in admin view which has been filled
+with white before due to a css mistake I made
+
 #### v3.4.2 --> v3.4.3
 Fixing design & propotion - Issues (CSS)
 - fixed background of paper-items in app-drawer (admin-view) being grey
