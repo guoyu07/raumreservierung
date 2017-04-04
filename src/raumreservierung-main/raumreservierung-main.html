@@ -219,8 +219,11 @@
 
             this.fire('pageLoad', this.nodeName);
 
-            this.$.userDataRequest.body = "r=getSessionData";
-            this.$.userDataRequest.generateRequest();
+            // Send the first request when all components have been loaded completely!
+            this.addEventListener('WebComponentsReady', function() {
+                this.$.userDataRequest.body = "r=getSessionData";
+                this.$.userDataRequest.generateRequest();
+            }.bind(this));
 
             window.addEventListener("offline", function() {
                 this._onOffline();
