@@ -56,12 +56,20 @@
             #cardWrapper{
                 @apply(--layout-vertical);
             }
-            paper-card{
+
+            /* Following section will set the borders between the paper- / contentcards */
+            paper-card {
                 width: calc(100% - 16px);
-                min-width: 250px;
                 @apply(--layout-self-center);
-                margin: 10px 0;
             }
+            #cardWrapper paper-card:first-of-type {
+                margin: 8px auto;
+            }
+            #cardWrapper paper-card:not(first-of-type) {
+                margin-bottom: 8px;
+            }
+            /* End content-card styling section */
+
             paper-card p {
                 text-align: justify;
             }
