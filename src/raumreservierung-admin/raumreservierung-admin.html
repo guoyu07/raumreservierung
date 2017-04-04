@@ -25,10 +25,12 @@
         @apply(--layout-fullbleed);
         @apply(--layout-fit);
       }
-      paper-drawer-panel {
-        --paper-drawer-panel-drawer-container: {
-          background-color: #F5F5F5;
-        }
+      #drawerPanel {
+        background-color: white;
+      }
+      /* v3.4.3 -- fixing grey background color on paper items */
+      #drawerPanel paper-menu, #drawerPanel paper-icon-item {
+        background-color: white;
       }
       paper-card {
         --paper-card: {
@@ -44,9 +46,8 @@
       }
       .welcome {
         @apply(--layout-vertical);
-        @apply(--layout-fit);
         background-color: var(--google-grey-300);
-        margin: 0 auto;
+        height: calc(100vh - 64px);
       }
       .welcome h1{
         color: var(--paper-grey-800);
@@ -61,14 +62,6 @@
       .paper-item-link {
         color: inherit;
         text-decoration: none;
-      }
-      paper-icon-item {
-        --paper-item: {
-          background-color: #F5F5F5;
-        }
-      }
-      paper-menu {
-        background-color: #F5F5F5;
       }
       paper-icon-item:hover {
         cursor: pointer;

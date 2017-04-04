@@ -53,7 +53,6 @@
                 background-color: var(--google-grey-300);
                 min-height: 400px;
                 height: calc(100vh - 64px - 64px);
-                padding-top: calc(64px - 48px);
             }
             @media (min-width: 800px) {
                 #emptyContent {
@@ -64,6 +63,9 @@
                 #emptyContent {
                     background-size: 40%;
                 }
+            }
+            #emptyContent > *:first-child {
+                padding-top: 24px;
             }
             .pseudoLink {
                 color: var(--paper-indigo-500);
