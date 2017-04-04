@@ -1,6 +1,14 @@
 # < Changelog >
 
-## Latest Changes (30.03.2017)
+## Latest Changes (04.04.2017)
+
+#### v3.4.2 --> v3.4.3
+Fixing design & propotion - Issues (CSS)
+- fixed background of paper-items in app-drawer (admin-view) being grey
+(changed to white)
+- fixed margins of admin-view-elements to be *below* the toolbar and not
+*under* it (toolbar was hiding the content)
+- fixed proportions of margins of the paper-cards for the imprint page
 
 #### v3.4.0 --> 3.4.2
 Reworked admin page
