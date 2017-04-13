@@ -30,6 +30,20 @@
             .secondary {
                 color: var(--secondary-text-color);
             }
+            #header {
+                position: fixed;
+                top: 0;
+                right: 0;
+                height: 128px;
+                width: 100%;
+                z-index: 1;
+            }
+            @media (min-width: 641px) {
+                #header {
+                    width: calc(100% - 256px);
+                    right: 0;
+                }
+            }
         </style>
 
         <paper-dialog id="loadIndicator" with-backdrop no-cancel-on-esc-key no-cancel-on-outside-click>
@@ -52,7 +66,7 @@
 
         <div id="content">
 
-            <div style="position: fixed; top: 0; left: 0; height: 128px; width: 100%; z-index: 1;">
+            <div id="header">
                 <app-toolbar style="background-color: #673AB7; color: white;">
                     <paper-icon-button icon="arrow-back" onclick="this.fire('close-frame');" title="Zur&uuml;ck" alt="Zur&uuml;ck"></paper-icon-button>
                     <div main-title style="padding: 0 0 1px 8px;">Raumreservierung</div>
