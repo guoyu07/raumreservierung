@@ -1,10 +1,17 @@
 # How to Build
 
-## Last edited in version: v3.2.2-public
+## Last edited in version: v3.5.1
 
 ```
-$ polymer build --sw-precache-config precache-config.js
+$ sudo sh buildscript.sh
 ```
+Custom precache file:
+```
+Which precache file do you want to use?
+> NAME_OF_THE_PRECACHE_FILE.js
+```
+No precache file:<br>
+\- Leave the line blank :D
 
 ## ServiceWorker - Update
 1. The service worker will automatically update itself. 

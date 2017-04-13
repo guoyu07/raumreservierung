@@ -1,6 +1,21 @@
 # < Changelog >
 
-## Latest Changes (04.04.2017)
+## Latest Changes (13.04.2017)
+
+#### v3.5.0 --> v3.5.1
+Fixing styling & overflow issues (admin-view)
+
+**Issues:**
+1. elements were ABOVE the page-toolbar
+2. main toolbar for admin view was folding into itself instead of hiding &
+revealing with correct proportions
+
+**Solutions:**
+1. added "z-index: 1;" to app-header-layout - element; added
+"z-index: 2;" to app-drawer - element; added "z-index: 1;" to
+app-toolbar - element(s) for "admin-raumverwaltung"
+2. added attribute "sticky" to bottom toolbar; added attribute "reveals"
+too the effect list of the app-header - Element
 
 #### v3.4.3 --> v3.5.0
 Elementary visual bug fixes
