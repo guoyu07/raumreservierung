@@ -52,19 +52,21 @@
 
         <div id="content">
 
-            <app-toolbar style="background-color: #673AB7; color: white;">
-                <paper-icon-button icon="arrow-back" onclick="this.fire('close-frame');" title="Zur&uuml;ck" alt="Zur&uuml;ck"></paper-icon-button>
-                <div main-title style="padding: 0 0 1px 8px;">Raumreservierung</div>
-                <img src="../../img/gykl-logo.gif" width="78px">
-            </app-toolbar>
-            <app-toolbar style="background-color: #673AB7; color: white;">
-                <paper-tabs id="tabs" bottom-item scrollable no-slide fit-container selected="{{selected}}" class="bottom fit">
-                    <paper-tab>Raum reservieren</paper-tab>
-                    <paper-tab>Meine Reservierungen</paper-tab>
-                    <paper-tab>Alle Reservierungen verwalten</paper-tab>
-                </paper-tabs>
-            </app-toolbar>
-            <iron-pages selected="{{selected}}">
+            <div style="position: fixed; top: 0; left: 0; height: 128px; width: 100%; z-index: 1;">
+                <app-toolbar style="background-color: #673AB7; color: white;">
+                    <paper-icon-button icon="arrow-back" onclick="this.fire('close-frame');" title="Zur&uuml;ck" alt="Zur&uuml;ck"></paper-icon-button>
+                    <div main-title style="padding: 0 0 1px 8px;">Raumreservierung</div>
+                    <img src="../../img/gykl-logo.gif" width="78px">
+                </app-toolbar>
+                <app-toolbar style="background-color: #673AB7; color: white;">
+                    <paper-tabs id="tabs" bottom-item scrollable no-slide fit-container selected="{{selected}}" class="bottom fit">
+                        <paper-tab>Raum reservieren</paper-tab>
+                        <paper-tab>Meine Reservierungen</paper-tab>
+                        <paper-tab>Alle Reservierungen verwalten</paper-tab>
+                    </paper-tabs>
+                </app-toolbar>
+            </div>
+            <iron-pages selected="{{selected}}" style="height: calc(100% - 128px); margin-top: 128px;">
                 <div id="reservation">
                     <div id="reservationLoader">
                         <paper-spinner active></paper-spinner>
