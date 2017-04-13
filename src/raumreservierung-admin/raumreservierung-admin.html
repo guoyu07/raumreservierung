@@ -88,6 +88,10 @@
         color: white;
       }
 
+      #secBar {
+        height: 48px;
+      }
+
       /* Overflow issue fix */
       app-header-layout {
         z-index: 1;
@@ -153,7 +157,7 @@
         </div>
       </app-drawer>
       <app-header-layout>
-        <app-header fixed condenses effects="waterfall">
+        <app-header fixed reveals condenses effects="waterfall">
           <app-toolbar hidden$="[[frameLayout]]" id="mainBar">
             <paper-icon-button icon="menu" drawer-toggle title="Men&uuml; &ouml;ffnen" alt="Men&uuml; &ouml;ffnen"></paper-icon-button>
             <div main-title style="padding: 0 0 1px 8px;">Administration</div>
@@ -161,7 +165,7 @@
               <img src="../../img/gykl-logo.gif" width="78px">
             </a>
           </app-toolbar>
-          <app-toolbar hidden$="[[frameLayout]]" id="secBar">
+          <app-toolbar sticky hidden$="[[frameLayout]]" id="secBar">
             <paper-tabs bottom-item fit-container no-slide selected="{{viewData.view}}" scrollable id="tabs" attr-for-selected="name">
               <paper-tab name="usermanagement">Nutzerverwaltung</paper-tab>
               <paper-tab name="roommanagement">Raumverwaltung</paper-tab>
