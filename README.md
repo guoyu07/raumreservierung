@@ -6,7 +6,6 @@ Everything done from now will be some fixes and improvements, no big changes are
 ## Latest Updates
 
 --> See [CHANGELOG.md](https://github.com/moritzmenzel/raumreservierung/blob/master/CHANGELOG.md)<br>
---> Last recorded Update: 04.04.2017 (according to [CHANGELOG.md](https://github.com/moritzmenzel/raumreservierung/blob/master/CHANGELOG.md))
 
 ## Usage of the public reservation API:
 See [API-USAGE.md](https://github.com/moritzmenzel/raumreservierung/blob/master/API-USAGE.md)
@@ -21,7 +20,7 @@ If anyone reading this is interested in this project or is willing to help with 
 If someone needs an example database for doing so, feel free to contact me.
 
 ## Demo
-A demo-version of this project in its current state (v3.5.0) is available at [gykl-rr.lima.zone](https://gykl-rr.lima.zone).
+A demo-version of this project in its current state is available at [gykl-rr.lima.zone](https://gykl-rr.lima.zone).
 According to the german privacy-law, not everyone is allowed to view the contents of the database I used for this demo. This is why only chosen persons have access to the backend & views.
 <br>Thanks for your understanding.
 
