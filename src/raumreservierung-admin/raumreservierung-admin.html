@@ -99,7 +99,7 @@
       }
     </style>
 
-    <app-location route="{{route}}" use-hash-as-path></app-location>
+    <app-location route="{{route}}" use-hash-as-path url-space-regex="^[[urlPrefix]]/"></app-location>
     <app-route
         route="{{route}}"
         pattern=":view"
