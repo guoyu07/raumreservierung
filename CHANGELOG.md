@@ -1,6 +1,14 @@
 # < Changelog >
 
-## Latest Changes (13.04.2017)
+## Latest Changes (27.04.2017)
+
+#### v3.5.1 --> v3.5.2
+Imprint & User Experience
+- Reworked imprint design & content
+- added "url-space-regex" to app-location for the page
+to redirect if the user clicks a link which points to the same
+domain as the page itself (otherwise it would be handled as
+normal "view-change" event)
 
 #### v3.5.0 --> v3.5.1
 Fixing styling & overflow issues (admin-view)
