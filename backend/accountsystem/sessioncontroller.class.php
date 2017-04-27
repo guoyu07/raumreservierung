@@ -22,18 +22,6 @@
             }
         }
 
-        //TODO: Implement status observing in AJAX calls xD
-        /**
-         * create function
-         * accstatus 1 --> #activate-account
-         * accstatus 2 --> #waiting-for-confirmation
-         * accstatus 3 --> _redirectUserPage()
-         *  --> UserPage by acctype
-         *      acctype 1 --> Admin
-         *      acctype 2 --> UserManagement
-         *      acctype 3 --> Teacher
-         */
-
         public function logout()
         {
             // Delete Session, not just its content
