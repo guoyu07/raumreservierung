@@ -13,6 +13,7 @@
         {
             $HTTPS_ONLY = false;  /** !!!CHANGE THIS TO TRUE WHEN NOT ON LOCAL SERVER!!! */
             session_set_cookie_params(3600, "/", "localhost", $HTTPS_ONLY, true);
+            session_name("SID_RAUMRESERVIERUNG");
             session_start();
             $this->pdo = $pdo;
             if(empty($_SESSION['loggedin']) || !isset($_SESSION['loggedin'])){
