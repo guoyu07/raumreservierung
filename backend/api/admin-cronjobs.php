@@ -10,8 +10,8 @@
     require_once ('../db/conf/dbconf.php');
     $sess = new SessionController($pdo);
 
-    if(!isset($_SESSION) || isset($_SESSION['loggedin'])) {
-        if($_SESSION['loggedin'] != false || $_SESSION['acctype'] != 1 || $_SESSION['accstatus'] != 3) {
+    if(isset($_SESSION) && isset($_SESSION['loggedin'])) {
+        if($_SESSION['loggedin'] != false && $_SESSION['acctype'] == 1 && $_SESSION['accstatus'] == 3) {
             if(isset($_POST['request'])) {
                 switch($_POST['request']) {
                     case "getLogs":
