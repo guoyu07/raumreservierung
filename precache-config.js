@@ -53,6 +53,6 @@ module.exports = {
         "./src/raumreservierung-main/raumreservierung-main.html"
     ],
     /** Fallback as replace for the .htaccess 404 redirect */
-    navigateFallback: 'index.html',
+    navigateFallback: '',
     directoryIndex: 'index.html'
 };
