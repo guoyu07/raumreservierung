@@ -1,7 +1,8 @@
 # Raumreservierung v3.5.2
-<b>After implementing the teacher-view to the project, it's now time to test all of its functionality.
-<br>
-Everything done from now will be some fixes and improvements, no big changes are planned for the project from now on.</b>
+
+## ! Important information !
+This repository has been archived due to inactivity since I am currently on a Work and Travel trip around Australia. It is quite likely that I am going to un-archive this repository as I might start reworking it on behalf of my old school for which it was originally created.<br>
+This archive will stay archived until May 2018 or longer.
 
 ## Latest Updates
 
